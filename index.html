@@ -39,13 +39,13 @@ body.lang-ar{font-family:'Cairo',sans-serif; direction:rtl;}
 
 /* ── Day theme: triggered automatically between sunrise & sunset at listener's location ── */
 body.day-theme{
-  --bg:#a9c7d4; --bg2:#cfe1d6; --surface:#e8ddc0; --card:#f0e6c8;
-  --border:#cdb37e; --gold:#9c6a22; --gold2:#85591b; --rose:#b56a82;
+  --bg:#f7f6f3; --bg2:#fbfaf8; --surface:#ffffff; --card:#ffffff;
+  --border:#e2ded6; --gold:#9c6a22; --gold2:#85591b; --rose:#b56a82;
   --maroon:#7d4154; --purple:#5d4aa0; --purple2:#473a85; --pink:#b85e7c;
-  --text:#2c2014; --muted:#5e4d3a;
-  --glow-g:rgba(156,106,34,.18); --glow-p:rgba(93,74,160,.14);
+  --text:#2a261f; --muted:#7a7468;
+  --glow-g:rgba(156,106,34,.10); --glow-p:rgba(93,74,160,.08);
 }
-body.day-theme{background:radial-gradient(ellipse at 30% 0%,#e6d9ad,#a9c7d4 75%);}
+body.day-theme{background:radial-gradient(ellipse at 30% 0%,#fdfcfa,#f3f1ec 75%);}
 body.day-theme #starCanvas,
 body.day-theme .aurora{opacity:0;}
 body.day-theme .moon-deco svg{filter:none;}
@@ -57,11 +57,43 @@ body.day-theme .hero{
 body.day-theme .hero::before{
   background:radial-gradient(ellipse at 70% 50%,rgba(255,196,107,.3),transparent 70%);
 }
+body.day-theme .sidebar{
+  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(247,246,243,.95));
+}
 
 /* Sun/Moon transition sweep overlay */
 #themeSweep{
   position:fixed;inset:0;z-index:9999;pointer-events:none;
   opacity:0;
+}
+
+/* ── Ambient floating notes — subtle, calm, fills empty space behind UI ── */
+.float-notes-layer{
+  position:fixed;inset:0;z-index:0;
+  pointer-events:none;overflow:hidden;
+}
+.float-note{
+  position:absolute;
+  bottom:-10%;
+  font-size:18px;
+  color:var(--gold);
+  opacity:0;
+  will-change:transform,opacity;
+  animation-name:floatNoteUp;
+  animation-timing-function:ease-in-out;
+  animation-iteration-count:infinite;
+  filter:drop-shadow(0 0 6px var(--glow-g));
+  transition:color .8s ease;
+}
+@keyframes floatNoteUp{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0;}
+  8%{opacity:.32;}
+  50%{transform:translate(var(--drift,18px),-55vh) rotate(8deg);opacity:.22;}
+  92%{opacity:.12;}
+  100%{transform:translate(calc(var(--drift,18px)*2),-115vh) rotate(-6deg);opacity:0;}
+}
+@media(prefers-reduced-motion:reduce){
+  .float-note{animation:none;display:none;}
 }
 #themeSweep.sweep-day{
   background:radial-gradient(circle at 50% 20%, rgba(255,224,150,.9), rgba(255,224,150,0) 60%);
@@ -220,6 +252,15 @@ body.lang-ar .lang-toggle{
   line-height:1.6;
 }
 
+.sidebar-decor{
+  flex:1;
+  position:relative;
+  overflow:hidden;
+  min-height:40px;
+  pointer-events:none;
+}
+.sidebar-decor .float-note{position:absolute;}
+
 .social-row{
   display:flex;
   align-items:center;
@@ -256,7 +297,8 @@ body.lang-ar .lang-toggle{
 .content{flex:1;padding:26px 34px 50px;min-width:0;}
 
 /* Topbar */
-.topbar{display:flex;justify-content:flex-end;margin-bottom:22px;}
+.topbar{display:flex;justify-content:flex-end;align-items:center;gap:12px;margin-bottom:22px;}
+.theme-toggle{width:auto;margin-bottom:0;}
 .clock-card{
   background:var(--surface);border:1px solid var(--border);border-radius:18px;
   padding:14px 22px;text-align:center;min-width:170px;
@@ -886,6 +928,7 @@ footer { margin-top: 10px; font-size: 11px; }
 <div class="aurora aurora-2"></div>
 <div class="aurora aurora-3"></div>
 <div id="themeSweep"></div>
+<div class="float-notes-layer" id="floatNotesLayer" aria-hidden="true"></div>
 <audio id="athanAudio" preload="none">
   <source src="https://www.islamicfinder.org/prayer-times/azan/mp3/azan1.mp3" type="audio/mpeg">
 </audio>
@@ -904,6 +947,7 @@ footer { margin-top: 10px; font-size: 11px; }
         <span class="ic">👤</span><span data-en="About Fairouz" data-ar="عن فيروز">About Fairouz</span>
       </button>
     </nav>
+    <div class="sidebar-decor" id="sidebarNotesLayer" aria-hidden="true"></div>
     <div class="sidebar-footer">
       <div data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
       <div data-en="Developed by Aly Alaa" data-ar="تم تطويره من خلال Aly Alaa" style="margin-top:2px;">Developed by Aly Alaa</div>
@@ -941,6 +985,11 @@ footer { margin-top: 10px; font-size: 11px; }
       <img src="https://flagcdn.com/24x18/eg.png" alt="العربية" width="20" height="15">
     </span>
     <span class="lang-name" id="langName">العربية</span>
+  </button>
+
+  <button class="lang-toggle theme-toggle top-lang" id="themeToggle" onclick="toggleManualTheme()">
+    <span class="lang-flag" id="themeIcon">🌙</span>
+    <span class="lang-name" id="themeName" data-en="Night Theme" data-ar="الثيم الليلي">Night Theme</span>
   </button>
 
   <div class="clock-card">
@@ -1211,6 +1260,15 @@ let prayers=[
 ];
 let lastAthanKey=null,wasPlayingBeforeAthan=false,currentAthanName=null,athanCountdownInterval=null;
 
+// ── أسماء ملفات الأذان: fajr.mp3 للفجر بس، athan.mp3 للباقي ──
+const ATHAN_FILES = {
+  Fajr: 'fajr.mp3',
+  Dhuhr: 'athan.mp3',
+  Asr: 'athan.mp3',
+  Maghrib: 'athan.mp3',
+  Isha: 'athan.mp3'
+};
+
 async function fetchPrayerTimes(lat,lon){
   try{
     const res=await fetch('https://api.aladhan.com/v1/timings?latitude='+lat+'&longitude='+lon+'&method=5');
@@ -1243,7 +1301,6 @@ function renderPrayers(){
     </div>`).join('');
 }
 renderPrayers();
-
 function updateAthanBanner(prayer){
   currentAthanName=prayer;
   document.getElementById('athanBannerText').textContent=
@@ -1264,25 +1321,24 @@ function triggerAthan(prayer){
   wasPlayingBeforeAthan=isPlaying;
   if(isPlaying){audio.pause();isPlaying=false;btnPlay.textContent='▶';cancelAnimationFrame(rafId);}
   document.getElementById('athanBanner').style.display='flex';
+
   const athanAudio=document.getElementById('athanAudio');
-  athanAudio.currentTime=0; athanAudio.play().catch(()=>{});
-  let remaining=90;
-  if(athanCountdownInterval)clearInterval(athanCountdownInterval);
-  athanCountdownInterval=setInterval(()=>{
-    remaining--;
-    const m=Math.floor(remaining/60),s=remaining%60;
-    const cd=document.getElementById('athanCountdown');
-    if(cd)cd.textContent=currentLang==='ar'?'سيعود البث خلال '+m+':'+String(s).padStart(2,'0'):'Music resumes in '+m+':'+String(s).padStart(2,'0');
-    if(remaining<=0){
-      clearInterval(athanCountdownInterval);
-      document.getElementById('athanBanner').style.display='none';
-      athanAudio.pause(); athanAudio.currentTime=0;
-      currentAthanName=null;
-      if(wasPlayingBeforeAthan&&hasStarted){
-        audio.play().then(()=>{isPlaying=true;btnPlay.textContent='⏸';cancelAnimationFrame(rafId);animateBars();});
-      }
+  athanAudio.src = ATHAN_FILES[prayer.nameEn] || ATHAN_FILES.Dhuhr;
+  athanAudio.currentTime=0;
+  athanAudio.play().catch(()=>{});
+
+  const cd=document.getElementById('athanCountdown');
+  if(cd) cd.textContent = currentLang==='ar' ? 'جاري أذان '+prayer.nameAr : 'Playing Athan — '+prayer.nameEn;
+
+  if(athanCountdownInterval) clearInterval(athanCountdownInterval);
+
+  athanAudio.onended = () => {
+    document.getElementById('athanBanner').style.display='none';
+    currentAthanName=null;
+    if(wasPlayingBeforeAthan&&hasStarted){
+      audio.play().then(()=>{isPlaying=true;btnPlay.textContent='⏸';cancelAnimationFrame(rafId);animateBars();});
     }
-  },1000);
+  };
 }
 setInterval(checkAthan,15000);
 
@@ -1342,6 +1398,7 @@ navigator.geolocation?.getCurrentPosition(
 
 // ── Day / Night auto-theme — follows real sunrise & sunset at the listener's location ──
 let dnSunrise=null, dnSunset=null, dnIsDay=null, dnRetimer=null;
+let dnManualOverride=null; // null = auto (follow sunrise/sunset), true = forced day, false = forced night
 function dnComputeIsDay(now){
   if(!dnSunrise || !dnSunset) return null;
   return now>=dnSunrise && now<dnSunset;
@@ -1353,7 +1410,25 @@ function dnPlaySweep(toDay){
   void el.offsetWidth; // restart animation
   el.classList.add(toDay?'sweep-day':'sweep-night');
 }
+function updateThemeToggleUI(isDay){
+  const icon=document.getElementById('themeIcon');
+  const name=document.getElementById('themeName');
+  if(!icon||!name) return;
+  icon.textContent = isDay ? '🌙' : '☀️';
+  name.dataset.en = isDay ? 'Night Theme' : 'Day Theme';
+  name.dataset.ar = isDay ? 'الثيم الليلي' : 'الثيم الصباحي';
+  name.textContent = currentLang==='ar' ? name.dataset.ar : name.dataset.en;
+}
+function toggleManualTheme(){
+  const isDay = document.body.classList.contains('day-theme');
+  const goingDay = !isDay;
+  dnManualOverride = goingDay;
+  dnPlaySweep(goingDay);
+  document.body.classList.toggle('day-theme', goingDay);
+  updateThemeToggleUI(goingDay);
+}
 function dnApply(now, animate){
+  if(dnManualOverride!==null) return; // user took manual control, don't auto-switch
   const isDay = dnComputeIsDay(now);
   if(isDay===null) return;
   if(dnIsDay===null){
@@ -1363,6 +1438,7 @@ function dnApply(now, animate){
     document.body.classList.toggle('day-theme', isDay);
   }
   dnIsDay=isDay;
+  updateThemeToggleUI(isDay);
 }
 function dnScheduleNextFlip(){
   if(dnRetimer) clearTimeout(dnRetimer);
@@ -1379,6 +1455,7 @@ function dnScheduleNextFlip(){
 function setupDayNightCycle(sunrise, sunset){
   dnSunrise = sunrise; dnSunset = sunset;
   dnApply(new Date(), false); // set initial theme silently, no flash on first load
+  updateThemeToggleUI(document.body.classList.contains('day-theme'));
   dnScheduleNextFlip();
 }
 
@@ -1420,6 +1497,28 @@ function setupDayNightCycle(sunrise, sunset){
     else if(rafId2){cancelAnimationFrame(rafId2);}
   });
   rafId2=requestAnimationFrame(tick);
+})();
+
+// ── Ambient floating notes generator ──
+(function(){
+  const glyphs=['♪','♫','♬','✦'];
+  function populate(layer, count){
+    if(!layer) return;
+    for(let i=0;i<count;i++){
+      const n=document.createElement('span');
+      n.className='float-note';
+      n.textContent=glyphs[Math.floor(Math.random()*glyphs.length)];
+      n.style.left=(Math.random()*80+10)+'%';
+      n.style.fontSize=(13+Math.random()*14)+'px';
+      n.style.setProperty('--drift',(Math.random()*60-30)+'px');
+      const duration=22+Math.random()*18;
+      n.style.animationDuration=duration+'s';
+      n.style.animationDelay=(-Math.random()*duration)+'s';
+      layer.appendChild(n);
+    }
+  }
+  populate(document.getElementById('floatNotesLayer'), window.innerWidth<700 ? 7 : 12);
+  populate(document.getElementById('sidebarNotesLayer'), 4);
 })();
 
 </script>
