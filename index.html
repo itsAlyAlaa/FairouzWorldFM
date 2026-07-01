@@ -19,6 +19,8 @@
   --maroon:#6e2640; --purple:#8b5cf6; --purple2:#6d28d9; --pink:#e08aa6;
   --text:#f3e8f6; --muted:#a080b0;
   --glow-g:rgba(217,184,136,.35); --glow-p:rgba(139,92,246,.3);
+  --sun-c:#ffb648; --moon-c:#c9a3e8; --cloud-c:#8d84a6; --cloud-c2:#b5add0;
+  --rain-c:#7ec3f2; --snow-c:#f4f7ff; --storm-c:#f4e04d; --fog-c:#a29cb8;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100%;}
@@ -59,6 +61,10 @@ body.day-theme .hero::before{
 }
 body.day-theme .sidebar{
   background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(247,246,243,.95));
+}
+body.day-theme{
+  --sun-c:#f2a53a; --moon-c:#9a7fc9; --cloud-c:#9c96ad; --cloud-c2:#c3bfd0;
+  --rain-c:#4f9bd6; --snow-c:#dfe7f7; --storm-c:#d9b823; --fog-c:#8f899d;
 }
 
 /* Sun/Moon transition sweep overlay */
@@ -357,132 +363,6 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .btn-start .dot{width:9px;height:9px;border-radius:50%;background:#e8425f;box-shadow:0 0 8px #e8425f;animation:pulseDot 1.4s infinite;}
 @keyframes pulseDot{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* ── Hero Art — Logo with animations ── */
-.hero-art{
-  flex:1;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
-  min-height:270px;
-}
-/* ambient glow disk behind logo */
-.logo-stage{
-  position:relative;
-  width:390px;
-  max-width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-}@keyframes ambientPulse{
-  0%,100%{opacity:.6; transform:translate(-50%,-50%) scale(1);}
-  50%    {opacity:1;   transform:translate(-50%,-50%) scale(1.18);}
-}
-/* shimmer sweep overlay on hero logo */
-.logo-stage::after{
-  content:'';position:absolute;
-  width:60%;height:100%;
-  background:linear-gradient(105deg,
-    transparent 20%,
-    rgba(255,240,180,.08) 45%,
-    rgba(217,184,136,.18) 50%,
-    rgba(255,240,180,.08) 55%,
-    transparent 80%);
-  pointer-events:none;z-index:4;
-  animation:logoShimmer 7s ease-in-out infinite;
-  top:0;left:-60%;
-  border-radius:4px;
-}
-@keyframes logoShimmer{
-  0%   {left:-60%;opacity:0;}
-  15%  {opacity:1;}
-  45%  {left:120%;opacity:.8;}
-  46%  {opacity:0;}
-  100% {left:120%;opacity:0;}
-}
-.logo-main-img{
-  width:100%;height:auto;object-fit:contain;
-  position:relative;z-index:2;
-  animation:heroMajestic 9s cubic-bezier(.45,.05,.55,.95) infinite;
-  transform-origin:center 55%;
-}
-/* Majestic rise & glow — totally different from sidebar pulsing rings */
-@keyframes heroMajestic{
-  0%   {transform:translateY(0)   scale(1);
-        filter:drop-shadow(0 4px 18px rgba(217,184,136,.38)) drop-shadow(0 0 40px rgba(139,92,246,.1));}
-  12%  {transform:translateY(-8px)  scale(1.025);
-        filter:drop-shadow(0 8px 28px rgba(217,184,136,.6)) drop-shadow(0 0 60px rgba(217,184,136,.2));}
-  28%  {transform:translateY(-14px) scale(1.042);
-        filter:drop-shadow(0 12px 38px rgba(217,184,136,.8)) drop-shadow(0 0 90px rgba(201,135,156,.3));}
-  45%  {transform:translateY(-11px) scale(1.032);
-        filter:drop-shadow(0 10px 34px rgba(201,135,156,.7)) drop-shadow(0 0 80px rgba(139,92,246,.22));}
-  62%  {transform:translateY(-16px) scale(1.05);
-        filter:drop-shadow(0 14px 42px rgba(217,184,136,.85)) drop-shadow(0 0 100px rgba(217,184,136,.28));}
-  78%  {transform:translateY(-8px)  scale(1.022);
-        filter:drop-shadow(0 8px 26px rgba(217,184,136,.55)) drop-shadow(0 0 60px rgba(201,135,156,.18));}
-  92%  {transform:translateY(-3px)  scale(1.008);
-        filter:drop-shadow(0 4px 18px rgba(217,184,136,.4))  drop-shadow(0 0 42px rgba(139,92,246,.12));}
-  100% {transform:translateY(0)   scale(1);
-        filter:drop-shadow(0 4px 18px rgba(217,184,136,.38)) drop-shadow(0 0 40px rgba(139,92,246,.1));}
-}
-
-/* SVG animation overlay */
-.logo-anim-svg{
-  position:absolute;inset:0;width:100%;height:100%;
-  z-index:3;pointer-events:none;overflow:visible;
-}
-
-/* ① Face halo CSS removed — hero logo uses heroLogoBreath instead */
-
-/* ② Crescent shimmer */
-.crescent-shine{
-  stroke-dasharray:130;
-  stroke-dashoffset:130;
-  animation:crescentGlow 9s ease-in-out infinite;
-  filter:drop-shadow(0 0 5px rgba(255,240,180,.9));
-}
-@keyframes crescentGlow{
-  0%,100%{stroke-dashoffset:130;opacity:0;}
-  35%{opacity:.7;}
-  60%{stroke-dashoffset:0;opacity:.6;}
-  90%{stroke-dashoffset:-130;opacity:0;}
-}
-
-/* ③ عالم text shimmer */
-.alam-glow{animation:textPulse 9s 1s ease-in-out infinite;}
-.fairouz-glow-text{animation:textPulse2 9s 2.5s ease-in-out infinite;}
-@keyframes textPulse{
-  0%,100%{opacity:0;transform:scaleX(0);transform-origin:left;}
-  35%{opacity:.7;transform:scaleX(1);}
-  65%{opacity:.45;transform:scaleX(1.04);}
-  92%{opacity:0;transform:scaleX(0);transform-origin:right;}
-}
-@keyframes textPulse2{
-  0%,100%{opacity:0;transform:scaleX(0);transform-origin:right;}
-  35%{opacity:.75;transform:scaleX(1);}
-  65%{opacity:.45;transform:scaleX(1.04);}
-  92%{opacity:0;transform:scaleX(0);transform-origin:left;}
-}
-
-/* ④ EQ bars CSS removed */
-@keyframes eqPulse{
-  0%,100%{transform:scaleY(.25);opacity:.5;}
-  50%{transform:scaleY(1.6);opacity:1;}
-}
-
-/* ⑤ Floating sparkles */
-.spark-dot{animation:sparkAnim 7s ease-in-out infinite;}
-.sp1{animation-delay:0s;animation-duration:6.5s;}
-.sp2{animation-delay:1.2s;animation-duration:7.5s;}
-.sp3{animation-delay:2.4s;animation-duration:7s;}
-.sp4{animation-delay:3.6s;animation-duration:8s;}
-.sp5{animation-delay:.8s;animation-duration:6.8s;}
-@keyframes sparkAnim{
-  0%,100%{transform:translateY(0) scale(1);opacity:.8;}
-  50%{transform:translateY(-10px) scale(1.35);opacity:.2;}
-}
-
 /* ── Athan Banner ── */
 .athan-banner{
   display:none;align-items:center;justify-content:center;
@@ -512,7 +392,7 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .np-mini{display:flex;align-items:center;gap:14px;min-width:210px;}
 .np-art{
   width:54px;height:54px;border-radius:14px;
-  background:linear-gradient(135deg,#5b1060,#8b5cf6);
+  background:linear-gradient(135deg,var(--maroon),var(--purple));
   display:flex;align-items:center;justify-content:center;font-size:24px;
   flex-shrink:0;animation:artPulse 2.6s ease-in-out infinite;
 }
@@ -744,6 +624,92 @@ input[type=range]::-webkit-slider-thumb{
   color:var(--text);
 }
 
+/* ── Weather panel: ambient FX layer + mood text ── */
+.panel-weather{position:relative;overflow:hidden;}
+.weather-fx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:24px;}
+.panel-weather .panel-title,
+.panel-weather .weather-main,
+.panel-weather .forecast-grid,
+.panel-weather .weather-loading{position:relative;z-index:1;}
+
+.weather-advice{
+  margin-top:8px;
+  font-size:13px;
+  line-height:1.55;
+  color:var(--text);
+  opacity:.82;
+  font-style:italic;
+  max-width:34ch;
+}
+body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
+
+/* Rain / storm drops */
+.fx-drop{
+  position:absolute; top:-10%;
+  width:2px; height:16px;
+  background:linear-gradient(to bottom, rgba(126,195,242,0), rgba(126,195,242,.6));
+  border-radius:2px;
+  animation-name:fxRainFall; animation-timing-function:linear; animation-iteration-count:infinite;
+}
+@keyframes fxRainFall{
+  0%{transform:translateY(0);opacity:0;}
+  10%{opacity:.75;}
+  85%{opacity:.5;}
+  100%{transform:translateY(230px);opacity:0;}
+}
+
+/* Heat shimmer */
+.fx-heat{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%,rgba(255,140,60,.16),transparent 70%);animation:fxHeatPulse 4.5s ease-in-out infinite;}
+@keyframes fxHeatPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
+.fx-wave{
+  position:absolute; bottom:-10px; height:26px; width:64px;
+  border-top:2px solid rgba(255,170,90,.32);
+  border-radius:50%;
+  animation-name:fxWaveRise; animation-timing-function:ease-in; animation-iteration-count:infinite;
+}
+@keyframes fxWaveRise{
+  0%{transform:translateY(0) scaleX(1);opacity:0;}
+  18%{opacity:.55;}
+  100%{transform:translateY(-150px) scaleX(1.5);opacity:0;}
+}
+
+/* Snow flurries */
+.fx-flake{
+  position:absolute; top:-8%;
+  color:var(--snow-c);
+  animation-name:fxSnowFall; animation-timing-function:linear; animation-iteration-count:infinite;
+}
+@keyframes fxSnowFall{
+  0%{transform:translate(0,0) rotate(0deg);opacity:0;}
+  10%{opacity:.85;}
+  100%{transform:translate(var(--sx,20px),230px) rotate(200deg);opacity:.15;}
+}
+
+/* Fog drift */
+.fx-fog{
+  position:absolute; left:-15%; width:130%; height:18px;
+  background:linear-gradient(90deg,transparent,rgba(200,200,220,.18),transparent);
+  border-radius:50%;
+  animation-name:fxFogDrift; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+}
+@keyframes fxFogDrift{
+  0%{transform:translateX(-30px);}
+  50%{transform:translateX(30px);}
+  100%{transform:translateX(-30px);}
+}
+
+/* Icon-internal micro-animations */
+.icon-drop{animation:iconDropFall 1s linear infinite;}
+@keyframes iconDropFall{0%{opacity:0;transform:translateY(-3px);}30%{opacity:1;}100%{opacity:0;transform:translateY(7px);}}
+.icon-flake{animation:iconFlakeFall 1.7s ease-in-out infinite;}
+@keyframes iconFlakeFall{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+.icon-bolt{animation:iconBoltFlash 2s ease-in-out infinite;filter:drop-shadow(0 0 4px var(--storm-c));}
+@keyframes iconBoltFlash{0%,100%{opacity:.3;}9%,13%{opacity:1;}22%{opacity:.3;}}
+
+@media(prefers-reduced-motion:reduce){
+  .fx-drop,.fx-heat,.fx-wave,.fx-flake,.fx-fog,.icon-drop,.icon-flake,.icon-bolt{animation:none!important;}
+}
+
 /* ── About ── */
 .about-page{display:none;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;}
 .about-page h2{font-family:'Cinzel',serif;font-size:24px;color:var(--gold);margin-bottom:16px;}
@@ -757,7 +723,6 @@ footer .heart{color:var(--rose);}
   .content{padding:20px;}
   .hero{flex-direction:column;text-align:center;padding:26px;}
   .hero-text{order:2;}
-  .hero-art{order:1;}
 }
 .twinkle-star{animation:twk 2.4s ease-in-out infinite;}
 @keyframes twk{0%,100%{opacity:.3;}50%{opacity:1;}}
@@ -826,11 +791,6 @@ html, body { height: 100%; overflow: hidden; }
 .hero-text .tagline-sub { font-size: 11px; margin-bottom: 12px; }
 .btn-start           { padding: 9px 18px; font-size: 13px; }
 
-/* Hero logo smaller */
-.hero-art  { min-height: 0; flex: 0 0 160px; }
-.logo-stage { width: 160px; }
-.logo-main-img { width: 160px; height: auto; }
-
 /* Player bar compact */
 .player-bar {
   padding: 10px 14px;
@@ -863,6 +823,7 @@ html, body { height: 100%; overflow: hidden; }
 .weather-temp { font-size: 34px; }
 .weather-desc { font-size: 13px; }
 .weather-main { gap: 16px; margin-bottom: 16px; }
+.weather-advice { font-size: 12px; max-width: 30ch; }
 .forecast-item { padding: 12px 6px; border-radius: 14px; }
 .forecast-item .f-icon { width: 32px; height: 32px; }
 .forecast-item .f-temp { font-size: 14px; }
@@ -881,9 +842,6 @@ footer { margin-top: 10px; font-size: 11px; }
   }
   /* Hero: row on tablet, compact */
   .hero        { flex-direction: row; text-align: left; padding: 10px 12px; gap: 10px; }
-  .hero-art    { flex: 0 0 110px; width: 110px; }
-  .logo-stage  { width: 110px; }
-  .logo-main-img { width: 110px; }
   .hero-text h1 { font-size: 20px; }
 
   /* Mobile bottom navigation bar */
@@ -909,7 +867,6 @@ footer { margin-top: 10px; font-size: 11px; }
 /* ── SMALL MOBILE ≤ 480px ── */
 @media (max-width: 480px) {
   .hero      { flex-direction: column; align-items: center; text-align: center; }
-  .hero-art  { flex: 0 0 auto; width: 120px; }
   .info-grid { grid-template-columns: 1fr; }
   .panels    { grid-template-columns: 1fr; }
   .prayer-grid { grid-template-columns: repeat(3,1fr); }
@@ -918,6 +875,152 @@ footer { margin-top: 10px; font-size: 11px; }
   .vol-row   { min-width: 90px; }
   input[type=range] { width: 70px; }
   .wave-container   { flex: 1 1 80px; min-width: 80px; }
+}
+
+/* ══════════════════════════════════════════════
+   OCCASION & SEASON ENGINE — decorations & particles
+   ══════════════════════════════════════════════ */
+#occCanvas{position:fixed;inset:0;z-index:5;pointer-events:none;}
+#occDecor{position:fixed;inset:0;z-index:5;pointer-events:none;overflow:hidden;}
+#occDecor > *{display:none;position:absolute;}
+
+#occBanner{
+  position:fixed; top:14px; left:50%; transform:translateX(-50%) translateY(-140%);
+  z-index:400; display:flex; align-items:center; gap:10px;
+  background:linear-gradient(135deg,var(--occ-2,var(--card)),var(--occ-1,var(--surface)));
+  border:1px solid var(--occ-glow,var(--border)); border-radius:999px;
+  padding:9px 16px; box-shadow:0 8px 26px rgba(0,0,0,.35), 0 0 0 1px var(--occ-glow,transparent);
+  font-size:13.5px; font-weight:600; color:var(--text);
+  opacity:0; transition:transform .7s cubic-bezier(.22,1,.36,1), opacity .7s ease;
+  max-width:92vw; pointer-events:none;
+}
+#occBanner.show{opacity:1; transform:translateX(-50%) translateY(0);}
+#occBanner .occ-emoji{font-size:17px;}
+#occBanner button{
+  background:none;border:none;color:var(--muted);font-size:16px;line-height:1;
+  cursor:pointer;pointer-events:all;padding:2px 4px;margin-inline-start:2px;
+}
+#occBanner button:hover{color:var(--text);}
+body.day-theme #occBanner{box-shadow:0 8px 26px rgba(0,0,0,.12), 0 0 0 1px var(--occ-glow,transparent);}
+
+/* ── Season: Summer ── */
+body.season-summer .occ-sun{
+  display:block; top:56px; inset-inline-end:4%; width:110px;height:110px;
+  font-size:64px; text-align:center; line-height:130px;
+  filter:drop-shadow(0 0 40px rgba(255,182,72,.55));
+  animation:occSpin 90s linear infinite;
+}
+body.season-summer .occ-sun::before{content:'☀️';}
+body.season-summer .occ-waves{
+  display:block; left:0; right:0; bottom:0; height:46px;
+  background:repeating-linear-gradient(100deg, rgba(126,195,242,.20) 0 40px, transparent 40px 80px);
+  animation:occWaveShift 7s linear infinite;
+}
+body.season-summer .occ-kite{
+  display:block; font-size:28px; top:26%; inset-inline-start:-60px;
+  animation:occKiteFly 26s linear infinite;
+}
+@keyframes occKiteFly{
+  0%{transform:translate(0,0) rotate(-6deg);}
+  50%{transform:translate(60vw,26px) rotate(6deg);}
+  100%{transform:translate(120vw,0) rotate(-6deg);}
+}
+@keyframes occWaveShift{0%{background-position-x:0;}100%{background-position-x:80px;}}
+@keyframes occSpin{0%{transform:rotate(0);}100%{transform:rotate(360deg);}}
+
+/* ── Season: Autumn ── */
+body.season-autumn .occ-tint{display:block; inset:0; background:radial-gradient(ellipse at 70% -10%, rgba(217,142,58,.10), transparent 60%);}
+
+/* ── Season: Winter ── */
+body.season-winter .occ-fog{
+  display:block; left:0;right:0;bottom:0;height:120px;
+  background:linear-gradient(0deg, rgba(164,199,224,.14), transparent);
+  animation:occFogDrift 30s ease-in-out infinite alternate;
+}
+@keyframes occFogDrift{0%{opacity:.5;}100%{opacity:1;}}
+
+/* ── Season: Spring / Sham El Nessim ── */
+body.season-spring .occ-grass,
+body.occasion-sham-elnessim .occ-grass{
+  display:block; left:0;right:0;bottom:0;height:8px;
+  background:linear-gradient(90deg,#5c9e4a,#7fbf5f,#5c9e4a); opacity:.55;
+}
+
+/* ── Ramadan / Eid Adha / Hijri new year / Mawlid: mosque + crescent + lanterns ── */
+body.occasion-ramadan .occ-crescent,
+body.occasion-eid-adha .occ-crescent,
+body.occasion-hijri-newyear .occ-crescent,
+body.occasion-mawlid .occ-crescent{
+  display:block; top:60px; inset-inline-end:5%; font-size:46px;
+  filter:drop-shadow(0 0 22px rgba(201,163,232,.6));
+  animation:occGlowPulse 4.5s ease-in-out infinite;
+}
+body.occasion-ramadan .occ-mosque,
+body.occasion-hijri-newyear .occ-mosque,
+body.occasion-mawlid .occ-mosque{
+  display:block; bottom:0; inset-inline-start:0; width:100%;
+  text-align:center; font-size:44px; opacity:.5; letter-spacing:40px;
+}
+body.occasion-ramadan .occ-lanterns,
+body.occasion-mawlid .occ-lanterns{
+  display:flex; top:0; left:0; right:0; justify-content:space-evenly; font-size:26px; padding-top:0;
+}
+body.occasion-ramadan .occ-lanterns span,
+body.occasion-mawlid .occ-lanterns span{ animation:occSway 3.4s ease-in-out infinite; transform-origin:top center; display:inline-block; }
+body.occasion-ramadan .occ-lanterns span:nth-child(2n){animation-delay:.6s;}
+body.occasion-ramadan .occ-lanterns span:nth-child(3n){animation-delay:1.2s;}
+@keyframes occSway{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
+@keyframes occGlowPulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+
+/* ── Eid Fitr / Eid Adha: balloons ── */
+body.occasion-eid-fitr .occ-balloons,
+body.occasion-eid-adha .occ-balloons{
+  display:flex; bottom:-20px; left:0; right:0; justify-content:space-around; font-size:34px;
+}
+body.occasion-eid-fitr .occ-balloons span,
+body.occasion-eid-adha .occ-balloons span{ display:inline-block; animation:occFloatUp 9s ease-in infinite; }
+body.occasion-eid-fitr .occ-balloons span:nth-child(2){animation-delay:2s;}
+body.occasion-eid-fitr .occ-balloons span:nth-child(3){animation-delay:4s;}
+body.occasion-eid-fitr .occ-balloons span:nth-child(4){animation-delay:1s;}
+@keyframes occFloatUp{0%{transform:translateY(0);opacity:0;}10%{opacity:1;}100%{transform:translateY(-115vh);opacity:0;}}
+
+/* ── National days: flag ribbon + icons ── */
+body.occasion-police-day .occ-flag,
+body.occasion-sinai .occ-flag,
+body.occasion-labour-day .occ-flag,
+body.occasion-june30 .occ-flag,
+body.occasion-july23 .occ-flag,
+body.occasion-october6 .occ-flag{
+  display:block; top:56px; inset-inline-end:4%; font-size:54px;
+  animation:occFlagWave 2.6s ease-in-out infinite;
+  filter:drop-shadow(0 4px 14px rgba(0,0,0,.35));
+}
+@keyframes occFlagWave{0%,100%{transform:rotate(0deg) translateY(0);}50%{transform:rotate(-4deg) translateY(3px);}}
+body.occasion-sinai .occ-mountain{display:block; bottom:0; inset-inline-start:4%; font-size:70px; opacity:.6;}
+body.occasion-labour-day .occ-gear{display:block; bottom:6%; inset-inline-start:6%; font-size:56px; opacity:.55; animation:occSpin 10s linear infinite;}
+body.occasion-october6 .occ-jet{display:block; top:10%; inset-inline-start:-60px; font-size:34px; animation:occJetFly 14s linear infinite;}
+@keyframes occJetFly{0%{transform:translateX(0) translateY(0);}100%{transform:translateX(130vw) translateY(-40px);}}
+body.occasion-october6 .occ-medal{display:block; bottom:6%; inset-inline-end:6%; font-size:50px; opacity:.6;}
+
+/* ── Christmas / New Year ── */
+body.occasion-christmas .occ-tree,
+body.occasion-newyear .occ-tree{display:block; bottom:0; inset-inline-start:4%; font-size:70px;}
+body.occasion-christmas .occ-star,
+body.occasion-newyear .occ-star{display:block; top:6%; left:50%; transform:translateX(-50%); font-size:36px; animation:occGlowPulse 2.4s ease-in-out infinite;}
+
+/* Occasion palette accents (drive banner colors) */
+body.occasion-ramadan, body.occasion-eid-adha, body.occasion-hijri-newyear, body.occasion-mawlid{--occ-1:#1b1030; --occ-2:#2c1a44; --occ-glow:rgba(201,163,232,.5);}
+body.occasion-eid-fitr{--occ-1:#221033; --occ-2:#3a1a4d; --occ-glow:rgba(224,138,166,.5);}
+body.occasion-christmas, body.occasion-newyear{--occ-1:#0f1f18; --occ-2:#173327; --occ-glow:rgba(217,184,136,.5);}
+body.occasion-police-day, body.occasion-sinai, body.occasion-labour-day, body.occasion-june30, body.occasion-july23, body.occasion-october6{--occ-1:#1a1010; --occ-2:#301414; --occ-glow:rgba(217,184,136,.5);}
+body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(127,191,95,.5);}
+
+@media (max-width:480px){
+  #occBanner{font-size:12px; padding:7px 12px;}
+  body.season-summer .occ-sun{width:90px;height:90px;font-size:50px;line-height:100px;}
+  body.occasion-october6 .occ-medal, body.occasion-sinai .occ-mountain, body.occasion-labour-day .occ-gear{font-size:40px;}
+  body.occasion-police-day .occ-flag, body.occasion-sinai .occ-flag, body.occasion-labour-day .occ-flag,
+  body.occasion-june30 .occ-flag, body.occasion-july23 .occ-flag, body.occasion-october6 .occ-flag{font-size:42px;}
 }
 
 </style>
@@ -929,6 +1032,34 @@ footer { margin-top: 10px; font-size: 11px; }
 <div class="aurora aurora-3"></div>
 <div id="themeSweep"></div>
 <div class="float-notes-layer" id="floatNotesLayer" aria-hidden="true"></div>
+
+<!-- Occasion & Season Engine: particle canvas + fixed decorations + banner -->
+<canvas id="occCanvas" aria-hidden="true"></canvas>
+<div id="occDecor" aria-hidden="true">
+  <div class="occ-sun"></div>
+  <div class="occ-waves"></div>
+  <div class="occ-kite">🪁</div>
+  <div class="occ-tint"></div>
+  <div class="occ-fog"></div>
+  <div class="occ-grass"></div>
+  <div class="occ-crescent">🌙</div>
+  <div class="occ-mosque">🕌</div>
+  <div class="occ-lanterns"><span>🏮</span><span>🏮</span><span>🏮</span><span>🏮</span><span>🏮</span></div>
+  <div class="occ-balloons"><span>🎈</span><span>🎈</span><span>🎈</span><span>🎈</span></div>
+  <div class="occ-flag">🇪🇬</div>
+  <div class="occ-mountain">🏔️</div>
+  <div class="occ-gear">⚙️</div>
+  <div class="occ-jet">✈️</div>
+  <div class="occ-medal">🎖️</div>
+  <div class="occ-tree">🎄</div>
+  <div class="occ-star">⭐</div>
+</div>
+<div id="occBanner">
+  <span class="occ-emoji" id="occBannerEmoji"></span>
+  <span id="occBannerText"></span>
+  <button id="occBannerClose" aria-label="close">×</button>
+</div>
+
 <audio id="athanAudio" preload="none">
   <source src="https://www.islamicfinder.org/prayer-times/azan/mp3/azan1.mp3" type="audio/mpeg">
 </audio>
@@ -1079,7 +1210,8 @@ footer { margin-top: 10px; font-size: 11px; }
 
 
       <section class="panels">
-        <div class="panel">
+        <div class="panel panel-weather">
+          <div class="weather-fx" id="weatherFx" aria-hidden="true"></div>
           <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span></div>
           <div id="weatherSection" style="display:none;">
             <div class="weather-main" id="weatherMain"></div>
@@ -1138,6 +1270,7 @@ function applyLang() {
   }
   updateClock(); renderPrayers();
   if (currentAthanName) updateAthanBanner(currentAthanName);
+  if (typeof refreshWeatherLang === 'function') refreshWeatherLang();
 }
 
 // ── Navigation ──
@@ -1260,14 +1393,15 @@ let prayers=[
 ];
 let lastAthanKey=null,wasPlayingBeforeAthan=false,currentAthanName=null,athanCountdownInterval=null;
 
-// ── أسماء ملفات الأذان: fajr.mp3 للفجر بس، athan.mp3 للباقي ──
+// ── أسماء ملفات الأذان — روابط CDN حقيقية (كانت تشير سابقًا لملفات محلية غير موجودة أصلًا) ──
 const ATHAN_FILES = {
-  Fajr: 'fajr.mp3',
-  Dhuhr: 'athan.mp3',
-  Asr: 'athan.mp3',
-  Maghrib: 'athan.mp3',
-  Isha: 'athan.mp3'
+  Fajr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
+  Dhuhr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
+  Asr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
+  Maghrib: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
+  Isha: 'https://cdn.aladhan.com/audio/adhans/a9.mp3'
 };
+const ATHAN_FALLBACK = 'https://www.islamicfinder.org/prayer-times/azan/mp3/azan1.mp3';
 
 async function fetchPrayerTimes(lat,lon){
   try{
@@ -1323,7 +1457,8 @@ function triggerAthan(prayer){
   document.getElementById('athanBanner').style.display='flex';
 
   const athanAudio=document.getElementById('athanAudio');
-  athanAudio.src = ATHAN_FILES[prayer.nameEn] || ATHAN_FILES.Dhuhr;
+  athanAudio.onerror = () => { if(athanAudio.src !== ATHAN_FALLBACK){ athanAudio.src = ATHAN_FALLBACK; athanAudio.play().catch(()=>{}); } };
+  athanAudio.src = ATHAN_FILES[prayer.nameEn] || ATHAN_FALLBACK;
   athanAudio.currentTime=0;
   athanAudio.play().catch(()=>{});
 
@@ -1343,50 +1478,154 @@ function triggerAthan(prayer){
 setInterval(checkAthan,15000);
 
 // ── Weather ──
+const WCODE={
+  rain:[51,53,55,56,57,61,63,65,66,67,80,81,82],
+  snow:[71,73,75,77,85,86],
+  fog:[45,48],
+  storm:[95,96,99]
+};
 function weatherIconSVG(code,isDay){
-  const sun=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="14" fill="#d9b888"/><g stroke="#d9b888" stroke-width="3" stroke-linecap="round"><line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/><line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/><line x1="12" y1="12" x2="18" y2="18"/><line x1="46" y1="46" x2="52" y2="52"/><line x1="52" y1="12" x2="46" y2="18"/><line x1="18" y1="46" x2="12" y2="52"/></g></svg>`;
-  const moon=`<svg viewBox="0 0 64 64"><path d="M40 8 a20 20 0 1 0 0 48 a25 25 0 1 1 0 -48" fill="#c9879c"/></svg>`;
-  const cloud=`<svg viewBox="0 0 64 64"><ellipse cx="28" cy="38" rx="18" ry="12" fill="#b08fa0"/><ellipse cx="42" cy="34" rx="13" ry="10" fill="#c9a36a"/></svg>`;
-  const rain=`<svg viewBox="0 0 64 64"><ellipse cx="28" cy="28" rx="18" ry="12" fill="#b08fa0"/><ellipse cx="42" cy="24" rx="13" ry="10" fill="#8b5cf6" opacity=".6"/><g stroke="#8b5cf6" stroke-width="3" stroke-linecap="round"><line x1="20" y1="48" x2="16" y2="58"/><line x1="32" y1="48" x2="28" y2="58"/><line x1="44" y1="48" x2="40" y2="58"/></g></svg>`;
-  const snow=`<svg viewBox="0 0 64 64"><ellipse cx="28" cy="28" rx="18" ry="12" fill="#cfd6e4"/><g fill="#f3e8e6"><circle cx="20" cy="50" r="2.4"/><circle cx="32" cy="54" r="2.4"/><circle cx="44" cy="50" r="2.4"/></g></svg>`;
-  const fog=`<svg viewBox="0 0 64 64"><g stroke="#b08fa0" stroke-width="4" stroke-linecap="round"><line x1="10" y1="26" x2="54" y2="26"/><line x1="6" y1="36" x2="58" y2="36"/><line x1="10" y1="46" x2="54" y2="46"/></g></svg>`;
-  if([0,1].includes(code))return isDay?sun:moon;
-  if([2,3].includes(code))return cloud;
-  if([45,48].includes(code))return fog;
-  if([51,53,55,56,57,61,63,65,66,67,80,81,82].includes(code))return rain;
-  if([71,73,75,77,85,86].includes(code))return snow;
+  const sun=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="13" fill="var(--sun-c)"/><g stroke="var(--sun-c)" stroke-width="3" stroke-linecap="round"><line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/><line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/><line x1="12" y1="12" x2="18" y2="18"/><line x1="46" y1="46" x2="52" y2="52"/><line x1="52" y1="12" x2="46" y2="18"/><line x1="18" y1="46" x2="12" y2="52"/></g></svg>`;
+  const moon=`<svg viewBox="0 0 64 64"><path d="M40 8 a20 20 0 1 0 0 48 a25 25 0 1 1 0 -48" fill="var(--moon-c)"/></svg>`;
+  const cloud=`<svg viewBox="0 0 64 64"><ellipse cx="24" cy="42" rx="14" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="30" r="13" fill="var(--cloud-c2)"/><circle cx="22" cy="30" r="9" fill="var(--cloud-c2)"/><rect x="12" y="36" width="38" height="14" rx="7" fill="var(--cloud-c)"/></svg>`;
+  const partcloud=`<svg viewBox="0 0 64 64"><circle cx="40" cy="18" r="9" fill="var(--sun-c)"/><g stroke="var(--sun-c)" stroke-width="2.5" stroke-linecap="round"><line x1="40" y1="2" x2="40" y2="7"/><line x1="53" y1="7" x2="49" y2="11"/><line x1="57" y1="18" x2="52" y2="18"/></g><ellipse cx="24" cy="42" rx="15" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="30" r="12" fill="var(--cloud-c2)"/><rect x="12" y="36" width="38" height="14" rx="7" fill="var(--cloud-c)"/></svg>`;
+  const partcloudNight=`<svg viewBox="0 0 64 64"><path d="M46 6 a9 9 0 1 0 0 20 a11 11 0 1 1 0 -20" fill="var(--moon-c)"/><ellipse cx="24" cy="42" rx="15" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="30" r="12" fill="var(--cloud-c2)"/><rect x="12" y="36" width="38" height="14" rx="7" fill="var(--cloud-c)"/></svg>`;
+  const rain=`<svg viewBox="0 0 64 64"><ellipse cx="24" cy="26" rx="15" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="18" r="11" fill="var(--cloud-c2)"/><rect x="12" y="22" width="38" height="14" rx="7" fill="var(--cloud-c)"/><g stroke="var(--rain-c)" stroke-width="3" stroke-linecap="round"><line class="icon-drop" x1="20" y1="42" x2="17" y2="52"/><line class="icon-drop" style="animation-delay:.25s" x1="32" y1="42" x2="29" y2="52"/><line class="icon-drop" style="animation-delay:.5s" x1="44" y1="42" x2="41" y2="52"/></g></svg>`;
+  const snow=`<svg viewBox="0 0 64 64"><ellipse cx="24" cy="26" rx="15" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="18" r="11" fill="var(--cloud-c2)"/><rect x="12" y="22" width="38" height="14" rx="7" fill="var(--cloud-c)"/><g fill="var(--snow-c)"><circle class="icon-flake" cx="20" cy="46" r="2.3"/><circle class="icon-flake" style="animation-delay:.3s" cx="32" cy="52" r="2.3"/><circle class="icon-flake" style="animation-delay:.6s" cx="44" cy="46" r="2.3"/></g></svg>`;
+  const fog=`<svg viewBox="0 0 64 64"><ellipse cx="30" cy="16" rx="12" ry="7" fill="var(--cloud-c2)" opacity=".6"/><g stroke="var(--fog-c)" stroke-width="4" stroke-linecap="round"><line x1="10" y1="26" x2="54" y2="26"/><line x1="6" y1="36" x2="58" y2="36"/><line x1="10" y1="46" x2="54" y2="46"/></g></svg>`;
+  const storm=`<svg viewBox="0 0 64 64"><ellipse cx="24" cy="24" rx="15" ry="10" fill="var(--cloud-c)"/><circle cx="34" cy="16" r="11" fill="var(--cloud-c2)"/><rect x="12" y="20" width="38" height="14" rx="7" fill="var(--cloud-c)"/><polygon class="icon-bolt" points="34,36 26,50 32,50 28,60 42,44 35,44" fill="var(--storm-c)"/></svg>`;
+  if(code===0) return isDay?sun:moon;
+  if([1,2].includes(code)) return isDay?partcloud:partcloudNight;
+  if(WCODE.fog.includes(code)) return fog;
+  if(WCODE.rain.includes(code)) return rain;
+  if(WCODE.snow.includes(code)) return snow;
+  if(WCODE.storm.includes(code)) return storm;
   return cloud;
 }
 function weatherDesc(code,lang){
   const d={clear:{en:'Clear',ar:'صافي'},partcloud:{en:'Partly Cloudy',ar:'غائم جزئيًا'},fog:{en:'Foggy',ar:'ضبابي'},drizzle:{en:'Drizzle',ar:'رذاذ'},rain:{en:'Rain',ar:'أمطار'},snow:{en:'Snow',ar:'تلج'},storm:{en:'Thunderstorm',ar:'عاصفة'},cloud:{en:'Cloudy',ar:'غائم'}};
   let k='cloud';
-  if([0,1].includes(code))k='clear'; else if([2,3].includes(code))k='partcloud';
-  else if([45,48].includes(code))k='fog'; else if([51,53,55].includes(code))k='drizzle';
-  else if([61,63,65,80,81,82].includes(code))k='rain'; else if([71,73,75].includes(code))k='snow';
-  else if([95,96,99].includes(code))k='storm';
+  if(code===0)k='clear'; else if([1,2].includes(code))k='partcloud';
+  else if(WCODE.fog.includes(code))k='fog'; else if([51,53,55].includes(code))k='drizzle';
+  else if(WCODE.rain.includes(code))k='rain'; else if(WCODE.snow.includes(code))k='snow';
+  else if(WCODE.storm.includes(code))k='storm';
   return d[k][lang]||d[k].en;
+}
+// ── Mood advice: a short human line about the current weather, based on condition + temp ──
+function weatherAdvice(temp, code, lang){
+  let msg;
+  if(WCODE.storm.includes(code)) msg={en:"Thunder's rolling — best enjoy it from indoors ⛈️",ar:"في رعد وبرق برة.. يفضل تستمتع بالمنظر من جوا ⛈️"};
+  else if(WCODE.snow.includes(code)) msg={en:"It's snowing — bundle up before you step out ❄️",ar:"الدنيا بتتلج.. لف نفسك كويس قبل ما تخرج ❄️"};
+  else if(WCODE.rain.includes(code)) msg={en:"Don't forget your umbrella today ☔",ar:"ما تنساش الشمسية معاك النهارده ☔"};
+  else if(WCODE.fog.includes(code)) msg={en:"Foggy out there — take it slow on the road 🌫️",ar:"الرؤية مش واضحة برة.. سوق على مهلك 🌫️"};
+  else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم معطف تقيل 🧥"};
+  else if(temp<=15) msg={en:"A bit chilly — grab a jacket before heading out 🧥",ar:"الجو بارد شوية.. خد جاكيت معاك 🧥"};
+  else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"جو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
+  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو دافي.. البس هدوم خفيفة 👕"};
+  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب ميه كتير 💧"};
+  return msg[lang]||msg.en;
+}
+// ── Ambient weather FX inside the panel: rain, snow, heat shimmer, fog ──
+function renderWeatherFx(code, temp){
+  const fx=document.getElementById('weatherFx');
+  if(!fx) return;
+  fx.innerHTML='';
+  const isRain=WCODE.rain.includes(code), isStorm=WCODE.storm.includes(code);
+  const isSnow=WCODE.snow.includes(code), isFog=WCODE.fog.includes(code);
+  const isHot=typeof temp==='number' && temp>=32;
+  if(isRain||isStorm){
+    const n=isStorm?24:16;
+    for(let i=0;i<n;i++){
+      const d=document.createElement('div');
+      d.className='fx-drop';
+      d.style.left=(Math.random()*98)+'%';
+      d.style.height=(12+Math.random()*14)+'px';
+      const dur=.5+Math.random()*.5;
+      d.style.animationDuration=dur+'s';
+      d.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(d);
+    }
+  } else if(isSnow){
+    for(let i=0;i<14;i++){
+      const s=document.createElement('div');
+      s.className='fx-flake';
+      s.textContent='❄';
+      s.style.left=(Math.random()*98)+'%';
+      s.style.setProperty('--sx',(Math.random()*40-20)+'px');
+      s.style.fontSize=(9+Math.random()*8)+'px';
+      const dur=6+Math.random()*5;
+      s.style.animationDuration=dur+'s';
+      s.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(s);
+    }
+  } else if(isHot){
+    const heat=document.createElement('div');
+    heat.className='fx-heat';
+    fx.appendChild(heat);
+    for(let i=0;i<4;i++){
+      const w=document.createElement('div');
+      w.className='fx-wave';
+      w.style.left=(8+i*23+Math.random()*10)+'%';
+      const dur=3+Math.random()*2;
+      w.style.animationDuration=dur+'s';
+      w.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(w);
+    }
+  } else if(isFog){
+    for(let i=0;i<3;i++){
+      const f=document.createElement('div');
+      f.className='fx-fog';
+      f.style.top=(22+i*24)+'%';
+      f.style.animationDuration=(6+i*2)+'s';
+      fx.appendChild(f);
+    }
+  }
+}
+let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null;
+function renderWeatherText(cur, wData, city){
+  document.getElementById('weatherMain').innerHTML=`<div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div><div class="weather-city">📍 ${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+  const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  let fc='';
+  for(let i=1;i<=3;i++){
+    const d=new Date(wData.daily.time[i]);
+    fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div></div>`;
+  }
+  document.getElementById('forecastGrid').innerHTML=fc;
+  const cityLabel=document.getElementById('prayerCityLabel');
+  if(cityLabel)cityLabel.textContent=city;
+}
+async function refreshWeatherLang(){
+  if(!lastWeatherData) return;
+  let city=lastWeatherCity;
+  if(lastWeatherCoords){
+    try{
+      const geoRes=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lastWeatherCoords.lat+'&lon='+lastWeatherCoords.lon+'&format=json&accept-language='+currentLang);
+      const geoData=await geoRes.json();
+      city=geoData.address?.city||geoData.address?.town||geoData.address?.state||(currentLang==='ar'?'مكانك':'Your location');
+      lastWeatherCity=city;
+    }catch(e){}
+  }
+  renderWeatherText(lastWeatherData.current, lastWeatherData, city);
+  renderWeatherFx(lastWeatherData.current.weather_code, lastWeatherData.current.temperature_2m);
 }
 async function fetchWeather(lat,lon){
   fetchPrayerTimes(lat,lon);
+  lastWeatherCoords={lat,lon};
   try{
     const geoRes=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&accept-language='+currentLang);
     const geoData=await geoRes.json();
     const city=geoData.address?.city||geoData.address?.town||geoData.address?.state||(currentLang==='ar'?'مكانك':'Your location');
+    lastWeatherCity=city;
     const cityLabel=document.getElementById('prayerCityLabel');
     if(cityLabel)cityLabel.textContent=city;
     const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
-    document.getElementById('weatherMain').innerHTML=`<div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div><div class="weather-city">📍 ${city}</div></div>`;
+    lastWeatherData=wData;
+    renderWeatherText(cur, wData, city);
+    renderWeatherFx(cur.weather_code, cur.temperature_2m);
     if(wData.daily?.sunrise?.[0] && wData.daily?.sunset?.[0]){
       setupDayNightCycle(new Date(wData.daily.sunrise[0]), new Date(wData.daily.sunset[0]));
     }
-    const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
-    let fc='';
-    for(let i=1;i<=3;i++){
-      const d=new Date(wData.daily.time[i]);
-      fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div></div>`;
-    }
-    document.getElementById('forecastGrid').innerHTML=fc;
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
   }catch(e){document.getElementById('weatherStatus').textContent=currentLang==='ar'?'مش قادر يجيب الطقس 😔':"Couldn't fetch weather 😔";}
@@ -1519,6 +1758,225 @@ function setupDayNightCycle(sunrise, sunset){
   }
   populate(document.getElementById('floatNotesLayer'), window.innerWidth<700 ? 7 : 12);
   populate(document.getElementById('sidebarNotesLayer'), 4);
+})();
+
+// ══════════════════════════════════════════════
+// OCCASION & SEASON ENGINE
+// ══════════════════════════════════════════════
+
+// ── Particle renderer (shared canvas for season + occasion decorations) ──
+(function(){
+  const canvas=document.getElementById('occCanvas'); if(!canvas) return;
+  const ctx=canvas.getContext('2d',{alpha:true});
+  let particles=[], rafId=null, paused=false, activeConfigs=[], lastT=0;
+  function rand(a,b){return a+Math.random()*(b-a);}
+  function resize(){
+    const dpr=Math.min(window.devicePixelRatio||1,2);
+    canvas.width=window.innerWidth*dpr; canvas.height=window.innerHeight*dpr;
+    canvas.style.width=window.innerWidth+'px'; canvas.style.height=window.innerHeight+'px';
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+    buildParticles();
+  }
+  function buildParticles(){
+    particles=[];
+    activeConfigs.forEach(cfg=>{
+      if(!cfg) return;
+      const n=Math.min(cfg.count,34);
+      for(let i=0;i<n;i++){
+        particles.push({
+          cfg,
+          x:Math.random()*window.innerWidth,
+          y: cfg.dir==='up' ? window.innerHeight+Math.random()*window.innerHeight : Math.random()*-window.innerHeight,
+          size:rand(cfg.size[0],cfg.size[1]),
+          speed:rand(cfg.speed[0],cfg.speed[1]),
+          swayPhase:Math.random()*Math.PI*2,
+          rot:Math.random()*360,
+          rotSpeed:rand(-40,40),
+          item: cfg.mode==='emoji' ? cfg.items[Math.floor(Math.random()*cfg.items.length)] : null,
+          color: cfg.mode==='shape' ? cfg.colors[Math.floor(Math.random()*cfg.colors.length)] : null
+        });
+      }
+    });
+  }
+  function setActiveThemes(configs){ activeConfigs=configs.filter(Boolean); buildParticles(); }
+  function tick(t){
+    if(!paused){
+      const dt=Math.min((t-lastT)/1000,.05)||.016; lastT=t;
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      particles.forEach(p=>{
+        const cfg=p.cfg;
+        if(cfg.dir==='side'){
+          p.x+=p.speed*dt;
+          if(p.x>window.innerWidth+60) p.x=-60;
+        }else{
+          const mul=cfg.dir==='up'?-1:1;
+          p.y+=mul*p.speed*dt;
+          p.x+=Math.sin(p.swayPhase+t/900)*(cfg.sway||0)*dt;
+          if(mul>0 && p.y>window.innerHeight+40){p.y=-40;p.x=Math.random()*window.innerWidth;}
+          if(mul<0 && p.y<-40){p.y=window.innerHeight+40;p.x=Math.random()*window.innerWidth;}
+        }
+        p.rot+=p.rotSpeed*dt;
+        ctx.save();
+        ctx.translate(p.x,p.y);
+        ctx.rotate(p.rot*Math.PI/180);
+        if(cfg.mode==='emoji'){
+          ctx.font=p.size+'px sans-serif';
+          ctx.textAlign='center'; ctx.textBaseline='middle';
+          ctx.globalAlpha=.85;
+          ctx.fillText(p.item,0,0);
+        }else{
+          ctx.fillStyle=p.color; ctx.globalAlpha=.8;
+          ctx.fillRect(-p.size/2,-p.size*.2,p.size,p.size*.4);
+        }
+        ctx.restore();
+      });
+    }
+    rafId=requestAnimationFrame(tick);
+  }
+  let rTimer;
+  window.addEventListener('resize',()=>{clearTimeout(rTimer);rTimer=setTimeout(resize,200);});
+  document.addEventListener('visibilitychange',()=>{paused=document.hidden;});
+  resize();
+  rafId=requestAnimationFrame(tick);
+  window.__occSetParticles=setActiveThemes;
+})();
+
+// ── Season / occasion detection + theme application ──
+(function(){
+  function gJDN(y,m,d){
+    const a=Math.floor((14-m)/12), y2=y+4800-a, m2=m+12*a-3;
+    return d+Math.floor((153*m2+2)/5)+365*y2+Math.floor(y2/4)-Math.floor(y2/100)+Math.floor(y2/400)-32045;
+  }
+  // Tabular (civil) Hijri conversion — approximate; may differ ±1 day from
+  // the officially announced Egyptian Islamic calendar (moon-sighting based).
+  function jdnToHijri(jdn){
+    const l0=jdn-1948440+10632;
+    const n=Math.floor((l0-1)/10631);
+    let l=l0-10631*n+354;
+    const j=(Math.floor((10985-l)/5316))*(Math.floor((50*l)/17719))+(Math.floor(l/5670))*(Math.floor((43*l)/15238));
+    l=l-(Math.floor((30-j)/15))*(Math.floor((17719*j)/50))-(Math.floor(j/16))*(Math.floor((15238*j)/43))+29;
+    const month=Math.floor((24*l)/709);
+    const day=l-Math.floor((709*month)/24);
+    const year=30*n+j-30;
+    return {year,month,day};
+  }
+  function gregorianToHijri(date){ return jdnToHijri(gJDN(date.getFullYear(),date.getMonth()+1,date.getDate())); }
+  function orthodoxEasterUTC(year){
+    const a=year%4,b=year%7,c=year%19;
+    const d=(19*c+15)%30, e=(2*a+4*b-d+34)%7;
+    const month=Math.floor((d+e+114)/31), day=((d+e+114)%31)+1;
+    const jd=new Date(Date.UTC(year,month-1,day));
+    jd.setUTCDate(jd.getUTCDate()+13); // Julian → Gregorian offset
+    return jd;
+  }
+  function sameDay(a,b){return a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();}
+  function getSeason(date){
+    const md=(date.getMonth()+1)*100+date.getDate();
+    if(md>=1221||md<=320) return 'winter';
+    if(md>=321&&md<=620) return 'spring';
+    if(md>=621&&md<=922) return 'summer';
+    return 'autumn';
+  }
+
+  const OCCASIONS=[
+    {id:'eid-fitr', pr:12, ar:'عيد الفطر المبارك 🎉', en:'Eid al-Fitr Mubarak 🎉', emoji:'🎉',
+      match:(d,h)=> (h.month===10&&h.day<=3)||(h.month===9&&h.day>=29)},
+    {id:'eid-adha', pr:12, ar:'عيد الأضحى المبارك', en:'Eid al-Adha Mubarak', emoji:'🌙',
+      match:(d,h)=> h.month===12&&h.day>=9&&h.day<=13},
+    {id:'ramadan', pr:10, ar:'رمضان كريم 🌙', en:'Ramadan Kareem 🌙', emoji:'🌙',
+      match:(d,h)=> h.month===9},
+    {id:'hijri-newyear', pr:9, ar:'رأس السنة الهجرية', en:'Islamic New Year', emoji:'🌙',
+      match:(d,h)=> h.month===1&&h.day===1},
+    {id:'mawlid', pr:9, ar:'المولد النبوي الشريف', en:"The Prophet's Birthday", emoji:'🕌',
+      match:(d,h)=> h.month===3&&h.day===12},
+    {id:'newyear', pr:8, ar:'كل عام وأنتم بخير 🎆', en:'Happy New Year 🎆', emoji:'🎆',
+      match:(d)=> (d.getMonth()===11&&d.getDate()>=31)||(d.getMonth()===0&&d.getDate()<=2)},
+    {id:'christmas', pr:8, ar:'عيد ميلاد مجيد', en:'Merry Christmas', emoji:'✝️',
+      match:(d)=> d.getMonth()===0&&d.getDate()===7},
+    {id:'police-day', pr:7, ar:'عيد الشرطة وثورة 25 يناير', en:'Police Day & Jan 25 Revolution', emoji:'🇪🇬',
+      match:(d)=> d.getMonth()===0&&d.getDate()===25},
+    {id:'sinai', pr:7, ar:'عيد تحرير سيناء', en:'Sinai Liberation Day', emoji:'🇪🇬',
+      match:(d)=> d.getMonth()===3&&d.getDate()===25},
+    {id:'labour-day', pr:7, ar:'عيد العمال', en:'Labour Day', emoji:'⚙️',
+      match:(d)=> d.getMonth()===4&&d.getDate()===1},
+    {id:'june30', pr:7, ar:'ثورة 30 يونيو', en:'June 30 Revolution', emoji:'🇪🇬',
+      match:(d)=> d.getMonth()===5&&d.getDate()===30},
+    {id:'july23', pr:7, ar:'ثورة 23 يوليو', en:'July 23 Revolution', emoji:'🇪🇬',
+      match:(d)=> d.getMonth()===6&&d.getDate()===23},
+    {id:'october6', pr:7, ar:'عيد القوات المسلحة', en:'Armed Forces Day', emoji:'🇪🇬',
+      match:(d)=> d.getMonth()===9&&d.getDate()===6},
+    {id:'sham-elnessim', pr:6, ar:'كل سنة وانتم طيبين، شم النسيم 🌼', en:'Happy Sham El Nessim 🌼', emoji:'🌼',
+      match:(d,h,extra)=> extra.isSham}
+  ];
+
+  function detectOccasion(date){
+    const hijri=gregorianToHijri(date);
+    const easter=orthodoxEasterUTC(date.getFullYear());
+    const sham=new Date(easter); sham.setUTCDate(sham.getUTCDate()+1);
+    const extra={isSham:sameDay(date,sham)};
+    const matches=OCCASIONS.filter(o=>o.match(date,hijri,extra));
+    if(!matches.length) return null;
+    matches.sort((a,b)=>b.pr-a.pr);
+    return matches[0];
+  }
+
+  const SEASON_PARTICLES={
+    summer:{mode:'emoji',items:['☁️'],count:5,dir:'side',speed:[6,14],size:[26,46],sway:0},
+    autumn:{mode:'emoji',items:['🍂','🍁'],count:16,dir:'down',speed:[18,34],size:[16,26],sway:40},
+    winter:{mode:'emoji',items:['❄️'],count:26,dir:'down',speed:[14,26],size:[10,18],sway:26},
+    spring:{mode:'emoji',items:['🌸','🦋'],count:14,dir:'up',speed:[16,30],size:[14,22],sway:30}
+  };
+  const OCCASION_PARTICLES={
+    'eid-fitr':{mode:'shape',count:26,dir:'down',speed:[10,20],size:[6,11],colors:['#c9a36a','#e08aa6','#8b5cf6','#f4f7ff']},
+    'eid-adha':{mode:'emoji',items:['✨'],count:14,dir:'down',speed:[16,28],size:[10,16],sway:20},
+    'ramadan':{mode:'emoji',items:['✨'],count:10,dir:'down',speed:[20,32],size:[8,12],sway:14},
+    'hijri-newyear':{mode:'emoji',items:['✨'],count:8,dir:'down',speed:[20,32],size:[8,12],sway:14},
+    'mawlid':{mode:'emoji',items:['✨'],count:10,dir:'down',speed:[20,32],size:[8,12],sway:14},
+    'newyear':{mode:'shape',count:30,dir:'down',speed:[9,18],size:[6,12],colors:['#d9b888','#e08aa6','#8b5cf6','#f4f7ff']},
+    'christmas':{mode:'emoji',items:['❄️','✨'],count:20,dir:'down',speed:[14,24],size:[10,16],sway:22},
+    'police-day':{mode:'shape',count:24,dir:'down',speed:[10,20],size:[6,11],colors:['#c9302c','#ffffff','#111111']},
+    'sinai':{mode:'shape',count:20,dir:'down',speed:[10,20],size:[6,11],colors:['#c9302c','#ffffff','#111111']},
+    'labour-day':{mode:'shape',count:16,dir:'down',speed:[10,18],size:[6,10],colors:['#c9302c','#ffffff','#111111']},
+    'june30':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
+    'july23':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
+    'october6':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
+    'sham-elnessim':{mode:'emoji',items:['🥚','🦋'],count:16,dir:'up',speed:[16,28],size:[14,20],sway:26}
+  };
+
+  function showBanner(occ){
+    const key='occDismiss:'+occ.id+':'+new Date().toDateString();
+    if(sessionStorage.getItem(key)) return;
+    const banner=document.getElementById('occBanner');
+    if(!banner) return;
+    const isAr=document.body.classList.contains('lang-ar');
+    document.getElementById('occBannerEmoji').textContent=occ.emoji;
+    document.getElementById('occBannerText').textContent=isAr?occ.ar:occ.en;
+    requestAnimationFrame(()=>banner.classList.add('show'));
+    const hide=()=>{banner.classList.remove('show');sessionStorage.setItem(key,'1');};
+    document.getElementById('occBannerClose').onclick=hide;
+    setTimeout(hide,9000);
+  }
+
+  function applyOccasionTheme(){
+    const now=new Date();
+    document.body.className=document.body.className
+      .replace(/\bseason-\S+/g,'')
+      .replace(/\boccasion-\S+/g,'')
+      .trim();
+    const season=getSeason(now);
+    document.body.classList.add('season-'+season);
+    const occ=detectOccasion(now);
+    const configs=[SEASON_PARTICLES[season]];
+    if(occ){
+      document.body.classList.add('occasion-'+occ.id);
+      configs.push(OCCASION_PARTICLES[occ.id]);
+      showBanner(occ);
+    }
+    if(window.__occSetParticles) window.__occSetParticles(configs);
+  }
+
+  window.addEventListener('load', applyOccasionTheme);
+  setInterval(applyOccasionTheme, 60*60*1000); // safety re-check, e.g. across midnight
 })();
 
 </script>
