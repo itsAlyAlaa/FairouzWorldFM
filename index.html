@@ -414,16 +414,25 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 
 /* ── Player Bar ── */
 .player-bar{
-  background:var(--surface);
-  border:1px solid var(--border);
-  border-radius:22px;
-  padding:18px 22px;
-  margin-bottom:16px;
-  display:flex;
-  align-items:center;
-  gap:20px;
-  flex-wrap:wrap;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:22px;
+    padding:18px 22px;
+    margin-bottom:16px;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:20px;
+    flex-wrap:wrap;
+
+    transition:
+      border-color .4s ease,
+      box-shadow .4s ease,
+      transform .4s ease;
 }
+
 .player-center{
     flex:1;
     display:flex;
@@ -431,12 +440,12 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
     align-items:center;
     gap:28px;
 }
+
 .np-mini{
     display:flex;
     align-items:center;
     gap:14px;
-    min-width:210px;
-    flex:1;
+    min-width:260px;
 }
 .np-art{
   width:54px;height:54px;border-radius:14px;
@@ -449,7 +458,12 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .np-label .dot{width:7px;height:7px;border-radius:50%;background:#e8425f;box-shadow:0 0 6px #e8425f;animation:pulseDot 1.4s infinite;}
 .np-title{font-size:15px;font-weight:800;color:var(--text);}
 .np-sub{font-size:11px;color:var(--muted);margin-top:2px;}
-.controls{display:flex;align-items:center;gap:10px;}
+.controls{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    flex-shrink:0;
+}
 .ctrl-btn{
   width:42px;height:42px;border-radius:50%;
   background:rgba(139,92,246,.08);border:1px solid var(--border);
@@ -459,15 +473,29 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 }
 .ctrl-btn:hover{background:rgba(139,92,246,.18);}
 .btn-play{
-  width:56px;height:56px;font-size:20px;
+  width:64px;
+  height:64px;
+  font-size:24px;
+
   background:linear-gradient(135deg,var(--purple2),var(--purple));
-  color:#fff;box-shadow:0 8px 22px -6px var(--glow-p);border:none;
+  color:#fff;
+
+  border:none;
+  border-radius:50%;
+
+  box-shadow:
+      0 10px 28px rgba(139,92,246,.35),
+      0 0 18px rgba(255,215,0,.18);
+
+  transition:.25s;
 }
-.btn-play:hover{transform:scale(1.07);}
+.btn-play:hover{
+    transform:scale(1.08);
+}
 .vol-row{display:flex;align-items:center;gap:8px;min-width:150px;}
 .vol-label{font-size:13px;color:var(--muted);min-width:20px;text-align:center;}
 input[type=range]{
-  -webkit-appearance:none;appearance:none;width:120px;height:6px;border-radius:99px;
+  -webkit-appearance:none;appearance:none;width:160px;height:6px;border-radius:99px;
   background:linear-gradient(to right,var(--purple) var(--val,100%),rgba(139,92,246,.15) var(--val,100%));
   outline:none;cursor:pointer;
 }
@@ -479,14 +507,64 @@ input[type=range]::-webkit-slider-thumb{
 .wave-container{
     display:flex;
     align-items:center;
+    justify-content:flex-end;
+
     gap:4px;
     height:56px;
-    flex:1;
-    min-width:180px;
-    justify-content:flex-end;
+
+    min-width:220px;
+    margin-left:auto;
+    flex-shrink:0;
 }
-.wave-bar{width:5px;border-radius:99px;height:10px;background:linear-gradient(to top,var(--purple2),var(--gold));transition:height .12s ease-out;}
+.wave-bar{
+    width:5px;
+    height:18px;
+    min-height:10px;
+    max-height:35px;
+
+    border-radius:999px;
+
+    background:linear-gradient(
+        to top,
+        var(--purple2),
+        var(--gold)
+    );
+
+    transition:height .12s ease;
+}
 .loading-text{width:100%;font-size:12px;color:var(--muted);text-align:center;}
+
+.player-bar.playing{
+    border-color:rgba(139,92,246,.35);
+
+    background:
+        linear-gradient(var(--surface),var(--surface)) padding-box,
+        linear-gradient(135deg,rgba(139,92,246,.35),rgba(255,215,0,.18)) border-box;
+
+    border:1px solid transparent;
+
+    box-shadow:
+        0 0 18px rgba(139,92,246,.18),
+        0 0 40px rgba(139,92,246,.10),
+        0 0 70px rgba(255,215,0,.06);
+
+    transform:translateY(-2px);
+}
+
+.player-bar.playing .np-art{
+    animation:
+        artPulse 2.6s ease-in-out infinite,
+        livePulse 1.8s ease-in-out infinite;
+}
+
+@keyframes livePulse{
+    0%,100%{
+        transform:scale(1);
+    }
+    50%{
+        transform:scale(1.08);
+    }
+}
 
 /* ── Info Cards ── */
 .info-grid{
@@ -873,8 +951,13 @@ footer .heart{color:var(--rose);}
 /* ── General site "life": gentle entrances + hover response ── */
 @keyframes riseIn{0%{opacity:0;transform:translateY(16px);}100%{opacity:1;transform:translateY(0);}}
 .hero{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both;}
-.player-bar{animation:riseIn .8s .08s cubic-bezier(.2,.8,.2,1) both;}
-.panels .panel{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both;}
+.player-bar{
+    animation:riseIn .8s .08s cubic-bezier(.2,.8,.2,1) both;
+    transition:
+        box-shadow .4s ease,
+        border-color .4s ease,
+        transform .4s ease;
+}.panels .panel{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both;}
 .panels .panel:nth-child(1){animation-delay:.14s;}
 .panels .panel:nth-child(2){animation-delay:.22s;}
 
@@ -1085,20 +1168,45 @@ body.day-theme #occBanner{box-shadow:0 8px 26px rgba(0,0,0,.12), 0 0 0 1px var(-
 /* ── Season: Summer ── */
 body.season-summer .occ-sun{
   display:block; top:56px; inset-inline-end:4%; width:110px;height:110px;
-  font-size:64px; text-align:center; line-height:130px;
   filter:drop-shadow(0 0 40px rgba(255,182,72,.55));
   animation:occSpin 90s linear infinite;
 }
-body.season-summer .occ-sun::before{content:'☀️';}
+body.season-summer .occ-sun svg{width:100%;height:100%;}
+body.season-summer .occ-sun .occ-ray{animation:sunPulse 3s ease-in-out infinite;transform-origin:50px 50px;}
 body.season-summer .occ-waves{
   display:block; left:0; right:0; bottom:0; height:46px;
   background:repeating-linear-gradient(100deg, rgba(126,195,242,.20) 0 40px, transparent 40px 80px);
   animation:occWaveShift 7s linear infinite;
 }
+/* Distant drifting clouds */
+body.season-summer .occ-clouds{display:block; inset:0;}
+body.season-summer .occ-clouds::before,
+body.season-summer .occ-clouds::after{
+  content:''; position:absolute; width:120px; height:44px; border-radius:50px;
+  background:rgba(255,255,255,.16); filter:blur(2px);
+  animation:occCloudDrift 60s linear infinite;
+}
+body.season-summer .occ-clouds::before{top:14%;}
+body.season-summer .occ-clouds::after{top:32%; animation-duration:80s; animation-delay:-20s; opacity:.7;}
+@keyframes occCloudDrift{0%{transform:translateX(-140px);}100%{transform:translateX(calc(100vw + 140px));}}
+/* Distant bird silhouettes */
+body.season-summer .occ-birds{display:block; inset:0;}
+body.season-summer .occ-birds::before,
+body.season-summer .occ-birds::after{
+  content:''; position:absolute; top:22%; width:22px; height:8px;
+  background:none; opacity:.4;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14'%3E%3Cpath d='M0 8 Q10 -4 20 8 Q30 -4 40 8' stroke='%23000' stroke-width='2' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 14'%3E%3Cpath d='M0 8 Q10 -4 20 8 Q30 -4 40 8' stroke='%23000' stroke-width='2' fill='none'/%3E%3C/svg%3E") center/contain no-repeat;
+  background-color:var(--cloud-c);
+  animation:occBirdFly 34s linear infinite;
+}
+body.season-summer .occ-birds::after{top:28%; animation-duration:46s; animation-delay:-10s;}
+@keyframes occBirdFly{0%{transform:translateX(-60px);}100%{transform:translateX(calc(100vw + 60px));}}
 body.season-summer .occ-kite{
-  display:block; font-size:28px; top:26%; inset-inline-start:-60px;
+  display:block; width:40px; height:40px; top:26%; inset-inline-start:-60px;
   animation:occKiteFly 26s linear infinite;
 }
+body.season-summer .occ-kite svg{width:100%;height:100%;}
 @keyframes occKiteFly{
   0%{transform:translate(0,0) rotate(-6deg);}
   50%{transform:translate(60vw,26px) rotate(6deg);}
@@ -1117,6 +1225,19 @@ body.season-winter .occ-fog{
   animation:occFogDrift 30s ease-in-out infinite alternate;
 }
 @keyframes occFogDrift{0%{opacity:.5;}100%{opacity:1;}}
+/* Delicate ice crystals in the corners + soft frosted-glass lift on surfaces */
+body.season-winter .occ-icecrystals{display:block; inset:0;}
+body.season-winter .occ-icecrystals::before,
+body.season-winter .occ-icecrystals::after{
+  content:''; position:absolute; width:70px; height:70px; opacity:.5;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cg stroke='%23f4f7ff' stroke-width='1.4' stroke-linecap='round'%3E%3Cpath d='M30 4v52M8 16l44 28M52 16 8 44'/%3E%3Cpath d='M30 4l-6 8m6-8 6 8M30 56l-6-8m6 8 6-8M8 16l10-1m-10 1 3 10M52 16l-10-1m10 1-3 10M8 44l10 1m-10-1 3-10M52 44l-10 1m10-1-3-10'/%3E%3C/g%3E%3C/svg%3E") center/contain no-repeat;
+  animation:occGlowPulse 4s ease-in-out infinite;
+}
+body.season-winter .occ-icecrystals::before{top:4%; inset-inline-start:2%;}
+body.season-winter .occ-icecrystals::after{bottom:6%; inset-inline-end:3%; width:48px; height:48px; animation-delay:1.4s;}
+body.season-winter .panel,
+body.season-winter .player-bar,
+body.season-winter .hero{backdrop-filter:blur(10px) saturate(1.05);}
 
 /* ── Season: Spring / Sham El Nessim ── */
 body.season-spring .occ-grass,
@@ -1130,62 +1251,216 @@ body.occasion-ramadan .occ-crescent,
 body.occasion-eid-adha .occ-crescent,
 body.occasion-hijri-newyear .occ-crescent,
 body.occasion-mawlid .occ-crescent{
-  display:block; top:60px; inset-inline-end:5%; font-size:46px;
+  display:block; top:60px; inset-inline-end:5%; width:52px; height:52px;
   filter:drop-shadow(0 0 22px rgba(201,163,232,.6));
   animation:occGlowPulse 4.5s ease-in-out infinite;
 }
+body.occasion-ramadan .occ-crescent svg,
+body.occasion-eid-adha .occ-crescent svg,
+body.occasion-hijri-newyear .occ-crescent svg,
+body.occasion-mawlid .occ-crescent svg{width:100%;height:100%;}
 body.occasion-ramadan .occ-mosque,
+body.occasion-eid-adha .occ-mosque,
 body.occasion-hijri-newyear .occ-mosque,
 body.occasion-mawlid .occ-mosque{
-  display:block; bottom:0; inset-inline-start:0; width:100%;
-  text-align:center; font-size:44px; opacity:.5; letter-spacing:40px;
+  display:block; bottom:0; inset-inline-start:0; width:100%; height:64px;
+  color:var(--purple2); opacity:.4;
 }
+body.occasion-ramadan .occ-mosque svg,
+body.occasion-eid-adha .occ-mosque svg,
+body.occasion-hijri-newyear .occ-mosque svg,
+body.occasion-mawlid .occ-mosque svg{width:100%;height:100%;}
 body.occasion-ramadan .occ-lanterns,
+body.occasion-eid-adha .occ-lanterns,
 body.occasion-mawlid .occ-lanterns{
-  display:flex; top:0; left:0; right:0; justify-content:space-evenly; font-size:26px; padding-top:0;
+  display:flex; top:0; left:0; right:0; justify-content:space-evenly; padding-top:0;
 }
 body.occasion-ramadan .occ-lanterns span,
-body.occasion-mawlid .occ-lanterns span{ animation:occSway 3.4s ease-in-out infinite; transform-origin:top center; display:inline-block; }
-body.occasion-ramadan .occ-lanterns span:nth-child(2n){animation-delay:.6s;}
-body.occasion-ramadan .occ-lanterns span:nth-child(3n){animation-delay:1.2s;}
+body.occasion-eid-adha .occ-lanterns span,
+body.occasion-mawlid .occ-lanterns span{ width:26px; height:40px; animation:occSway 3.4s ease-in-out infinite; transform-origin:top center; display:inline-block; filter:drop-shadow(0 0 10px var(--glow-g)); }
+body.occasion-ramadan .occ-lanterns span svg,
+body.occasion-eid-adha .occ-lanterns span svg,
+body.occasion-mawlid .occ-lanterns span svg{width:100%;height:100%;}
+body.occasion-ramadan .occ-lanterns span:nth-child(2n),
+body.occasion-eid-adha .occ-lanterns span:nth-child(2n){animation-delay:.6s;}
+body.occasion-ramadan .occ-lanterns span:nth-child(3n),
+body.occasion-eid-adha .occ-lanterns span:nth-child(3n){animation-delay:1.2s;}
 @keyframes occSway{0%,100%{transform:rotate(-6deg);}50%{transform:rotate(6deg);}}
 @keyframes occGlowPulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+
+/* Warm golden ambient light leak for Eid Adha */
+body.occasion-eid-adha .occ-tint{
+  display:block; inset:0;
+  background:radial-gradient(ellipse at 50% 0%, rgba(217,184,136,.16), transparent 65%);
+}
+
+/* Ultra-faint Islamic geometric / arabesque pattern on cards during Ramadan & Eid Adha
+   — layered directly into the existing background so it can never sit above content ── */
+body.occasion-ramadan .panel,
+body.occasion-eid-adha .panel{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='%23d9b888' stroke-width='1' opacity='.16'%3E%3Cpath d='M30 2 58 30 30 58 2 30z'/%3E%3Ccircle cx='30' cy='30' r='14'/%3E%3C/g%3E%3C/svg%3E"), linear-gradient(0deg,transparent,transparent);
+  background-color:var(--card);
+  background-size:60px 60px, auto;
+  background-blend-mode:overlay, normal;
+}
+body.occasion-ramadan .player-bar,
+body.occasion-eid-adha .player-bar{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60'%3E%3Cg fill='none' stroke='%23d9b888' stroke-width='1' opacity='.14'%3E%3Cpath d='M30 2 58 30 30 58 2 30z'/%3E%3Ccircle cx='30' cy='30' r='14'/%3E%3C/g%3E%3C/svg%3E");
+  background-color:var(--surface);
+  background-size:60px 60px;
+  background-blend-mode:overlay;
+}
+
+/* Soft golden ambient glow around key interactive elements during Ramadan / Eid Adha */
+body.occasion-ramadan .btn-start,
+body.occasion-eid-adha .btn-start,
+body.occasion-ramadan .btn-play,
+body.occasion-eid-adha .btn-play{box-shadow:0 0 0 1px rgba(217,184,136,.35), 0 10px 30px -6px rgba(217,184,136,.5);}
 
 /* ── Eid Fitr / Eid Adha: balloons ── */
 body.occasion-eid-fitr .occ-balloons,
 body.occasion-eid-adha .occ-balloons{
-  display:flex; bottom:-20px; left:0; right:0; justify-content:space-around; font-size:34px;
+  display:flex; bottom:-20px; left:0; right:0; justify-content:space-around;
 }
 body.occasion-eid-fitr .occ-balloons span,
-body.occasion-eid-adha .occ-balloons span{ display:inline-block; animation:occFloatUp 9s ease-in infinite; }
-body.occasion-eid-fitr .occ-balloons span:nth-child(2){animation-delay:2s;}
-body.occasion-eid-fitr .occ-balloons span:nth-child(3){animation-delay:4s;}
-body.occasion-eid-fitr .occ-balloons span:nth-child(4){animation-delay:1s;}
+body.occasion-eid-adha .occ-balloons span{ width:26px; height:40px; display:inline-block; animation:occFloatUp 9s ease-in infinite; }
+body.occasion-eid-fitr .occ-balloons span svg,
+body.occasion-eid-adha .occ-balloons span svg{width:100%;height:100%;}
+body.occasion-eid-fitr .occ-balloons span:nth-child(2),
+body.occasion-eid-adha .occ-balloons span:nth-child(2){animation-delay:2s;}
+body.occasion-eid-fitr .occ-balloons span:nth-child(3),
+body.occasion-eid-adha .occ-balloons span:nth-child(3){animation-delay:4s;}
+body.occasion-eid-fitr .occ-balloons span:nth-child(4),
+body.occasion-eid-adha .occ-balloons span:nth-child(4){animation-delay:1s;}
 @keyframes occFloatUp{0%{transform:translateY(0);opacity:0;}10%{opacity:1;}100%{transform:translateY(-115vh);opacity:0;}}
 
-/* ── National days: flag ribbon + icons ── */
+/* Faraway, faint fireworks — Eid Fitr & New Year */
+body.occasion-eid-fitr .occ-fireworks,
+body.occasion-newyear .occ-fireworks{display:block; inset:0;}
+body.occasion-eid-fitr .occ-fireworks span,
+body.occasion-newyear .occ-fireworks span{
+  position:absolute; width:3px; height:3px; border-radius:50%;
+  box-shadow:0 0 0 0 currentColor;
+  animation:occFireworkBurst 3.6s ease-out infinite;
+  opacity:0;
+}
+body.occasion-eid-fitr .occ-fireworks span,
+body.occasion-newyear .occ-fireworks span{color:var(--gold);}
+body.occasion-eid-fitr .occ-fireworks span:nth-child(1),
+body.occasion-newyear .occ-fireworks span:nth-child(1){top:18%; left:22%; animation-delay:.2s;}
+body.occasion-eid-fitr .occ-fireworks span:nth-child(2),
+body.occasion-newyear .occ-fireworks span:nth-child(2){top:14%; left:62%; color:var(--rose); animation-delay:1.6s;}
+body.occasion-eid-fitr .occ-fireworks span:nth-child(3),
+body.occasion-newyear .occ-fireworks span:nth-child(3){top:24%; left:82%; color:var(--purple); animation-delay:2.8s;}
+@keyframes occFireworkBurst{
+  0%{opacity:0; box-shadow:0 0 0 0 currentColor;}
+  8%{opacity:.9; box-shadow:0 0 0 1px currentColor;}
+  55%{opacity:.55; box-shadow:0 -6px 16px 34px transparent, 6px 4px 0 34px currentColor inset;}
+  56%{box-shadow: -30px -22px 0 -29px currentColor, 30px -22px 0 -29px currentColor, -34px 6px 0 -29px currentColor, 34px 6px 0 -29px currentColor, 0 -38px 0 -29px currentColor, 0 30px 0 -29px currentColor, -22px 26px 0 -29px currentColor, 22px 26px 0 -29px currentColor;}
+  100%{opacity:0; box-shadow: -46px -34px 0 -29px transparent, 46px -34px 0 -29px transparent, -52px 10px 0 -29px transparent, 52px 10px 0 -29px transparent, 0 -58px 0 -29px transparent, 0 46px 0 -29px transparent, -34px 40px 0 -29px transparent, 34px 40px 0 -29px transparent;}
+}
+
+/* Elegant floating streamers — New Year & Egyptian national holidays */
+body.occasion-newyear .occ-streamers,
+body.occasion-police-day .occ-streamers,
+body.occasion-sinai .occ-streamers,
+body.occasion-labour-day .occ-streamers,
+body.occasion-june30 .occ-streamers,
+body.occasion-july23 .occ-streamers,
+body.occasion-october6 .occ-streamers{display:block; inset:0;}
+body.occasion-newyear .occ-streamers span,
+body.occasion-police-day .occ-streamers span,
+body.occasion-sinai .occ-streamers span,
+body.occasion-labour-day .occ-streamers span,
+body.occasion-june30 .occ-streamers span,
+body.occasion-july23 .occ-streamers span,
+body.occasion-october6 .occ-streamers span{
+  position:absolute; top:-14%; width:5px; height:70px; border-radius:3px; opacity:.5;
+  animation:occStreamerFall 11s linear infinite;
+}
+body.occasion-newyear .occ-streamers span{background:linear-gradient(180deg,var(--gold),transparent);}
+body.occasion-police-day .occ-streamers span,
+body.occasion-sinai .occ-streamers span,
+body.occasion-labour-day .occ-streamers span,
+body.occasion-june30 .occ-streamers span,
+body.occasion-july23 .occ-streamers span,
+body.occasion-october6 .occ-streamers span{background:linear-gradient(180deg,#CE1126,transparent);}
+body.occasion-newyear .occ-streamers span:nth-child(1),
+body.occasion-police-day .occ-streamers span:nth-child(1){left:8%; animation-delay:0s;}
+body.occasion-newyear .occ-streamers span:nth-child(2),
+body.occasion-police-day .occ-streamers span:nth-child(2){left:22%; animation-delay:2s; background:linear-gradient(180deg,#fff,transparent);}
+body.occasion-newyear .occ-streamers span:nth-child(3),
+body.occasion-police-day .occ-streamers span:nth-child(3){left:40%; animation-delay:4s;}
+body.occasion-newyear .occ-streamers span:nth-child(4),
+body.occasion-police-day .occ-streamers span:nth-child(4){left:60%; animation-delay:1s; background:linear-gradient(180deg,#111,transparent);}
+body.occasion-newyear .occ-streamers span:nth-child(5),
+body.occasion-police-day .occ-streamers span:nth-child(5){left:78%; animation-delay:3s;}
+body.occasion-newyear .occ-streamers span:nth-child(6),
+body.occasion-police-day .occ-streamers span:nth-child(6){left:90%; animation-delay:5s; background:linear-gradient(180deg,#fff,transparent);}
+@keyframes occStreamerFall{
+  0%{transform:translateY(0) rotate(0deg); opacity:0;}
+  10%{opacity:.55;}
+  90%{opacity:.4;}
+  100%{transform:translateY(112vh) rotate(140deg); opacity:0;}
+}
+
+/* ── National days: abstract eagle-line motif + icons, Egyptian flag palette ── */
 body.occasion-police-day .occ-flag,
 body.occasion-sinai .occ-flag,
 body.occasion-labour-day .occ-flag,
 body.occasion-june30 .occ-flag,
 body.occasion-july23 .occ-flag,
 body.occasion-october6 .occ-flag{
-  display:block; top:56px; inset-inline-end:4%; font-size:54px;
+  display:block; top:56px; inset-inline-end:4%; width:90px; height:60px;
   animation:occFlagWave 2.6s ease-in-out infinite;
   filter:drop-shadow(0 4px 14px rgba(0,0,0,.35));
 }
+body.occasion-police-day .occ-flag svg, body.occasion-sinai .occ-flag svg, body.occasion-labour-day .occ-flag svg,
+body.occasion-june30 .occ-flag svg, body.occasion-july23 .occ-flag svg, body.occasion-october6 .occ-flag svg{width:100%;height:100%;}
 @keyframes occFlagWave{0%,100%{transform:rotate(0deg) translateY(0);}50%{transform:rotate(-4deg) translateY(3px);}}
-body.occasion-sinai .occ-mountain{display:block; bottom:0; inset-inline-start:4%; font-size:70px; opacity:.6;}
-body.occasion-labour-day .occ-gear{display:block; bottom:6%; inset-inline-start:6%; font-size:56px; opacity:.55; animation:occSpin 10s linear infinite;}
-body.occasion-october6 .occ-jet{display:block; top:10%; inset-inline-start:-60px; font-size:34px; animation:occJetFly 14s linear infinite;}
+body.occasion-sinai .occ-mountain{display:block; bottom:0; inset-inline-start:4%; width:180px; height:80px; color:var(--muted); opacity:.6;}
+body.occasion-sinai .occ-mountain svg{width:100%;height:100%;}
+body.occasion-labour-day .occ-gear{display:block; bottom:6%; inset-inline-start:6%; width:50px; height:50px; color:var(--muted); opacity:.55; animation:occSpin 10s linear infinite;}
+body.occasion-labour-day .occ-gear svg{width:100%;height:100%;}
+body.occasion-october6 .occ-jet{display:block; top:10%; inset-inline-start:-60px; width:44px; height:18px; color:var(--muted); animation:occJetFly 14s linear infinite;}
+body.occasion-october6 .occ-jet svg{width:100%;height:100%;}
 @keyframes occJetFly{0%{transform:translateX(0) translateY(0);}100%{transform:translateX(130vw) translateY(-40px);}}
-body.occasion-october6 .occ-medal{display:block; bottom:6%; inset-inline-end:6%; font-size:50px; opacity:.6;}
+body.occasion-october6 .occ-medal{display:block; bottom:6%; inset-inline-end:6%; width:44px; height:66px; opacity:.6;}
+body.occasion-october6 .occ-medal svg{width:100%;height:100%;}
+
+/* National-colored celebratory glow across key UI */
+body.occasion-police-day .btn-start, body.occasion-sinai .btn-start, body.occasion-labour-day .btn-start,
+body.occasion-june30 .btn-start, body.occasion-july23 .btn-start, body.occasion-october6 .btn-start{
+  box-shadow:0 0 0 1px rgba(206,17,38,.3), 0 10px 30px -6px rgba(206,17,38,.45);
+}
 
 /* ── Christmas / New Year ── */
 body.occasion-christmas .occ-tree,
-body.occasion-newyear .occ-tree{display:block; bottom:0; inset-inline-start:4%; font-size:70px;}
+body.occasion-newyear .occ-tree{display:block; bottom:0; inset-inline-start:4%; width:80px; height:104px; color:var(--purple2); filter:drop-shadow(0 0 14px rgba(80,180,120,.3));}
+body.occasion-christmas .occ-tree svg, body.occasion-newyear .occ-tree svg{width:100%;height:100%;}
 body.occasion-christmas .occ-star,
-body.occasion-newyear .occ-star{display:block; top:6%; left:50%; transform:translateX(-50%); font-size:36px; animation:occGlowPulse 2.4s ease-in-out infinite;}
+body.occasion-newyear .occ-star{display:block; top:6%; left:50%; transform:translateX(-50%); width:36px; height:36px; animation:occGlowPulse 2.4s ease-in-out infinite;}
+body.occasion-christmas .occ-star svg, body.occasion-newyear .occ-star svg{width:100%;height:100%;}
+
+/* Delicate fairy-light strand across the top for Christmas */
+body.occasion-christmas .occ-fairylights{
+  display:block; top:0; left:0; right:0; height:10px;
+  background-image:radial-gradient(circle,#ffd76a 0 3px, transparent 4px),
+                    radial-gradient(circle,#7fd8a0 0 3px, transparent 4px),
+                    radial-gradient(circle,#e08aa6 0 3px, transparent 4px),
+                    radial-gradient(circle,#8bc9f2 0 3px, transparent 4px);
+  background-repeat:repeat-x;
+  background-size:120px 10px;
+  background-position:0 0, 30px 0, 60px 0, 90px 0;
+  animation:occTwinkleLights 2.6s ease-in-out infinite;
+}
+@keyframes occTwinkleLights{0%,100%{opacity:.55;}50%{opacity:1;}}
+/* Elegant pine wreath accent integrated into the hero border */
+body.occasion-christmas .hero{position:relative;}
+body.occasion-christmas .hero::after{
+  content:''; position:absolute; inset:0; pointer-events:none !important; z-index:1; border-radius:inherit;
+  border:2px dashed rgba(127,191,95,.28); mix-blend-mode:screen;
+}
 
 /* Occasion palette accents (drive banner colors) */
 body.occasion-ramadan, body.occasion-eid-adha, body.occasion-hijri-newyear, body.occasion-mawlid{--occ-1:#1b1030; --occ-2:#2c1a44; --occ-glow:rgba(201,163,232,.5);}
@@ -1194,12 +1469,37 @@ body.occasion-christmas, body.occasion-newyear{--occ-1:#0f1f18; --occ-2:#173327;
 body.occasion-police-day, body.occasion-sinai, body.occasion-labour-day, body.occasion-june30, body.occasion-july23, body.occasion-october6{--occ-1:#1a1010; --occ-2:#301414; --occ-glow:rgba(217,184,136,.5);}
 body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(127,191,95,.5);}
 
+/* ── Spring: soft, fresh pastel color grading (subtle var shift only, no layout impact) ── */
+body.season-spring{--rose:#e8a3c2; --pink:#f2b8c6; --glow-g:rgba(217,184,136,.28);}
+body.season-spring .hero{background:linear-gradient(135deg,rgba(200,150,180,.16),rgba(30,15,38,.5));}
+
+/* ── Autumn: cozy, warm color grading ── */
+body.season-autumn{--glow-g:rgba(201,116,58,.3);}
+body.season-autumn .hero{background:linear-gradient(135deg,rgba(180,100,50,.18),rgba(30,15,38,.5));}
+
+/* ── New Year: sophisticated neon glow around UI components ── */
+body.occasion-newyear .btn-start,
+body.occasion-newyear .btn-play,
+body.occasion-newyear .clock-card{
+  box-shadow:0 0 0 1px rgba(139,92,246,.35), 0 0 26px 2px rgba(139,92,246,.35), 0 10px 30px -6px rgba(217,184,136,.4);
+}
+body.occasion-newyear .player-bar{box-shadow:0 0 30px -6px rgba(139,92,246,.25);}
+
+/* ── Sham El-Nessim: nature-inspired ambient light trail ── */
+body.occasion-sham-elnessim .occ-tint{
+  display:block; inset:0;
+  background:radial-gradient(ellipse at 20% 100%, rgba(127,191,95,.10), transparent 60%);
+}
+
 @media (max-width:480px){
   #occBanner{font-size:12px; padding:7px 12px;}
-  body.season-summer .occ-sun{width:90px;height:90px;font-size:50px;line-height:100px;}
-  body.occasion-october6 .occ-medal, body.occasion-sinai .occ-mountain, body.occasion-labour-day .occ-gear{font-size:40px;}
+  body.season-summer .occ-sun{width:80px;height:80px;}
+  body.occasion-october6 .occ-medal{width:34px;height:52px;}
+  body.occasion-sinai .occ-mountain{width:130px;height:60px;}
+  body.occasion-labour-day .occ-gear{width:38px;height:38px;}
   body.occasion-police-day .occ-flag, body.occasion-sinai .occ-flag, body.occasion-labour-day .occ-flag,
-  body.occasion-june30 .occ-flag, body.occasion-july23 .occ-flag, body.occasion-october6 .occ-flag{font-size:42px;}
+  body.occasion-june30 .occ-flag, body.occasion-july23 .occ-flag, body.occasion-october6 .occ-flag{width:66px;height:44px;}
+  body.occasion-christmas .occ-tree, body.occasion-newyear .occ-tree{width:56px;height:76px;}
 }
 
 </style>
@@ -1215,23 +1515,49 @@ body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(12
 <!-- Occasion & Season Engine: particle canvas + fixed decorations + banner -->
 <canvas id="occCanvas" aria-hidden="true"></canvas>
 <div id="occDecor" aria-hidden="true">
-  <div class="occ-sun"></div>
+  <div class="occ-sun"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="20" fill="var(--sun-c)"/><g stroke="var(--sun-c)" stroke-width="4" stroke-linecap="round"><line class="occ-ray" x1="50" y1="6" x2="50" y2="20"/><line class="occ-ray" x1="50" y1="80" x2="50" y2="94"/><line class="occ-ray" x1="6" y1="50" x2="20" y2="50"/><line class="occ-ray" x1="80" y1="50" x2="94" y2="50"/><line class="occ-ray" x1="18" y1="18" x2="27" y2="27"/><line class="occ-ray" x1="73" y1="73" x2="82" y2="82"/><line class="occ-ray" x1="18" y1="82" x2="27" y2="73"/><line class="occ-ray" x1="73" y1="27" x2="82" y2="18"/></g></svg></div>
   <div class="occ-waves"></div>
-  <div class="occ-kite">🪁</div>
+  <div class="occ-clouds" aria-hidden="true"></div>
+  <div class="occ-birds" aria-hidden="true"></div>
+  <div class="occ-kite"><svg viewBox="0 0 60 60"><path d="M30 6C22 16 22 20 30 30 38 20 38 16 30 6z" fill="var(--gold)" opacity=".55"/><path d="M30 30c-8 10-8 14 0 24 8-10 8-14 0-24z" fill="var(--purple)" opacity=".5"/><path d="M6 30c10-8 14-8 24 0-10 8-14 8-24 0z" fill="var(--rose)" opacity=".5"/><path d="M30 30c10-8 14-8 24 0-10 8-14 8-24 0z" fill="var(--gold2)" opacity=".5"/></svg></div>
   <div class="occ-tint"></div>
   <div class="occ-fog"></div>
+  <div class="occ-icecrystals" aria-hidden="true"></div>
   <div class="occ-grass"></div>
-  <div class="occ-crescent">🌙</div>
-  <div class="occ-mosque">🕌</div>
-  <div class="occ-lanterns"><span>🏮</span><span>🏮</span><span>🏮</span><span>🏮</span><span>🏮</span></div>
-  <div class="occ-balloons"><span>🎈</span><span>🎈</span><span>🎈</span><span>🎈</span></div>
-  <div class="occ-flag">🇪🇬</div>
-  <div class="occ-mountain">🏔️</div>
-  <div class="occ-gear">⚙️</div>
-  <div class="occ-jet">✈️</div>
-  <div class="occ-medal">🎖️</div>
-  <div class="occ-tree">🎄</div>
-  <div class="occ-star">⭐</div>
+  <div class="occ-crescent"><svg viewBox="0 0 60 60"><path d="M34 6a24 24 0 1 0 0 48 29 29 0 1 1 0-48" fill="var(--moon-c)"/></svg></div>
+  <div class="occ-mosque"><svg viewBox="0 0 900 100" preserveAspectRatio="xMidYMax slice"><g fill="currentColor"><path d="M0 100V78h900v22z"/><path d="M60 78V52h26v26zM814 78V52h26v26z"/><path d="M73 52c0-14 9-24 13-24s13 10 13 24z"/><path d="M827 52c0-14 9-24 13-24s13 10 13 24z"/><path d="M330 78V40c0-40 30-56 70-56s70 16 70 56v38z"/><circle cx="400" cy="8" r="4"/><rect x="397" y="0" width="6" height="10"/><path d="M180 78V60c0-10 8-18 18-18s18 8 18 18v18zM684 78V60c0-10 8-18 18-18s18 8 18 18v18z"/><rect x="150" y="20" width="10" height="58"/><rect x="740" y="20" width="10" height="58"/><path d="M155 20a10 12 0 0 1 0-24 10 12 0 0 1 0 24z"/><path d="M745 20a10 12 0 0 1 0-24 10 12 0 0 1 0 24z"/></g></svg></div>
+  <div class="occ-lanterns" aria-hidden="true">
+    <span><svg viewBox="0 0 40 60"><line x1="20" y1="0" x2="20" y2="8" stroke="var(--gold2)" stroke-width="2"/><ellipse cx="20" cy="10" rx="10" ry="4" fill="var(--gold2)"/><path d="M10 12h20l-3 32a7 6 0 0 1-14 0z" fill="var(--gold)" opacity=".85"/><path d="M12 16h16M11 24h18M12 32h16" stroke="var(--maroon)" stroke-width="1" opacity=".5"/><ellipse cx="20" cy="48" rx="4" ry="3" fill="var(--gold2)"/></svg></span>
+    <span><svg viewBox="0 0 40 60"><line x1="20" y1="0" x2="20" y2="8" stroke="var(--gold2)" stroke-width="2"/><ellipse cx="20" cy="10" rx="10" ry="4" fill="var(--gold2)"/><path d="M10 12h20l-3 32a7 6 0 0 1-14 0z" fill="var(--gold)" opacity=".85"/><path d="M12 16h16M11 24h18M12 32h16" stroke="var(--maroon)" stroke-width="1" opacity=".5"/><ellipse cx="20" cy="48" rx="4" ry="3" fill="var(--gold2)"/></svg></span>
+    <span><svg viewBox="0 0 40 60"><line x1="20" y1="0" x2="20" y2="8" stroke="var(--gold2)" stroke-width="2"/><ellipse cx="20" cy="10" rx="10" ry="4" fill="var(--gold2)"/><path d="M10 12h20l-3 32a7 6 0 0 1-14 0z" fill="var(--gold)" opacity=".85"/><path d="M12 16h16M11 24h18M12 32h16" stroke="var(--maroon)" stroke-width="1" opacity=".5"/><ellipse cx="20" cy="48" rx="4" ry="3" fill="var(--gold2)"/></svg></span>
+    <span><svg viewBox="0 0 40 60"><line x1="20" y1="0" x2="20" y2="8" stroke="var(--gold2)" stroke-width="2"/><ellipse cx="20" cy="10" rx="10" ry="4" fill="var(--gold2)"/><path d="M10 12h20l-3 32a7 6 0 0 1-14 0z" fill="var(--gold)" opacity=".85"/><path d="M12 16h16M11 24h18M12 32h16" stroke="var(--maroon)" stroke-width="1" opacity=".5"/><ellipse cx="20" cy="48" rx="4" ry="3" fill="var(--gold2)"/></svg></span>
+    <span><svg viewBox="0 0 40 60"><line x1="20" y1="0" x2="20" y2="8" stroke="var(--gold2)" stroke-width="2"/><ellipse cx="20" cy="10" rx="10" ry="4" fill="var(--gold2)"/><path d="M10 12h20l-3 32a7 6 0 0 1-14 0z" fill="var(--gold)" opacity=".85"/><path d="M12 16h16M11 24h18M12 32h16" stroke="var(--maroon)" stroke-width="1" opacity=".5"/><ellipse cx="20" cy="48" rx="4" ry="3" fill="var(--gold2)"/></svg></span>
+  </div>
+  <div class="occ-balloons" aria-hidden="true">
+    <span><svg viewBox="0 0 30 46"><ellipse cx="15" cy="16" rx="14" ry="16" fill="var(--gold)"/><path d="M15 32l-3 6 3 3 3-3z" fill="var(--gold2)"/><line x1="15" y1="41" x2="15" y2="46" stroke="var(--gold2)" stroke-width="1"/></svg></span>
+    <span><svg viewBox="0 0 30 46"><ellipse cx="15" cy="16" rx="14" ry="16" fill="var(--rose)"/><path d="M15 32l-3 6 3 3 3-3z" fill="var(--pink)"/><line x1="15" y1="41" x2="15" y2="46" stroke="var(--pink)" stroke-width="1"/></svg></span>
+    <span><svg viewBox="0 0 30 46"><ellipse cx="15" cy="16" rx="14" ry="16" fill="var(--purple)"/><path d="M15 32l-3 6 3 3 3-3z" fill="var(--purple2)"/><line x1="15" y1="41" x2="15" y2="46" stroke="var(--purple2)" stroke-width="1"/></svg></span>
+    <span><svg viewBox="0 0 30 46"><ellipse cx="15" cy="16" rx="14" ry="16" fill="var(--gold2)"/><path d="M15 32l-3 6 3 3 3-3z" fill="var(--gold)"/><line x1="15" y1="41" x2="15" y2="46" stroke="var(--gold)" stroke-width="1"/></svg></span>
+  </div>
+  <div class="occ-fireworks" aria-hidden="true">
+    <span></span><span></span><span></span>
+  </div>
+  <div class="occ-streamers" aria-hidden="true">
+    <span></span><span></span><span></span><span></span><span></span><span></span>
+  </div>
+  <div class="occ-flag" aria-hidden="true"><svg viewBox="0 0 120 80"><g fill="none" stroke="#CE1126" stroke-width="4" stroke-linecap="round"><path d="M20 40 L60 12"/><path d="M20 40 L58 24"/></g><g fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round"><path d="M60 12 L100 40"/><path d="M62 24 L100 40"/></g><g fill="none" stroke="#CE1126" stroke-width="4" stroke-linecap="round"><path d="M20 40 L60 68"/><path d="M20 40 L58 56"/></g><g fill="none" stroke="#000000" stroke-width="4" stroke-linecap="round"><path d="M60 68 L100 40"/><path d="M62 56 L100 40"/></g><circle cx="60" cy="40" r="6" fill="#d9b888"/></svg></div>
+  <div class="occ-mountain"><svg viewBox="0 0 200 90"><path d="M0 90 40 30 70 60 110 10 150 55 200 90z" fill="currentColor" opacity=".55"/></svg></div>
+  <div class="occ-gear"><svg viewBox="0 0 100 100"><g fill="currentColor"><circle cx="50" cy="50" r="18"/><g>
+    <rect x="46" y="0" width="8" height="18"/><rect x="46" y="82" width="8" height="18"/>
+    <rect x="0" y="46" width="18" height="8"/><rect x="82" y="46" width="18" height="8"/>
+    <rect x="46" y="0" width="8" height="18" transform="rotate(45 50 50)"/><rect x="46" y="82" width="8" height="18" transform="rotate(45 50 50)"/>
+    <rect x="0" y="46" width="18" height="8" transform="rotate(45 50 50)"/><rect x="82" y="46" width="18" height="8" transform="rotate(45 50 50)"/>
+  </g></g><circle cx="50" cy="50" r="8" fill="var(--bg)"/></svg></div>
+  <div class="occ-jet"><svg viewBox="0 0 100 40"><path d="M0 20 L70 16 L100 20 L70 24z" fill="currentColor"/><path d="M40 16 L30 4 L38 4 L52 16z" fill="currentColor"/><path d="M40 24 L30 36 L38 36 L52 24z" fill="currentColor"/></svg></div>
+  <div class="occ-medal"><svg viewBox="0 0 60 90"><path d="M20 0 L30 34 L20 0z" fill="#CE1126" opacity=".8"/><path d="M30 0 L30 34z" fill="#fff" opacity=".8"/><path d="M40 0 L30 34 L40 0z" fill="#000" opacity=".8"/><circle cx="30" cy="58" r="22" fill="var(--gold)"/><circle cx="30" cy="58" r="15" fill="none" stroke="var(--gold2)" stroke-width="2"/></svg></div>
+  <div class="occ-tree"><svg viewBox="0 0 100 130" preserveAspectRatio="xMidYMax meet"><g fill="currentColor"><path d="M50 6 20 46h60z"/><path d="M50 34 14 78h72z"/><path d="M50 64 8 118h84z"/></g><rect x="42" y="118" width="16" height="12" fill="var(--gold2)"/></svg></div>
+  <div class="occ-star"><svg viewBox="0 0 40 40"><path d="M20 0 L25 15 L40 15 L28 24 L33 40 L20 30 L7 40 L12 24 L0 15 L15 15z" fill="var(--gold)"/></svg></div>
+  <div class="occ-fairylights" aria-hidden="true"></div>
 </div>
 <div id="occBanner">
   <span class="occ-emoji" id="occBannerEmoji"></span>
@@ -1294,11 +1620,6 @@ body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(12
       <img src="https://flagcdn.com/24x18/eg.png" alt="العربية" width="20" height="15">
     </span>
     <span class="lang-name" id="langName">العربية</span>
-  </button>
-
-  <button class="lang-toggle theme-toggle top-lang" id="themeToggle" onclick="toggleManualTheme()">
-    <span class="lang-flag" id="themeIcon">🌙</span>
-    <span class="lang-name" id="themeName" data-en="Dark Mode" data-ar="الوضع الداكن">Dark Mode</span>
   </button>
 
   <div class="clock-card">
@@ -1529,7 +1850,10 @@ function startRadio(){
   loadingText.textContent=currentLang==='ar'?'جاري الاتصال بالبث...':'Connecting...';
   audio.src=PRIMARY_STREAM; audio.volume=volSlider.value/100; audio.load();
   audio.play().then(()=>{
-    isPlaying=true;retryCount=0;btnPlay.textContent='⏸';
+    isPlaying=true;
+retryCount=0;
+btnPlay.textContent='⏸';
+document.querySelector('.player-bar').classList.add('playing');
     npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
   }).catch(()=>attemptRetry());
@@ -1541,7 +1865,10 @@ function attemptRetry(){
   setTimeout(()=>{
     audio.src=PRIMARY_STREAM+'?t='+Date.now(); audio.load();
     audio.play().then(()=>{
-      isPlaying=true;btnPlay.textContent='⏸';loadingText.textContent='';
+      isPlaying=true;
+btnPlay.textContent='⏸';
+document.querySelector('.player-bar').classList.add('playing');
+loadingText.textContent='';
       setupAnalyser();cancelAnimationFrame(rafId);animateBars();
     }).catch(attemptRetry);
   },1500*retryCount);
@@ -1549,10 +1876,32 @@ function attemptRetry(){
 audio.addEventListener('error',()=>{if(isPlaying)attemptRetry();});
 audio.addEventListener('stalled',()=>{if(isPlaying)attemptRetry();});
 function togglePlay(){
-  if(!hasStarted){startRadio();return;}
-  if(isPlaying){audio.pause();isPlaying=false;btnPlay.textContent='▶';cancelAnimationFrame(rafId);}
-  else{audio.play().then(()=>{isPlaying=true;btnPlay.textContent='⏸';cancelAnimationFrame(rafId);animateBars();});}
+  if(!hasStarted){
+    startRadio();
+    return;
+  }
+
+  if(isPlaying){
+    audio.pause();
+    isPlaying=false;
+    btnPlay.textContent='▶';
+
+    document.querySelector('.player-bar').classList.remove('playing');
+
+    cancelAnimationFrame(rafId);
+  }else{
+    audio.play().then(()=>{
+      isPlaying=true;
+      btnPlay.textContent='⏸';
+
+      document.querySelector('.player-bar').classList.add('playing');
+
+      cancelAnimationFrame(rafId);
+      animateBars();
+    });
+  }
 }
+
 btnPlay.addEventListener('click',togglePlay);
 document.getElementById('btnGetStarted').addEventListener('click',()=>{if(!hasStarted)startRadio();});
 btnMute.addEventListener('click',()=>{isMuted=!isMuted;audio.muted=isMuted;btnMute.textContent=isMuted?'🔇':'🔊';});
@@ -1635,7 +1984,15 @@ function checkAthan(){
 function triggerAthan(prayer){
   updateAthanBanner(prayer);
   wasPlayingBeforeAthan=isPlaying;
-  if(isPlaying){audio.pause();isPlaying=false;btnPlay.textContent='▶';cancelAnimationFrame(rafId);}
+  if(isPlaying){
+    audio.pause();
+
+    document.querySelector('.player-bar').classList.remove('playing');
+
+    isPlaying=false;
+    btnPlay.textContent='▶';
+    cancelAnimationFrame(rafId);
+}
   document.getElementById('athanBanner').style.display='flex';
 
   const athanAudio=document.getElementById('athanAudio');
@@ -1652,10 +2009,19 @@ function triggerAthan(prayer){
   athanAudio.onended = () => {
     document.getElementById('athanBanner').style.display='none';
     currentAthanName=null;
+
     if(wasPlayingBeforeAthan&&hasStarted){
-      audio.play().then(()=>{isPlaying=true;btnPlay.textContent='⏸';cancelAnimationFrame(rafId);animateBars();});
+        audio.play().then(()=>{
+            isPlaying=true;
+            btnPlay.textContent='⏸';
+
+            document.querySelector('.player-bar').classList.add('playing');
+
+            cancelAnimationFrame(rafId);
+            animateBars();
+        });
     }
-  };
+};
 }
 setInterval(checkAthan,15000);
 
@@ -1697,10 +2063,10 @@ function weatherDesc(code,lang){
 function weatherAdvice(temp, code, lang){
   let msg;
   if(WCODE.storm.includes(code)) msg={en:"Thunder's rolling — best enjoy it from indoors ⛈️",ar:"في رعد وبرق برة.. يفضل تستمتع بالمنظر من جوا ⛈️"};
-  else if(WCODE.snow.includes(code)) msg={en:"It's snowing — bundle up before you step out ❄️",ar:"الدنيا بتتلج.. لف نفسك كويس قبل ما تخرج ❄️"};
+  else if(WCODE.snow.includes(code)) msg={en:"It's snowing — bundle up before you step out ❄️",ar:"الدنيا برد جامد.. البس جاكيت تقيل قبل ما تخرج ❄️"};
   else if(WCODE.rain.includes(code)) msg={en:"Don't forget your umbrella today ☔",ar:"ما تنساش الشمسية معاك النهارده ☔"};
-  else if(WCODE.fog.includes(code)) msg={en:"Foggy out there — take it slow on the road 🌫️",ar:"الرؤية مش واضحة برة.. سوق على مهلك 🌫️"};
-  else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم معطف تقيل 🧥"};
+  else if(WCODE.fog.includes(code)) msg={en:"Foggy out there — take it slow on the road 🌫️",ar:"الرؤية مش واضحة عالطريق.. سوق على مهلك 🌫️"};
+  else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم جاكيت تقيل 🧥"};
   else if(temp<=15) msg={en:"A bit chilly — grab a jacket before heading out 🧥",ar:"الجو بارد شوية.. خد جاكيت معاك 🧥"};
   else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"جو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
   else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو دافي.. البس هدوم خفيفة 👕"};
@@ -1933,10 +2299,16 @@ function dnScheduleNextFlip(){
   dnRetimer = setTimeout(()=>{ dnApply(new Date(), true); dnScheduleNextFlip(); }, Math.min(ms, 2147483000));
 }
 function setupDayNightCycle(sunrise, sunset){
-  dnSunrise = sunrise; dnSunset = sunset;
-  dnApply(new Date(), false); // set initial theme silently, no flash on first load
-  updateThemeToggleUI(document.body.classList.contains('day-theme'));
-  dnScheduleNextFlip();
+
+  // خليه يفتح Dark Mode دائمًا
+  dnSunrise = sunrise;
+  dnSunset = sunset;
+
+  dnManualOverride = false;
+
+  document.body.classList.remove('day-theme');
+
+  updateThemeToggleUI(false);
 }
 
 
@@ -2010,7 +2382,69 @@ function setupDayNightCycle(sunrise, sunset){
   const canvas=document.getElementById('occCanvas'); if(!canvas) return;
   const ctx=canvas.getContext('2d',{alpha:true});
   let particles=[], rafId=null, paused=false, activeConfigs=[], lastT=0;
+  const reduceMQ=window.matchMedia('(prefers-reduced-motion: reduce)');
+  let reduceMotion=reduceMQ.matches;
+  reduceMQ.addEventListener?.('change',e=>{ reduceMotion=e.matches; if(reduceMotion) ctx.clearRect(0,0,window.innerWidth,window.innerHeight); });
   function rand(a,b){return a+Math.random()*(b-a);}
+  // ── Lightweight vector shape drawing (no emoji, no raster images — pure canvas paths) ──
+  function drawShape(shape,size,color){
+    ctx.globalAlpha=.82;
+    switch(shape){
+      case 'leaf':{
+        ctx.fillStyle=color;
+        ctx.beginPath();
+        ctx.moveTo(0,-size/2); ctx.quadraticCurveTo(size/2,0,0,size/2); ctx.quadraticCurveTo(-size/2,0,0,-size/2);
+        ctx.fill();
+        ctx.strokeStyle='rgba(0,0,0,.15)'; ctx.lineWidth=Math.max(.5,size*.04);
+        ctx.beginPath(); ctx.moveTo(0,-size/2); ctx.lineTo(0,size/2); ctx.stroke();
+        break;}
+      case 'petal':{
+        ctx.fillStyle=color;
+        ctx.beginPath();
+        ctx.ellipse(0,0,size/2,size/3.2,0,0,Math.PI*2);
+        ctx.fill();
+        break;}
+      case 'snow':{
+        ctx.strokeStyle=color; ctx.lineWidth=Math.max(.6,size*.08); ctx.lineCap='round';
+        for(let i=0;i<3;i++){
+          ctx.save(); ctx.rotate(i*Math.PI/3);
+          ctx.beginPath(); ctx.moveTo(0,-size/2); ctx.lineTo(0,size/2); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(-size/5,-size/3); ctx.lineTo(size/5,-size/4); ctx.stroke();
+          ctx.beginPath(); ctx.moveTo(-size/5,size/3); ctx.lineTo(size/5,size/4); ctx.stroke();
+          ctx.restore();
+        }
+        break;}
+      case 'sparkle':{
+        ctx.fillStyle=color;
+        ctx.beginPath();
+        ctx.moveTo(0,-size/2); ctx.lineTo(size/7,-size/7); ctx.lineTo(size/2,0);
+        ctx.lineTo(size/7,size/7); ctx.lineTo(0,size/2); ctx.lineTo(-size/7,size/7);
+        ctx.lineTo(-size/2,0); ctx.lineTo(-size/7,-size/7); ctx.closePath(); ctx.fill();
+        break;}
+      case 'butterfly':{
+        ctx.fillStyle=color;
+        ctx.beginPath(); ctx.ellipse(-size*.26,-size*.14,size*.28,size*.2,-.4,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size*.26,-size*.14,size*.28,size*.2,.4,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(-size*.22,size*.18,size*.2,size*.15,-.3,0,Math.PI*2); ctx.fill();
+        ctx.beginPath(); ctx.ellipse(size*.22,size*.18,size*.2,size*.15,.3,0,Math.PI*2); ctx.fill();
+        ctx.strokeStyle=color; ctx.lineWidth=Math.max(.6,size*.06);
+        ctx.beginPath(); ctx.moveTo(0,-size/2); ctx.lineTo(0,size/2); ctx.stroke();
+        break;}
+      case 'cloud':{
+        ctx.fillStyle=color;
+        ctx.beginPath();
+        ctx.ellipse(-size*.28,0,size*.32,size*.22,0,0,Math.PI*2);
+        ctx.ellipse(size*.1,-size*.1,size*.38,size*.28,0,0,Math.PI*2);
+        ctx.ellipse(size*.42,0,size*.28,size*.2,0,0,Math.PI*2);
+        ctx.fill();
+        break;}
+      default:{
+        ctx.fillStyle=color;
+        ctx.beginPath(); ctx.arc(0,0,size/2,0,Math.PI*2); ctx.fill();
+      }
+    }
+    ctx.globalAlpha=1;
+  }
   function resize(){
     const dpr=Math.min(window.devicePixelRatio||1,2);
     canvas.width=window.innerWidth*dpr; canvas.height=window.innerHeight*dpr;
@@ -2033,15 +2467,15 @@ function setupDayNightCycle(sunrise, sunset){
           swayPhase:Math.random()*Math.PI*2,
           rot:Math.random()*360,
           rotSpeed:rand(-40,40),
-          item: cfg.mode==='emoji' ? cfg.items[Math.floor(Math.random()*cfg.items.length)] : null,
-          color: cfg.mode==='shape' ? cfg.colors[Math.floor(Math.random()*cfg.colors.length)] : null
+          shape: cfg.mode==='vector' ? cfg.shapes[Math.floor(Math.random()*cfg.shapes.length)] : null,
+          color: (cfg.mode==='shape'||cfg.mode==='vector') ? cfg.colors[Math.floor(Math.random()*cfg.colors.length)] : null
         });
       }
     });
   }
   function setActiveThemes(configs){ activeConfigs=configs.filter(Boolean); buildParticles(); }
   function tick(t){
-    if(!paused){
+    if(!paused && !reduceMotion){
       const dt=Math.min((t-lastT)/1000,.05)||.016; lastT=t;
       ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
       particles.forEach(p=>{
@@ -2060,11 +2494,8 @@ function setupDayNightCycle(sunrise, sunset){
         ctx.save();
         ctx.translate(p.x,p.y);
         ctx.rotate(p.rot*Math.PI/180);
-        if(cfg.mode==='emoji'){
-          ctx.font=p.size+'px sans-serif';
-          ctx.textAlign='center'; ctx.textBaseline='middle';
-          ctx.globalAlpha=.85;
-          ctx.fillText(p.item,0,0);
+        if(cfg.mode==='vector'){
+          drawShape(p.shape,p.size,p.color);
         }else{
           ctx.fillStyle=p.color; ctx.globalAlpha=.8;
           ctx.fillRect(-p.size/2,-p.size*.2,p.size,p.size*.4);
@@ -2162,26 +2593,26 @@ function setupDayNightCycle(sunrise, sunset){
   }
 
   const SEASON_PARTICLES={
-    summer:{mode:'emoji',items:['☁️'],count:5,dir:'side',speed:[6,14],size:[26,46],sway:0},
-    autumn:{mode:'emoji',items:['🍂','🍁'],count:16,dir:'down',speed:[18,34],size:[16,26],sway:40},
-    winter:{mode:'emoji',items:['❄️'],count:26,dir:'down',speed:[14,26],size:[10,18],sway:26},
-    spring:{mode:'emoji',items:['🌸','🦋'],count:14,dir:'up',speed:[16,30],size:[14,22],sway:30}
+    summer:{mode:'vector',shapes:['cloud'],colors:['rgba(200,196,214,.5)','rgba(220,216,232,.4)'],count:5,dir:'side',speed:[6,14],size:[40,70],sway:0},
+    autumn:{mode:'vector',shapes:['leaf'],colors:['#c9743a','#d9962f','#b5542e','#e0a856'],count:16,dir:'down',speed:[18,34],size:[14,22],sway:40},
+    winter:{mode:'vector',shapes:['snow'],colors:['#f4f7ff','#e3ecff'],count:26,dir:'down',speed:[14,26],size:[8,15],sway:26},
+    spring:{mode:'vector',shapes:['petal','butterfly'],colors:['#f2b8c6','#e8a3c2','#f6cdd6','#c9a36a'],count:14,dir:'up',speed:[16,30],size:[10,17],sway:30}
   };
   const OCCASION_PARTICLES={
     'eid-fitr':{mode:'shape',count:26,dir:'down',speed:[10,20],size:[6,11],colors:['#c9a36a','#e08aa6','#8b5cf6','#f4f7ff']},
-    'eid-adha':{mode:'emoji',items:['✨'],count:14,dir:'down',speed:[16,28],size:[10,16],sway:20},
-    'ramadan':{mode:'emoji',items:['✨'],count:10,dir:'down',speed:[20,32],size:[8,12],sway:14},
-    'hijri-newyear':{mode:'emoji',items:['✨'],count:8,dir:'down',speed:[20,32],size:[8,12],sway:14},
-    'mawlid':{mode:'emoji',items:['✨'],count:10,dir:'down',speed:[20,32],size:[8,12],sway:14},
+    'eid-adha':{mode:'vector',shapes:['sparkle'],colors:['#d9b888','#e8cfa0'],count:14,dir:'down',speed:[16,28],size:[7,11],sway:20},
+    'ramadan':{mode:'vector',shapes:['sparkle'],colors:['#d9b888','#c9a36a'],count:10,dir:'down',speed:[20,32],size:[6,9],sway:14},
+    'hijri-newyear':{mode:'vector',shapes:['sparkle'],colors:['#d9b888','#c9a3e8'],count:8,dir:'down',speed:[20,32],size:[6,9],sway:14},
+    'mawlid':{mode:'vector',shapes:['sparkle'],colors:['#d9b888','#c9a36a'],count:10,dir:'down',speed:[20,32],size:[6,9],sway:14},
     'newyear':{mode:'shape',count:30,dir:'down',speed:[9,18],size:[6,12],colors:['#d9b888','#e08aa6','#8b5cf6','#f4f7ff']},
-    'christmas':{mode:'emoji',items:['❄️','✨'],count:20,dir:'down',speed:[14,24],size:[10,16],sway:22},
+    'christmas':{mode:'vector',shapes:['snow','sparkle'],colors:['#f4f7ff','#d9b888'],count:20,dir:'down',speed:[14,24],size:[8,14],sway:22},
     'police-day':{mode:'shape',count:24,dir:'down',speed:[10,20],size:[6,11],colors:['#c9302c','#ffffff','#111111']},
     'sinai':{mode:'shape',count:20,dir:'down',speed:[10,20],size:[6,11],colors:['#c9302c','#ffffff','#111111']},
     'labour-day':{mode:'shape',count:16,dir:'down',speed:[10,18],size:[6,10],colors:['#c9302c','#ffffff','#111111']},
     'june30':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
     'july23':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
     'october6':{mode:'shape',count:26,dir:'down',speed:[9,18],size:[6,12],colors:['#c9302c','#ffffff','#111111']},
-    'sham-elnessim':{mode:'emoji',items:['🥚','🦋'],count:16,dir:'up',speed:[16,28],size:[14,20],sway:26}
+    'sham-elnessim':{mode:'vector',shapes:['petal','leaf'],colors:['#7fbf5f','#f2c14e','#f2b8c6'],count:16,dir:'up',speed:[16,28],size:[12,18],sway:26}
   };
 
   function showBanner(occ){
