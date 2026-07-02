@@ -836,11 +836,11 @@ input[type=range]::-webkit-slider-thumb{
 .panel-weather .weather-loading{position:relative;z-index:1;}
 
 .weather-advice{
-  font-size:14px;
+  font-size:18px;
   line-height:1.65;
   color:var(--text);
-  opacity:.85;
-  font-style:italic;
+  opacity:.90;
+  font-style:normal;
   max-width:26ch;
   text-align:end;
 }
@@ -1677,7 +1677,7 @@ body.occasion-sham-elnessim .occ-tint{
 
   <div class="clock-card">
     <div class="cc-label">
-    <span data-en="Current Time" data-ar="الوقت الآن">Current Time</span>
+      <span data-en="Current Time" data-ar="الوقت الآن">Current Time</span>
     </div>
 
     <div class="cc-time" id="clockTime">
@@ -2344,17 +2344,46 @@ function renderWeatherText(cur, wData, city){
 }
 async function refreshWeatherLang(){
   if(!lastWeatherData) return;
-  let city=lastWeatherCity;
+
+  let city = lastWeatherCity;
+
   if(lastWeatherCoords){
     try{
-      const geoRes=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lastWeatherCoords.lat+'&lon='+lastWeatherCoords.lon+'&format=json&accept-language='+currentLang);
-      const geoData=await geoRes.json();
-      city=geoData.address?.city||geoData.address?.town||geoData.address?.state||(currentLang==='ar'?'مكانك':'Your location');
-      lastWeatherCity=city;
-    }catch(e){}
+      const geoRes = await fetch(
+        'https://nominatim.openstreetmap.org/reverse?lat=' +
+        lastWeatherCoords.lat +
+        '&lon=' +
+        lastWeatherCoords.lon +
+        '&format=json&accept-language=' +
+        currentLang
+      );
+
+      const geoData = await geoRes.json();
+
+      const city =
+        geoData.address?.city ||
+        geoData.address?.town ||
+        geoData.address?.village ||
+        geoData.address?.state ||
+        (currentLang === 'ar' ? 'مكانك' : 'Your location');
+
+      const country =
+    geoData.address?.country || '';
+
+const locationName =
+    country ? `${city}, ${country}` : city;
+
+lastWeatherCity = locationName;
+city = locationName;
+    } catch(e){}
   }
+
   renderWeatherText(lastWeatherData.current, lastWeatherData, city);
-  renderWeatherFx(lastWeatherData.current.weather_code, lastWeatherData.current.temperature_2m, lastWeatherData.current.is_day);
+  renderWeatherFx(
+    lastWeatherData.current.weather_code,
+    lastWeatherData.current.temperature_2m,
+    lastWeatherData.current.is_day
+  );
 }
 const WEATHER_CACHE_KEY='fwfm_weather_cache_v1';
 function saveWeatherCache(lat,lon,city,wData){
@@ -2377,24 +2406,39 @@ async function fetchWeather(lat,lon){
   try{
     const geoRes=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&accept-language='+currentLang);
     const geoData=await geoRes.json();
-    const city=geoData.address?.city||geoData.address?.town||geoData.address?.state||(currentLang==='ar'?'مكانك':'Your location');
-    lastWeatherCity=city;
-    const cityLabel=document.getElementById('prayerCityLabel');
-    if(cityLabel)cityLabel.textContent=city;
+    const city =
+    geoData.address?.city ||
+    geoData.address?.town ||
+    geoData.address?.village ||
+    geoData.address?.state ||
+    (currentLang === 'ar' ? 'مكانك' : 'Your location');
+
+const country =
+    geoData.address?.country || '';
+
+const locationName =
+    country
+        ? `${city}, ${country}`
+        : city;
+
+lastWeatherCity = locationName;
+
+const cityLabel = document.getElementById('prayerCityLabel');
+if (cityLabel) cityLabel.textContent = locationName;
     const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
-    renderWeatherText(cur, wData, city);
+    renderWeatherText(cur, wData, locationName);
     renderWeatherFx(cur.weather_code, cur.temperature_2m, cur.is_day);
     if(wData.daily?.sunrise?.[0] && wData.daily?.sunset?.[0]){
       setupDayNightCycle(new Date(wData.daily.sunrise[0]), new Date(wData.daily.sunset[0]));
     }
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
-    saveWeatherCache(lat,lon,city,wData);
+    saveWeatherCache(lat, lon, locationName, wData);
   }catch(e){
     const btn=document.getElementById('weatherStatus');
-    btn.textContent=currentLang==='ar'?'مش قادر يجيب الطقس — دوس للمحاولة تاني 😔':"Couldn't fetch weather — tap to retry 😔";
+    btn.textContent=currentLang==='ar'?'مش قادر اجيبلك الطقس — حاول تاني 😔':"Couldn't fetch weather — tap to retry 😔";
     btn.classList.add('retryable');
   }
 }
@@ -2447,6 +2491,12 @@ if(cachedWeather && cachedWeather.wData){
   document.getElementById('weatherLoading').style.display='none';
 }
 requestLocation();
+// تحديث الطقس تلقائياً كل ساعة
+setInterval(() => {
+  if (lastWeatherCoords) {
+    fetchWeather(lastWeatherCoords.lat, lastWeatherCoords.lon);
+  }
+}, 60 * 60 * 1000);
 
 // ── Day / Night auto-theme — follows real sunrise & sunset at the listener's location ──
 let dnSunrise=null, dnSunset=null, dnIsDay=null, dnRetimer=null;
