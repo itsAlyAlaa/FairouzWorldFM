@@ -600,8 +600,22 @@ input[type=range]::-webkit-slider-thumb{
 .weather-main{
   display:flex;
   align-items:center;
-  gap:22px;
+  justify-content:space-between;
+  gap:20px;
   margin-bottom:24px;
+}
+
+.weather-left{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-shrink:0;
+}
+
+.weather-primary{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
 }
 
 .weather-icon{
@@ -614,6 +628,7 @@ input[type=range]::-webkit-slider-thumb{
   font-size:48px;
   font-weight:800;
   color:var(--gold);
+  line-height:1;
 }
 
 .weather-desc{
@@ -621,10 +636,32 @@ input[type=range]::-webkit-slider-thumb{
   color:var(--muted);
 }
 
+.weather-right{
+  flex:1 1 auto;
+  min-width:0;
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  justify-content:center;
+  gap:12px;
+  text-align:end;
+  padding-inline-start:22px;
+  border-inline-start:1px solid var(--border);
+  align-self:stretch;
+}
+
 .weather-city{
-  font-size:14px;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  font-size:13.5px;
+  font-weight:700;
   color:var(--rose);
-  margin-top:4px;
+  background:rgba(224,138,166,.08);
+  border:1px solid var(--border);
+  padding:6px 16px;
+  border-radius:999px;
+  white-space:nowrap;
 }
 
 .forecast-grid{
@@ -668,15 +705,26 @@ input[type=range]::-webkit-slider-thumb{
 .panel-weather .weather-loading{position:relative;z-index:1;}
 
 .weather-advice{
-  margin-top:8px;
-  font-size:13px;
-  line-height:1.55;
+  font-size:14px;
+  line-height:1.65;
   color:var(--text);
-  opacity:.82;
+  opacity:.85;
   font-style:italic;
-  max-width:34ch;
+  max-width:26ch;
+  text-align:end;
 }
 body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
+
+@media(max-width:480px){
+  .weather-main{flex-direction:column;align-items:stretch;}
+  .weather-left{justify-content:center;}
+  .weather-right{
+    align-items:center;text-align:center;
+    padding-inline-start:0;border-inline-start:none;
+    border-top:1px solid var(--border);padding-top:14px;
+  }
+  .weather-advice{max-width:34ch;}
+}
 
 /* Rain / storm drops */
 .fx-drop{
@@ -929,8 +977,11 @@ html, body { height: 100%; overflow: hidden; }
 .weather-icon { width: 68px; height: 68px; }
 .weather-temp { font-size: 34px; }
 .weather-desc { font-size: 13px; }
-.weather-main { gap: 16px; margin-bottom: 16px; }
-.weather-advice { font-size: 12px; max-width: 30ch; }
+.weather-main { gap: 14px; margin-bottom: 16px; }
+.weather-left { gap: 14px; }
+.weather-right { padding-inline-start: 16px; gap: 8px; }
+.weather-advice { font-size: 12px; max-width: 22ch; }
+.weather-city { font-size: 12px; padding: 5px 12px; }
 .forecast-item { padding: 12px 6px; border-radius: 14px; }
 .forecast-item .f-icon { width: 32px; height: 32px; }
 .forecast-item .f-temp { font-size: 14px; }
@@ -1227,7 +1278,7 @@ body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(12
 
   <button class="lang-toggle theme-toggle top-lang" id="themeToggle" onclick="toggleManualTheme()">
     <span class="lang-flag" id="themeIcon">🌙</span>
-    <span class="lang-name" id="themeName" data-en="Night Theme" data-ar="الثيم الليلي">Night Theme</span>
+    <span class="lang-name" id="themeName" data-en="Dark Mode" data-ar="الوضع الداكن">Dark Mode</span>
   </button>
 
   <div class="clock-card">
@@ -1749,7 +1800,7 @@ function renderWeatherFx(code, temp, isDay){
 }
 let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null;
 function renderWeatherText(cur, wData, city){
-  document.getElementById('weatherMain').innerHTML=`<div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div><div class="weather-city">📍 ${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">📍 ${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
   for(let i=1;i<=3;i++){
@@ -1820,8 +1871,8 @@ function updateThemeToggleUI(isDay){
   const name=document.getElementById('themeName');
   if(!icon||!name) return;
   icon.textContent = isDay ? '🌙' : '☀️';
-  name.dataset.en = isDay ? 'Night Theme' : 'Day Theme';
-  name.dataset.ar = isDay ? 'الثيم الليلي' : 'الثيم الصباحي';
+  name.dataset.en = isDay ? 'Dark Mode' : 'Light Mode';
+  name.dataset.ar = isDay ? 'الوضع الداكن' : 'الوضع الفاتح';
   name.textContent = currentLang==='ar' ? name.dataset.ar : name.dataset.en;
 }
 function toggleManualTheme(){
