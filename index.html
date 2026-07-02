@@ -458,6 +458,14 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .np-label .dot{width:7px;height:7px;border-radius:50%;background:#e8425f;box-shadow:0 0 6px #e8425f;animation:pulseDot 1.4s infinite;}
 .np-title{font-size:15px;font-weight:800;color:var(--text);}
 .np-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.np-ai{display:none;align-items:center;gap:6px;margin-top:5px;}
+.np-ai .ai-badge{
+  font-size:9px;font-weight:800;letter-spacing:.3px;
+  padding:2px 7px;border-radius:20px;color:#1a0f22;
+  background:linear-gradient(135deg,var(--gold),var(--purple));
+  flex-shrink:0;
+}
+.np-ai .np-ai-text{font-size:12px;color:var(--rose);font-weight:700;}
 .controls{
     display:flex;
     align-items:center;
@@ -1080,6 +1088,7 @@ html, body { height: 100%; overflow: hidden; }
 .np-mini   { min-width: 160px; }
 .np-title  { font-size: 13px; }
 .np-sub    { font-size: 10px; }
+.np-ai .np-ai-text { font-size: 11px; }
 .btn-play  { width: 46px; height: 46px; font-size: 17px; }
 .ctrl-btn  { width: 36px; height: 36px; font-size: 14px; }
 .wave-container { height: 42px; }
@@ -1724,6 +1733,10 @@ body.occasion-sham-elnessim .occ-tint{
             <div class="np-label"><span class="dot"></span><span data-en="On Air" data-ar="يُبث الآن">On Air</span></div>
             <div class="np-title" id="npTitle" data-en="Press play to start listening" data-ar="اضغط تشغيل للاستماع">Press play to start listening</div>
             <div class="np-sub" id="npSub" data-en="Fairouz World FM — Live" data-ar="عالم فيروز FM — بث مباشر">Fairouz World FM — Live</div>
+            <div class="np-ai" id="npAi">
+              <span class="ai-badge">AI ✨</span>
+              <span class="np-ai-text" id="npAiText"></span>
+            </div>
           </div>
         </div>
         <div class="player-center">
@@ -1807,7 +1820,11 @@ function applyLang() {
     if (val !== null) el.innerHTML = val;
   });
   if (typeof isPlaying !== 'undefined' && isPlaying) {
-    npTitle.textContent = currentLang==='ar' ? 'عالم فيروز FM — بث مباشر' : 'Fairouz World FM — Live';
+    npTitle.textContent = lastRawTitle || (currentLang==='ar' ? 'عالم فيروز FM — بث مباشر' : 'Fairouz World FM — Live');
+    if (npAi && npAi.style.display==='flex' && lastRawTitle && !isArabicText(lastRawTitle)) {
+      npAiText.textContent = currentLang==='ar' ? 'جارِ الترجمة بالذكاء الاصطناعي...' : 'AI translating...';
+      translateToArabic(lastRawTitle).then(ar=>{ if(ar && lastRawTitle) npAiText.textContent = ar; });
+    }
   }
   updateClock(); renderPrayers();
   if (currentAthanName) updateAthanBanner(currentAthanName);
@@ -1855,6 +1872,8 @@ const btnMute=document.getElementById('btnMute');
 const volSlider=document.getElementById('volSlider');
 const volValue=document.getElementById('volValue');
 const npTitle=document.getElementById('npTitle');
+const npAi=document.getElementById('npAi');
+const npAiText=document.getElementById('npAiText');
 const loadingText=document.getElementById('loadingText');
 const waveBars=document.querySelectorAll('.wave-bar');
 let audioCtx,analyser,dataArray,sourceNode,rafId=null,usingRealData=false,silentFrames=0;
@@ -1884,6 +1903,67 @@ function animateBars(){
   });
   rafId=requestAnimationFrame(animateBars);
 }
+// ── AI: detect current song name + show it in Arabic ──
+function getZenoMount(streamUrl){
+  try{ return new URL(streamUrl).pathname.replace(/^\//,''); }catch(e){ return null; }
+}
+const ZENO_MOUNT=getZenoMount(PRIMARY_STREAM);
+let metaSource=null, lastRawTitle='', metaRetryTimer=null;
+const arTranslationCache=new Map();
+function isArabicText(str){ return /[\u0600-\u06FF]/.test(str); }
+function hideAiTitle(){ if(npAi){npAi.style.display='none'; npAiText.textContent='';} }
+async function translateToArabic(text){
+  if(!text) return '';
+  if(arTranslationCache.has(text)) return arTranslationCache.get(text);
+  try{
+    const res=await fetch('https://api.mymemory.translated.net/get?q='+encodeURIComponent(text)+'&langpair=en|ar');
+    const data=await res.json();
+    const translated=(data&&data.responseData&&data.responseData.translatedText)?data.responseData.translatedText:'';
+    arTranslationCache.set(text,translated);
+    return translated;
+  }catch(e){ return ''; }
+}
+async function handleStreamTitle(rawTitle){
+  if(!rawTitle) return;
+  rawTitle=rawTitle.trim();
+  if(!rawTitle || rawTitle===lastRawTitle) return;
+  lastRawTitle=rawTitle;
+  npTitle.textContent=rawTitle;
+  if(isArabicText(rawTitle)){ hideAiTitle(); return; }
+  if(npAi){
+    npAi.style.display='flex';
+    npAiText.textContent=currentLang==='ar'?'جارِ الترجمة بالذكاء الاصطناعي...':'AI translating...';
+  }
+  const arabic=await translateToArabic(rawTitle);
+  if(rawTitle!==lastRawTitle) return; // song changed meanwhile
+  if(arabic){ npAiText.textContent=arabic; }
+  else{ hideAiTitle(); }
+}
+function connectMetadata(){
+  if(!ZENO_MOUNT||typeof EventSource==='undefined'||metaSource) return;
+  try{
+    metaSource=new EventSource('https://api.zeno.fm/mounts/metadata/subscribe/'+ZENO_MOUNT);
+    metaSource.onmessage=(e)=>{
+      try{
+        const data=JSON.parse(e.data);
+        handleStreamTitle(data.streamTitle||data.title||'');
+      }catch(err){}
+    };
+    metaSource.onerror=()=>{
+      if(metaSource){metaSource.close();metaSource=null;}
+      if(isPlaying&&!metaRetryTimer){
+        metaRetryTimer=setTimeout(()=>{metaRetryTimer=null;connectMetadata();},8000);
+      }
+    };
+  }catch(e){ metaSource=null; }
+}
+function disconnectMetadata(){
+  if(metaSource){metaSource.close();metaSource=null;}
+  if(metaRetryTimer){clearTimeout(metaRetryTimer);metaRetryTimer=null;}
+  lastRawTitle='';
+  hideAiTitle();
+}
+
 function startRadio(){
   hasStarted=true;
   loadingText.textContent=currentLang==='ar'?'جاري الاتصال بالبث...':'Connecting...';
@@ -1895,6 +1975,7 @@ btnPlay.textContent='⏸';
 document.querySelector('.player-bar').classList.add('playing');
     npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
+    connectMetadata();
   }).catch(()=>attemptRetry());
 }
 function attemptRetry(){
@@ -1909,6 +1990,7 @@ btnPlay.textContent='⏸';
 document.querySelector('.player-bar').classList.add('playing');
 loadingText.textContent='';
       setupAnalyser();cancelAnimationFrame(rafId);animateBars();
+      connectMetadata();
     }).catch(attemptRetry);
   },1500*retryCount);
 }
@@ -1928,6 +2010,7 @@ function togglePlay(){
     document.querySelector('.player-bar').classList.remove('playing');
 
     cancelAnimationFrame(rafId);
+    disconnectMetadata();
   }else{
     audio.play().then(()=>{
       isPlaying=true;
@@ -1937,6 +2020,7 @@ function togglePlay(){
 
       cancelAnimationFrame(rafId);
       animateBars();
+      connectMetadata();
     });
   }
 }
