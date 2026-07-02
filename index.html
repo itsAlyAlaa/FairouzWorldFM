@@ -622,7 +622,7 @@ input[type=range]::-webkit-slider-thumb{
 .info-card.quote p{
   font-size:13.5px;
   color:var(--text);
-  font-style:normal;
+  font-style:italic;
   line-height:1.7;
 }
 /* ── Panels ── */
@@ -1854,7 +1854,6 @@ function updateClock() {
   const h12 = h % 12 === 0 ? 12 : h % 12;
   const m = String(now.getMinutes()).padStart(2,'0');
   document.getElementById('clockTime').innerHTML = h12+':'+m+' <span id="clockAmPm">'+ampm+'</span>';
-  document.getElementById('clockIcon').textContent = (h>=6&&h<18)?'☀️':'🌙';
   if (currentLang==='ar') {
     const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
     const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
@@ -2329,9 +2328,14 @@ function renderWeatherFx(code, temp, isDay){
     }
   }
 }
-let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null;
-function renderWeatherText(cur, wData, city){
-  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">📍 ${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null, lastWeatherFlag='';
+function countryFlagEmoji(cc){
+  if(!cc || cc.length!==2) return '';
+  return String.fromCodePoint(...[...cc.toUpperCase()].map(c=>127397+c.charCodeAt(0)));
+}
+function renderWeatherText(cur, wData, city, flag){
+  const flagPart = flag !== undefined ? flag : lastWeatherFlag;
+  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
   for(let i=1;i<=3;i++){
@@ -2369,16 +2373,18 @@ async function refreshWeatherLang(){
 
       const country =
     geoData.address?.country || '';
+      const countryCode = geoData.address?.country_code || '';
 
 const locationName =
     country ? `${city}, ${country}` : city;
 
 lastWeatherCity = locationName;
+lastWeatherFlag = countryFlagEmoji(countryCode);
 city = locationName;
     } catch(e){}
   }
 
-  renderWeatherText(lastWeatherData.current, lastWeatherData, city);
+  renderWeatherText(lastWeatherData.current, lastWeatherData, city, lastWeatherFlag);
   renderWeatherFx(
     lastWeatherData.current.weather_code,
     lastWeatherData.current.temperature_2m,
@@ -2386,9 +2392,9 @@ city = locationName;
   );
 }
 const WEATHER_CACHE_KEY='fwfm_weather_cache_v1';
-function saveWeatherCache(lat,lon,city,wData){
+function saveWeatherCache(lat,lon,city,wData,flag){
   try{
-    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,ts:Date.now()}));
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,flag,ts:Date.now()}));
   }catch(e){/* storage unavailable/full — non-critical, just skip caching */}
 }
 function loadWeatherCache(){
@@ -2415,6 +2421,7 @@ async function fetchWeather(lat,lon){
 
 const country =
     geoData.address?.country || '';
+const countryCode = geoData.address?.country_code || '';
 
 const locationName =
     country
@@ -2422,20 +2429,21 @@ const locationName =
         : city;
 
 lastWeatherCity = locationName;
+lastWeatherFlag = countryFlagEmoji(countryCode);
 
 const cityLabel = document.getElementById('prayerCityLabel');
 if (cityLabel) cityLabel.textContent = locationName;
     const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
-    renderWeatherText(cur, wData, locationName);
+    renderWeatherText(cur, wData, locationName, lastWeatherFlag);
     renderWeatherFx(cur.weather_code, cur.temperature_2m, cur.is_day);
     if(wData.daily?.sunrise?.[0] && wData.daily?.sunset?.[0]){
       setupDayNightCycle(new Date(wData.daily.sunrise[0]), new Date(wData.daily.sunset[0]));
     }
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
-    saveWeatherCache(lat, lon, locationName, wData);
+    saveWeatherCache(lat, lon, locationName, wData, lastWeatherFlag);
   }catch(e){
     const btn=document.getElementById('weatherStatus');
     btn.textContent=currentLang==='ar'?'مش قادر اجيبلك الطقس — حاول تاني 😔':"Couldn't fetch weather — tap to retry 😔";
@@ -2485,7 +2493,8 @@ if(cachedWeather && cachedWeather.wData){
   lastWeatherData=cachedWeather.wData;
   lastWeatherCoords={lat:cachedWeather.lat, lon:cachedWeather.lon};
   lastWeatherCity=cachedWeather.city;
-  renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city);
+  lastWeatherFlag=cachedWeather.flag||'';
+  renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city, lastWeatherFlag);
   renderWeatherFx(cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m, cachedWeather.wData.current.is_day);
   document.getElementById('weatherSection').style.display='block';
   document.getElementById('weatherLoading').style.display='none';
