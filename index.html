@@ -276,28 +276,63 @@ body.lang-ar .lang-toggle{
 }
 
 .social-ic{
+  position:relative;
   display:flex;
   align-items:center;
   justify-content:center;
-  width:32px;
-  height:32px;
+  width:34px;
+  height:34px;
   border-radius:50%;
-  background:rgba(217,184,136,.08);
-  border:1px solid var(--border);
-  color:var(--gold2);
-  transition:background .2s,color .2s,transform .2s,border-color .2s;
+  background:var(--card);
+  border:1.5px solid var(--border);
+  color:var(--muted);
+  isolation:isolate;
+  transition:transform .45s cubic-bezier(.34,1.6,.64,1),color .3s ease,border-color .3s ease,box-shadow .3s ease;
+}
+.social-ic::before{
+  content:'';
+  position:absolute;inset:-2px;
+  border-radius:50%;
+  background:var(--brand-grad, var(--brand, var(--gold2)));
+  opacity:0;
+  transition:opacity .35s ease;
+  z-index:-1;
+}
+.social-ic::after{
+  content:'';
+  position:absolute;inset:0;
+  border-radius:50%;
+  pointer-events:none;
+  animation:socialPulse 3s ease-in-out infinite;
+}
+.social-ic:nth-of-type(1)::after{animation-delay:0s;}
+.social-ic:nth-of-type(2)::after{animation-delay:.5s;}
+.social-ic:nth-of-type(3)::after{animation-delay:1s;}
+@keyframes socialPulse{
+  0%,100%{box-shadow:0 0 0 0 var(--brand, var(--gold2));opacity:.3;}
+  50%{box-shadow:0 0 9px 1px var(--brand, var(--gold2));opacity:.75;}
 }
 
 .social-ic svg{
+  position:relative;
+  z-index:1;
   width:15px;
   height:15px;
+  transition:transform .35s cubic-bezier(.34,1.6,.64,1);
 }
 
 .social-ic:hover{
-  background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#1a0820;
-  transform:translateY(-2px);
-  border-color:var(--gold2);
+  color:#fff;
+  border-color:transparent;
+  transform:translateY(-4px) scale(1.14) rotate(-10deg);
+  box-shadow:0 12px 24px -8px var(--brand, var(--glow-g));
+}
+.social-ic:hover::before{opacity:1;}
+.social-ic:hover svg{transform:scale(1.12) rotate(10deg);}
+.social-ic:active{transform:translateY(-1px) scale(.96) rotate(0deg);}
+
+@media(prefers-reduced-motion:reduce){
+  .social-ic::after{animation:none!important;}
 }
 /* ── Main Content ── */
 .content{flex:1;padding:26px 34px 50px;min-width:0;}
@@ -706,8 +741,47 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 .icon-bolt{animation:iconBoltFlash 2s ease-in-out infinite;filter:drop-shadow(0 0 4px var(--storm-c));}
 @keyframes iconBoltFlash{0%,100%{opacity:.3;}9%,13%{opacity:1;}22%{opacity:.3;}}
 
+/* ── Ambient drifting clouds inside the weather panel — layered parallax ── */
+.fx-cloud{
+  position:absolute;
+  left:-25%;
+  pointer-events:none;
+  will-change:left,transform;
+  animation-name:fxCloudDrift;
+  animation-timing-function:linear;
+  animation-iteration-count:infinite;
+}
+.fx-cloud svg{display:block;width:100%;height:100%;}
+@keyframes fxCloudDrift{
+  0%{left:-25%;transform:translateY(0);}
+  50%{left:55%;transform:translateY(-10px);}
+  100%{left:130%;transform:translateY(0);}
+}
+/* Soft rays breathing behind a clear-day icon */
+.fx-sunray{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,182,72,.32),transparent 72%);
+  animation:fxSunPulse 5s ease-in-out infinite;
+}
+@keyframes fxSunPulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:.95;transform:scale(1.15);}}
+/* Twinkling stars for a clear night */
+.fx-twinkle{
+  position:absolute;border-radius:50%;background:#fff;pointer-events:none;
+  animation:fxTwinkle 2.6s ease-in-out infinite;
+}
+@keyframes fxTwinkle{0%,100%{opacity:.12;}50%{opacity:.95;}}
+
+/* Weather icons get a slow, alive bob */
+.weather-icon{animation:iconFloatBob 4.6s ease-in-out infinite;}
+@keyframes iconFloatBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.forecast-item .f-icon{animation:iconFloatBob 4s ease-in-out infinite;}
+.forecast-item:nth-child(1) .f-icon{animation-delay:0s;}
+.forecast-item:nth-child(2) .f-icon{animation-delay:.35s;}
+.forecast-item:nth-child(3) .f-icon{animation-delay:.7s;}
+
 @media(prefers-reduced-motion:reduce){
-  .fx-drop,.fx-heat,.fx-wave,.fx-flake,.fx-fog,.icon-drop,.icon-flake,.icon-bolt{animation:none!important;}
+  .fx-drop,.fx-heat,.fx-wave,.fx-flake,.fx-fog,.icon-drop,.icon-flake,.icon-bolt,
+  .fx-cloud,.fx-sunray,.fx-twinkle,.weather-icon,.forecast-item .f-icon{animation:none!important;}
 }
 
 /* ── About ── */
@@ -726,6 +800,39 @@ footer .heart{color:var(--rose);}
 }
 .twinkle-star{animation:twk 2.4s ease-in-out infinite;}
 @keyframes twk{0%,100%{opacity:.3;}50%{opacity:1;}}
+
+/* ── General site "life": gentle entrances + hover response ── */
+@keyframes riseIn{0%{opacity:0;transform:translateY(16px);}100%{opacity:1;transform:translateY(0);}}
+.hero{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both;}
+.player-bar{animation:riseIn .8s .08s cubic-bezier(.2,.8,.2,1) both;}
+.panels .panel{animation:riseIn .8s cubic-bezier(.2,.8,.2,1) both;}
+.panels .panel:nth-child(1){animation-delay:.14s;}
+.panels .panel:nth-child(2){animation-delay:.22s;}
+
+.panel{transition:transform .35s ease,box-shadow .35s ease,border-color .35s ease;}
+.panel:hover{transform:translateY(-4px);box-shadow:0 18px 36px -16px rgba(0,0,0,.4);border-color:var(--gold2);}
+
+.prayer-item,.forecast-item{transition:transform .25s ease,box-shadow .25s ease,border-color .25s ease;}
+.prayer-item:hover,.forecast-item:hover{transform:translateY(-3px) scale(1.03);box-shadow:0 12px 24px -12px var(--glow-p);border-color:var(--gold2);}
+
+.nav-item{transition:background .2s,color .2s,transform .2s;}
+.nav-item:hover{transform:translateX(4px);}
+body.lang-ar .nav-item:hover{transform:translateX(-4px);}
+
+.clock-card{transition:box-shadow .3s ease,border-color .3s ease;}
+.clock-card:hover{box-shadow:0 10px 24px -12px var(--glow-g);border-color:var(--gold2);}
+
+/* Shimmering sweep across the main call-to-action */
+.btn-start{position:relative;overflow:hidden;}
+.btn-start::after{
+  content:'';position:absolute;top:0;left:-60%;width:35%;height:100%;
+  background:linear-gradient(120deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:skewX(-20deg);
+  animation:btnShine 3.4s ease-in-out infinite;
+  pointer-events:none;
+}
+@keyframes btnShine{0%{left:-60%;}45%{left:130%;}100%{left:130%;}}
+
 @media(prefers-reduced-motion:reduce){
   *{animation-duration:.001ms!important;animation-iteration-count:1!important;}
 }
@@ -1083,13 +1190,13 @@ body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(12
       <div data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
       <div data-en="Developed by Aly Alaa" data-ar="تم تطويره من خلال Aly Alaa" style="margin-top:2px;">Developed by Aly Alaa</div>
       <div class="social-row">
-        <a href="https://www.facebook.com/itsAlyAlaa/" target="_blank" rel="noopener" aria-label="Facebook" class="social-ic">
+        <a href="https://www.facebook.com/itsAlyAlaa/" target="_blank" rel="noopener" aria-label="Facebook" class="social-ic" style="--brand:#1877f2;">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.14 8.44 9.94v-7.03H7.9v-2.91h2.54V9.91c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.8 8.44-4.94 8.44-9.94z"/></svg>
         </a>
-        <a href="https://www.instagram.com/itsalyalaa/" target="_blank" rel="noopener" aria-label="Instagram" class="social-ic">
+        <a href="https://www.instagram.com/itsalyalaa/" target="_blank" rel="noopener" aria-label="Instagram" class="social-ic" style="--brand:#e1306c;--brand-grad:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.65.25 1.21.6 1.7 1.09.49.49.84 1.05 1.09 1.7.25.64.42 1.37.47 2.43C21.86 8.42 21.87 8.76 21.87 11.48v1.04c0 2.72-.01 3.06-.06 4.12-.05 1.06-.22 1.79-.47 2.43-.25.65-.6 1.21-1.09 1.7-.49.49-1.05.84-1.7 1.09-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.6 4.6 0 0 1-1.7-1.09 4.6 4.6 0 0 1-1.09-1.7c-.25-.64-.42-1.37-.47-2.43C2.14 15.58 2.13 15.24 2.13 12.52v-1.04c0-2.72.01-3.06.06-4.12.05-1.06.22-1.79.47-2.43.25-.65.6-1.21 1.09-1.7a4.6 4.6 0 0 1 1.7-1.09c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.28 2 12 2zm0 1.8c-2.67 0-2.99.01-4.04.06-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85-.05 1.05-.06 1.37-.06 4.04s.01 2.99.06 4.04c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.05-1.05.06-1.37.06-4.04s-.01-2.99-.06-4.04c-.04-.97-.2-1.5-.34-1.85a3 3 0 0 0-.74-1.15 3 3 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34-1.05-.05-1.37-.06-4.04-.06zm0 3.5a4.7 4.7 0 1 1 0 9.4 4.7 4.7 0 0 1 0-9.4zm0 1.8a2.9 2.9 0 1 0 0 5.8 2.9 2.9 0 0 0 0-5.8zm5.98-2.16a1.13 1.13 0 1 1-2.26 0 1.13 1.13 0 0 1 2.26 0z"/></svg>
         </a>
-        <a href="https://www.linkedin.com/in/itsalyalaa/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-ic">
+        <a href="https://www.linkedin.com/in/itsalyalaa/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-ic" style="--brand:#0a66c2;">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
         </a>
       </div>
@@ -1525,14 +1632,73 @@ function weatherAdvice(temp, code, lang){
   else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب ميه كتير 💧"};
   return msg[lang]||msg.en;
 }
-// ── Ambient weather FX inside the panel: rain, snow, heat shimmer, fog ──
-function renderWeatherFx(code, temp){
+// ── A soft, puffy ambient cloud shape used for the drifting background layer ──
+function ambientCloudSVG(){
+  return `<svg viewBox="0 0 120 60" xmlns="http://www.w3.org/2000/svg">
+    <ellipse cx="40" cy="42" rx="26" ry="16" fill="var(--cloud-c)"/>
+    <circle cx="58" cy="26" r="20" fill="var(--cloud-c2)"/>
+    <circle cx="34" cy="24" r="15" fill="var(--cloud-c2)"/>
+    <rect x="18" y="34" width="70" height="22" rx="11" fill="var(--cloud-c)"/>
+  </svg>`;
+}
+// ── Ambient weather FX inside the panel: drifting clouds, sun/stars, rain, snow, heat shimmer, fog ──
+function renderWeatherFx(code, temp, isDay){
   const fx=document.getElementById('weatherFx');
   if(!fx) return;
   fx.innerHTML='';
   const isRain=WCODE.rain.includes(code), isStorm=WCODE.storm.includes(code);
   const isSnow=WCODE.snow.includes(code), isFog=WCODE.fog.includes(code);
   const isHot=typeof temp==='number' && temp>=32;
+  const isClear=code===0;
+  const isCloudy=[1,2,3].includes(code) || isRain || isStorm || isSnow;
+  const dayTime = isDay===undefined ? !document.body.classList.contains('night-theme') : !!isDay;
+
+  // Layered drifting clouds — always present when the sky isn't clear, softer touch when clear
+  if(isCloudy || isFog){
+    const layers=isStorm?4:(isSnow||isRain?3:2);
+    for(let i=0;i<layers;i++){
+      const c=document.createElement('div');
+      c.className='fx-cloud';
+      const w=60+Math.random()*70;
+      c.style.width=w+'px';
+      c.style.height=(w*0.5)+'px';
+      c.style.top=(6+i*20+Math.random()*10)+'%';
+      c.style.opacity=(0.22+Math.random()*0.28).toFixed(2);
+      const dur=22+i*10+Math.random()*10;
+      c.style.animationDuration=dur+'s';
+      c.style.animationDelay=(-Math.random()*dur)+'s';
+      c.innerHTML=ambientCloudSVG();
+      fx.appendChild(c);
+    }
+  } else if(isClear && dayTime){
+    // Gentle sun glow + one thin decorative cloud drifting past
+    const ray=document.createElement('div');
+    ray.className='fx-sunray';
+    ray.style.width='90px'; ray.style.height='90px';
+    ray.style.top='10%'; ray.style.right='8%';
+    fx.appendChild(ray);
+    const c=document.createElement('div');
+    c.className='fx-cloud';
+    c.style.width='70px'; c.style.height='35px';
+    c.style.top='55%'; c.style.opacity='.2';
+    c.style.animationDuration='34s';
+    c.innerHTML=ambientCloudSVG();
+    fx.appendChild(c);
+  } else if(isClear && !dayTime){
+    // Twinkling starfield for a clear night
+    for(let i=0;i<12;i++){
+      const t=document.createElement('div');
+      t.className='fx-twinkle';
+      const s=1+Math.random()*2;
+      t.style.width=s+'px'; t.style.height=s+'px';
+      t.style.left=(Math.random()*96)+'%';
+      t.style.top=(Math.random()*70)+'%';
+      t.style.animationDuration=(1.8+Math.random()*2.2)+'s';
+      t.style.animationDelay=(-Math.random()*3)+'s';
+      fx.appendChild(t);
+    }
+  }
+
   if(isRain||isStorm){
     const n=isStorm?24:16;
     for(let i=0;i<n;i++){
@@ -1606,7 +1772,7 @@ async function refreshWeatherLang(){
     }catch(e){}
   }
   renderWeatherText(lastWeatherData.current, lastWeatherData, city);
-  renderWeatherFx(lastWeatherData.current.weather_code, lastWeatherData.current.temperature_2m);
+  renderWeatherFx(lastWeatherData.current.weather_code, lastWeatherData.current.temperature_2m, lastWeatherData.current.is_day);
 }
 async function fetchWeather(lat,lon){
   fetchPrayerTimes(lat,lon);
@@ -1622,7 +1788,7 @@ async function fetchWeather(lat,lon){
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
     renderWeatherText(cur, wData, city);
-    renderWeatherFx(cur.weather_code, cur.temperature_2m);
+    renderWeatherFx(cur.weather_code, cur.temperature_2m, cur.is_day);
     if(wData.daily?.sunrise?.[0] && wData.daily?.sunset?.[0]){
       setupDayNightCycle(new Date(wData.daily.sunrise[0]), new Date(wData.daily.sunset[0]));
     }
