@@ -1869,8 +1869,11 @@ function updateClock() {
 updateClock(); setInterval(updateClock,1000);
 
 // ── Radio ──
+// ── Radio ──
 const PRIMARY_STREAM='https://stream.zeno.fm/zv3e5wykprhvv.mp3';
-const audio=new Audio(); audio.crossOrigin='anonymous'; audio.preload='none';
+const audio=new Audio(); 
+audio.preload='none';
+// تم إيقاف الـ crossOrigin لحل مشكلة حظر البث بعد تفعيل الـ HTTPS
 let isPlaying=false,isMuted=false,hasStarted=false,retryCount=0; const MAX_RETRY=5;
 const btnPlay=document.getElementById('btnPlay');
 const btnMute=document.getElementById('btnMute');
