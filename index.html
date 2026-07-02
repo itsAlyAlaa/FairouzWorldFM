@@ -1940,14 +1940,20 @@ async function handleStreamTitle(rawTitle){
   rawTitle=rawTitle.trim();
   if(!rawTitle || rawTitle===lastRawTitle) return;
   lastRawTitle=rawTitle;
-  npTitle.textContent=rawTitle;
-  if(isArabicText(rawTitle)){ hideAiTitle(); return; }
+  
+  // تنظيف اسم الأغنية من أي دمج وتنسيقه بشكل مريح للعين
+  let cleanTitle = rawTitle.replace(/[-_]/g, ' - ').replace(/\s+/g, ' ');
+  npTitle.textContent = cleanTitle;
+  
+  if(isArabicText(cleanTitle)){ hideAiTitle(); return; }
   if(npAi){
     npAi.style.display='flex';
     npAiText.textContent=currentLang==='ar'?'جارِ الترجمة بالذكاء الاصطناعي...':'AI translating...';
   }
-  const arabic=await translateToArabic(rawTitle);
-  if(rawTitle!==lastRawTitle) return; // song changed meanwhile
+  
+  // إرسال النص المنظف للترجمة لضمان أدق نتيجة
+  const arabic=await translateToArabic(cleanTitle);
+  if(rawTitle!==lastRawTitle) return; 
   if(arabic){ npAiText.textContent=arabic; }
   else{ hideAiTitle(); }
 }
