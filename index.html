@@ -696,6 +696,25 @@ input[type=range]::-webkit-slider-thumb{
   padding:30px 0;
 }
 
+.weather-status-btn{
+  font-family:inherit;
+  font-size:14px;
+  color:var(--muted);
+  background:transparent;
+  border:none;
+  cursor:default;
+  padding:0;
+  width:100%;
+  text-align:center;
+}
+.weather-status-btn.retryable{
+  cursor:pointer;
+  color:var(--gold);
+  text-decoration:underline;
+  text-underline-offset:3px;
+}
+.weather-status-btn.retryable:hover{color:var(--text);}
+
 .weather-main{
   display:flex;
   align-items:center;
@@ -1740,7 +1759,7 @@ body.occasion-sham-elnessim .occ-tint{
             <div class="forecast-grid" id="forecastGrid"></div>
           </div>
           <div id="weatherLoading" class="weather-loading">
-            <div id="weatherStatus">📍 Detecting your location...</div>
+            <button type="button" id="weatherStatus" class="weather-status-btn">📍 Detecting your location...</button>
           </div>
         </div>
         <div class="panel">
@@ -2089,8 +2108,8 @@ function weatherAdvice(temp, code, lang){
   else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم جاكيت تقيل 🧥"};
   else if(temp<=15) msg={en:"A bit chilly — grab a jacket before heading out 🧥",ar:"الجو بارد شوية.. خد جاكيت معاك 🧥"};
   else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"جو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
-  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو حر شوية.. البس هدوم خفيفة 👕"};
-  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب مياه كتير 💧"};
+  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو دافي.. البس هدوم خفيفة 👕"};
+  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب ميه كتير 💧"};
   return msg[lang]||msg.en;
 }
 // ── A soft, puffy ambient cloud shape used for the drifting background layer ──
@@ -2235,6 +2254,21 @@ async function refreshWeatherLang(){
   renderWeatherText(lastWeatherData.current, lastWeatherData, city);
   renderWeatherFx(lastWeatherData.current.weather_code, lastWeatherData.current.temperature_2m, lastWeatherData.current.is_day);
 }
+const WEATHER_CACHE_KEY='fwfm_weather_cache_v1';
+function saveWeatherCache(lat,lon,city,wData){
+  try{
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,ts:Date.now()}));
+  }catch(e){/* storage unavailable/full — non-critical, just skip caching */}
+}
+function loadWeatherCache(){
+  try{
+    const raw=localStorage.getItem(WEATHER_CACHE_KEY);
+    if(!raw) return null;
+    const parsed=JSON.parse(raw);
+    // Cache stays "fresh enough to show instantly" for 1 hour; older than that we still show it (better than nothing) but always refresh in background.
+    return parsed;
+  }catch(e){ return null; }
+}
 async function fetchWeather(lat,lon){
   fetchPrayerTimes(lat,lon);
   lastWeatherCoords={lat,lon};
@@ -2255,12 +2289,62 @@ async function fetchWeather(lat,lon){
     }
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
-  }catch(e){document.getElementById('weatherStatus').textContent=currentLang==='ar'?'مش قادر يجيب الطقس 😔':"Couldn't fetch weather 😔";}
+    saveWeatherCache(lat,lon,city,wData);
+  }catch(e){
+    const btn=document.getElementById('weatherStatus');
+    btn.textContent=currentLang==='ar'?'مش قادر يجيب الطقس — دوس للمحاولة تاني 😔':"Couldn't fetch weather — tap to retry 😔";
+    btn.classList.add('retryable');
+  }
 }
-navigator.geolocation?.getCurrentPosition(
-  pos=>fetchWeather(pos.coords.latitude,pos.coords.longitude),
-  ()=>{document.getElementById('weatherStatus').textContent=currentLang==='ar'?'هنوريك الجو لو سمحت بالوصول 🌦️':'Allow location to see weather 🌦️';document.getElementById('prayerCityLabel').textContent=currentLang==='ar'?'توقيت تقريبي':'Approx. times';}
-);
+function setWeatherStatus(msg, retryable){
+  const btn=document.getElementById('weatherStatus');
+  btn.textContent=msg;
+  btn.classList.toggle('retryable', !!retryable);
+}
+function requestLocation(){
+  if(!navigator.geolocation){
+    setWeatherStatus(currentLang==='ar'?'المتصفح ده مش بيدعم تحديد الموقع 😔':'This browser doesn\'t support location 😔', false);
+    return;
+  }
+  setWeatherStatus(currentLang==='ar'?'📍 بنحدد مكانك...':'📍 Detecting your location...', false);
+  navigator.geolocation.getCurrentPosition(
+    pos=>fetchWeather(pos.coords.latitude,pos.coords.longitude),
+    err=>{
+      let msgEn, msgAr;
+      if(err.code===1){ // PERMISSION_DENIED
+        msgEn='Location blocked — enable it in your browser\'s site settings, then tap here 🌦️';
+        msgAr='الموقع متمنوع — فعّله من إعدادات المتصفح للموقع، وبعدين دوس هنا 🌦️';
+      } else if(err.code===3){ // TIMEOUT
+        msgEn='Taking too long — tap to try again 🌦️';
+        msgAr='الطلب واخد وقت — دوس تاني 🌦️';
+      } else { // POSITION_UNAVAILABLE or other
+        msgEn='Couldn\'t get your location — tap to retry 🌦️';
+        msgAr='مش قادرين نجيب مكانك — دوس تاني 🌦️';
+      }
+      setWeatherStatus(currentLang==='ar'?msgAr:msgEn, true);
+      const cityLabel=document.getElementById('prayerCityLabel');
+      if(cityLabel) cityLabel.textContent=currentLang==='ar'?'توقيت تقريبي':'Approx. times';
+    },
+    {enableHighAccuracy:false, timeout:10000, maximumAge:600000}
+  );
+}
+document.getElementById('weatherStatus').addEventListener('click', ()=>{
+  if(document.getElementById('weatherStatus').classList.contains('retryable')) requestLocation();
+});
+
+// Show cached weather instantly (if we have any from a previous visit) while a fresh
+// location fix runs quietly in the background — makes the site feel instant on reopen.
+const cachedWeather=loadWeatherCache();
+if(cachedWeather && cachedWeather.wData){
+  lastWeatherData=cachedWeather.wData;
+  lastWeatherCoords={lat:cachedWeather.lat, lon:cachedWeather.lon};
+  lastWeatherCity=cachedWeather.city;
+  renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city);
+  renderWeatherFx(cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m, cachedWeather.wData.current.is_day);
+  document.getElementById('weatherSection').style.display='block';
+  document.getElementById('weatherLoading').style.display='none';
+}
+requestLocation();
 
 // ── Day / Night auto-theme — follows real sunrise & sunset at the listener's location ──
 let dnSunrise=null, dnSunset=null, dnIsDay=null, dnRetimer=null;
