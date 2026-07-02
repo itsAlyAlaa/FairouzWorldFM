@@ -1869,11 +1869,12 @@ function updateClock() {
 updateClock(); setInterval(updateClock,1000);
 
 // ── Radio ──
-// استخدام الرابط المباشر للسيرفر ليتوافق مع الـ HTTPS ويشتغل فوراً
+// استخدام الرابط المباشر بدون امتدادات ليتوافق مع الـ HTTPS ويشتغل فوراً
 const PRIMARY_STREAM='https://stream.zeno.fm/zv3e5wykprhvv';
 const audio=new Audio(); 
-audio.crossOrigin='anonymous'; // رجعناها عشان ميزة اسم الأغنية والـ Analyser يشتغلوا صح مع الرابط الجديد
+audio.crossOrigin='anonymous'; // رجعناها هنا لأن الرابط المباشر يدعم الـ CORS بشكل صحيح
 audio.preload='none';
+
 let isPlaying=false,isMuted=false,hasStarted=false,retryCount=0; const MAX_RETRY=5;
 const btnPlay=document.getElementById('btnPlay');
 const btnMute=document.getElementById('btnMute');
@@ -1886,6 +1887,11 @@ const loadingText=document.getElementById('loadingText');
 const waveBars=document.querySelectorAll('.wave-bar');
 let audioCtx,analyser,dataArray,sourceNode,rafId=null,usingRealData=false,silentFrames=0;
 
+// تحديد الـ Mount الخاص بإذاعتك بشكل ثابت لضمان جلب اسم الأغنية دائماً
+const ZENO_MOUNT='zv3e5wykprhvv';
+let metaSource=null, lastRawTitle='', metaRetryTimer=null;
+const arTranslationCache=new Map();
+
 function setupAnalyser(){
   if(analyser)return;
   try{
@@ -1896,6 +1902,7 @@ function setupAnalyser(){
     dataArray=new Uint8Array(analyser.frequencyBinCount);
   }catch(e){analyser=null;}
 }
+
 function animateBars(){
   if(!isPlaying)return;
   if(analyser){
@@ -1911,13 +1918,11 @@ function animateBars(){
   });
   rafId=requestAnimationFrame(animateBars);
 }
+
 // ── AI: detect current song name + show it in Arabic ──
-// تحديد الـ Mount الخاص بإذاعتك بشكل ثابت لضمان جلب اسم الأغنية دائماً
-const ZENO_MOUNT='zv3e5wykprhvv';
-let metaSource=null, lastRawTitle='', metaRetryTimer=null;
-const arTranslationCache=new Map();
 function isArabicText(str){ return /[\u0600-\u06FF]/.test(str); }
 function hideAiTitle(){ if(npAi){npAi.style.display='none'; npAiText.textContent='';} }
+
 async function translateToArabic(text){
   if(!text) return '';
   if(arTranslationCache.has(text)) return arTranslationCache.get(text);
@@ -1929,6 +1934,7 @@ async function translateToArabic(text){
     return translated;
   }catch(e){ return ''; }
 }
+
 async function handleStreamTitle(rawTitle){
   if(!rawTitle) return;
   rawTitle=rawTitle.trim();
@@ -1945,6 +1951,7 @@ async function handleStreamTitle(rawTitle){
   if(arabic){ npAiText.textContent=arabic; }
   else{ hideAiTitle(); }
 }
+
 function connectMetadata(){
   if(!ZENO_MOUNT||typeof EventSource==='undefined'||metaSource) return;
   try{
@@ -1963,6 +1970,7 @@ function connectMetadata(){
     };
   }catch(e){ metaSource=null; }
 }
+
 function disconnectMetadata(){
   if(metaSource){metaSource.close();metaSource=null;}
   if(metaRetryTimer){clearTimeout(metaRetryTimer);metaRetryTimer=null;}
@@ -1976,14 +1984,15 @@ function startRadio(){
   audio.src=PRIMARY_STREAM; audio.volume=volSlider.value/100; audio.load();
   audio.play().then(()=>{
     isPlaying=true;
-retryCount=0;
-btnPlay.textContent='⏸';
-document.querySelector('.player-bar').classList.add('playing');
+    retryCount=0;
+    btnPlay.textContent='⏸';
+    document.querySelector('.player-bar').classList.add('playing');
     npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
     connectMetadata();
   }).catch(()=>attemptRetry());
 }
+
 function attemptRetry(){
   if(retryCount>=MAX_RETRY){loadingText.textContent=currentLang==='ar'?'البث مش متاح دلوقتي 🙏':'Stream unavailable. Try again shortly 🙏';return;}
   retryCount++;
@@ -1992,16 +2001,18 @@ function attemptRetry(){
     audio.src=PRIMARY_STREAM+'?t='+Date.now(); audio.load();
     audio.play().then(()=>{
       isPlaying=true;
-btnPlay.textContent='⏸';
-document.querySelector('.player-bar').classList.add('playing');
-loadingText.textContent='';
+      btnPlay.textContent='⏸';
+      document.querySelector('.player-bar').classList.add('playing');
+      loadingText.textContent='';
       setupAnalyser();cancelAnimationFrame(rafId);animateBars();
       connectMetadata();
     }).catch(attemptRetry);
   },1500*retryCount);
 }
+
 audio.addEventListener('error',()=>{if(isPlaying)attemptRetry();});
 audio.addEventListener('stalled',()=>{if(isPlaying)attemptRetry();});
+
 function togglePlay(){
   if(!hasStarted){
     startRadio();
@@ -2012,18 +2023,14 @@ function togglePlay(){
     audio.pause();
     isPlaying=false;
     btnPlay.textContent='▶';
-
     document.querySelector('.player-bar').classList.remove('playing');
-
     cancelAnimationFrame(rafId);
     disconnectMetadata();
   }else{
     audio.play().then(()=>{
       isPlaying=true;
       btnPlay.textContent='⏸';
-
       document.querySelector('.player-bar').classList.add('playing');
-
       cancelAnimationFrame(rafId);
       animateBars();
       connectMetadata();
