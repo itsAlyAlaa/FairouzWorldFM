@@ -1645,7 +1645,7 @@ function triggerAthan(prayer){
   athanAudio.play().catch(()=>{});
 
   const cd=document.getElementById('athanCountdown');
-  if(cd) cd.textContent = currentLang==='ar' ? 'جاري أذان '+prayer.nameAr : 'Playing Athan — '+prayer.nameEn;
+  if(cd) cd.textContent = '🕌 حان وقت أذان ' + prayer.nameAr;
 
   if(athanCountdownInterval) clearInterval(athanCountdownInterval);
 
