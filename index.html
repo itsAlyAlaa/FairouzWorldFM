@@ -1239,8 +1239,7 @@ body.occasion-sham-elnessim{--occ-1:#10241a; --occ-2:#1b3524; --occ-glow:rgba(12
   <button id="occBannerClose" aria-label="close">×</button>
 </div>
 
-<audio id="athanAudio" preload="none">
-  <source src="https://www.islamicfinder.org/prayer-times/azan/mp3/azan1.mp3" type="audio/mpeg">
+<audio id="athanAudio" preload="auto">
 </audio>
 
 <div class="app">
@@ -1577,13 +1576,14 @@ let lastAthanKey=null,wasPlayingBeforeAthan=false,currentAthanName=null,athanCou
 
 // ── أسماء ملفات الأذان — روابط CDN حقيقية (كانت تشير سابقًا لملفات محلية غير موجودة أصلًا) ──
 const ATHAN_FILES = {
-  Fajr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
-  Dhuhr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
-  Asr: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
-  Maghrib: 'https://cdn.aladhan.com/audio/adhans/a9.mp3',
-  Isha: 'https://cdn.aladhan.com/audio/adhans/a9.mp3'
+  Fajr: './fajr.mp3',
+  Dhuhr: './athan.mp3',
+  Asr: './athan.mp3',
+  Maghrib: './athan.mp3',
+  Isha: './athan.mp3'
 };
-const ATHAN_FALLBACK = 'https://www.islamicfinder.org/prayer-times/azan/mp3/azan1.mp3';
+
+const ATHAN_FALLBACK = './athan.mp3';
 
 async function fetchPrayerTimes(lat,lon){
   try{
