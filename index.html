@@ -1869,11 +1869,11 @@ function updateClock() {
 updateClock(); setInterval(updateClock,1000);
 
 // ── Radio ──
-// ── Radio ──
-const PRIMARY_STREAM='https://stream.zeno.fm/zv3e5wykprhvv.mp3';
+// استخدام الرابط المباشر للسيرفر ليتوافق مع الـ HTTPS ويشتغل فوراً
+const PRIMARY_STREAM='https://stream.zeno.fm/zv3e5wykprhvv';
 const audio=new Audio(); 
+audio.crossOrigin='anonymous'; // رجعناها عشان ميزة اسم الأغنية والـ Analyser يشتغلوا صح مع الرابط الجديد
 audio.preload='none';
-// تم إيقاف الـ crossOrigin لحل مشكلة حظر البث بعد تفعيل الـ HTTPS
 let isPlaying=false,isMuted=false,hasStarted=false,retryCount=0; const MAX_RETRY=5;
 const btnPlay=document.getElementById('btnPlay');
 const btnMute=document.getElementById('btnMute');
@@ -1912,10 +1912,8 @@ function animateBars(){
   rafId=requestAnimationFrame(animateBars);
 }
 // ── AI: detect current song name + show it in Arabic ──
-function getZenoMount(streamUrl){
-  try{ return new URL(streamUrl).pathname.replace(/^\//,''); }catch(e){ return null; }
-}
-const ZENO_MOUNT=getZenoMount(PRIMARY_STREAM);
+// تحديد الـ Mount الخاص بإذاعتك بشكل ثابت لضمان جلب اسم الأغنية دائماً
+const ZENO_MOUNT='zv3e5wykprhvv';
 let metaSource=null, lastRawTitle='', metaRetryTimer=null;
 const arTranslationCache=new Map();
 function isArabicText(str){ return /[\u0600-\u06FF]/.test(str); }
