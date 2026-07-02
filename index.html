@@ -2204,15 +2204,15 @@ function weatherDesc(code,lang){
 // ── Mood advice: a short human line about the current weather, based on condition + temp ──
 function weatherAdvice(temp, code, lang){
   let msg;
-  if(WCODE.storm.includes(code)) msg={en:"Thunder's rolling — best enjoy it from indoors ⛈️",ar:"في رعد وبرق برة.. يفضل تستمتع بالمنظر من جوا ⛈️"};
+  if(WCODE.storm.includes(code)) msg={en:"Thunder's rolling — best enjoy it from indoors ⛈️",ar:"في رعد وبرق برة.. يفضل تستمتع بالمنظر من جوا البيت ⛈️"};
   else if(WCODE.snow.includes(code)) msg={en:"It's snowing — bundle up before you step out ❄️",ar:"الدنيا برد جامد.. البس جاكيت تقيل قبل ما تخرج ❄️"};
   else if(WCODE.rain.includes(code)) msg={en:"Don't forget your umbrella today ☔",ar:"ما تنساش الشمسية معاك النهارده ☔"};
   else if(WCODE.fog.includes(code)) msg={en:"Foggy out there — take it slow on the road 🌫️",ar:"الرؤية مش واضحة عالطريق.. سوق على مهلك 🌫️"};
   else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم جاكيت تقيل 🧥"};
   else if(temp<=15) msg={en:"A bit chilly — grab a jacket before heading out 🧥",ar:"الجو بارد شوية.. خد جاكيت معاك 🧥"};
-  else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"جو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
-  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو دافي.. البس هدوم خفيفة 👕"};
-  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب ميه كتير 💧"};
+  else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"الجو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
+  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو حر شوية.. البس هدوم خفيفة 👕"};
+  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب مياه كتير 💧"};
   return msg[lang]||msg.en;
 }
 // ── A soft, puffy ambient cloud shape used for the drifting background layer ──
