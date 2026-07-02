@@ -1132,11 +1132,31 @@ footer { margin-top: 10px; font-size: 11px; }
   .info-grid { grid-template-columns: 1fr; }
   .panels    { grid-template-columns: 1fr; }
   .prayer-grid { grid-template-columns: repeat(3,1fr); }
-  .np-mini   { min-width: 0; flex: 1; }
-  .controls  { gap: 5px; }
-  .vol-row   { min-width: 90px; }
-  input[type=range] { width: 70px; }
-  .wave-container   { flex: 1 1 80px; min-width: 80px; }
+
+  /* Player bar: stack instead of cramming everything into one row */
+  .player-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .np-mini {
+    min-width: 0;
+    width: 100%;
+    flex: none;
+  }
+  .np-title, .np-sub { white-space: normal; }
+  .player-center {
+    width: 100%;
+    flex: none;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .controls  { gap: 8px; }
+  .vol-row   { min-width: 0; flex: 1; max-width: 160px; }
+  input[type=range] { width: 100%; }
+  .wave-container {
+    display: none;
+  }
 }
 
 /* ══════════════════════════════════════════════
@@ -2069,8 +2089,8 @@ function weatherAdvice(temp, code, lang){
   else if(temp<=8) msg={en:"Freezing out there — a heavy coat is a must 🧥",ar:"البرد قارص برة.. لازم جاكيت تقيل 🧥"};
   else if(temp<=15) msg={en:"A bit chilly — grab a jacket before heading out 🧥",ar:"الجو بارد شوية.. خد جاكيت معاك 🧥"};
   else if(temp<=26) msg={en:"Pleasant weather out there — enjoy your day 🌿",ar:"جو حلو ومعتدل النهارده.. استمتع بيومك 🌿"};
-  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو دافي.. البس هدوم خفيفة 👕"};
-  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب ميه كتير 💧"};
+  else if(temp<=32) msg={en:"Warm out — light clothes will do just fine 👕",ar:"الجو حر شوية.. البس هدوم خفيفة 👕"};
+  else msg={en:"Scorching hot — wear light clothes and drink plenty of water 💧",ar:"الجو حر جداً.. البس خفيف واشرب مياه كتير 💧"};
   return msg[lang]||msg.en;
 }
 // ── A soft, puffy ambient cloud shape used for the drifting background layer ──
