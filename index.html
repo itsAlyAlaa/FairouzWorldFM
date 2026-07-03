@@ -39,40 +39,6 @@ body.lang-ar{font-family:'Cairo',sans-serif; direction:rtl;}
 .aurora-2{width:520px;height:520px;background:var(--gold);bottom:-140px;left:-100px;animation-delay:4s;opacity:.08;}
 .aurora-3{width:420px;height:420px;background:var(--purple);top:40%;left:38%;animation-delay:8s;opacity:.12;}
 
-/* ── Day theme: triggered automatically between sunrise & sunset at listener's location ── */
-body.day-theme{
-  --bg:#f7f6f3; --bg2:#fbfaf8; --surface:#ffffff; --card:#ffffff;
-  --border:#e2ded6; --gold:#9c6a22; --gold2:#85591b; --rose:#b56a82;
-  --maroon:#7d4154; --purple:#5d4aa0; --purple2:#473a85; --pink:#b85e7c;
-  --text:#2a261f; --muted:#7a7468;
-  --glow-g:rgba(156,106,34,.10); --glow-p:rgba(93,74,160,.08);
-}
-body.day-theme{background:radial-gradient(ellipse at 30% 0%,#fdfcfa,#f3f1ec 75%);}
-body.day-theme #starCanvas,
-body.day-theme .aurora{opacity:0;}
-body.day-theme .moon-deco svg{filter:none;}
-body.day-theme .moon-icon{display:none;}
-body.day-theme .sun-icon{display:block;}
-body.day-theme .hero{
-  background:linear-gradient(135deg,var(--card),var(--surface));
-}
-body.day-theme .hero::before{
-  background:radial-gradient(ellipse at 70% 50%,rgba(255,196,107,.3),transparent 70%);
-}
-body.day-theme .sidebar{
-  background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(247,246,243,.95));
-}
-body.day-theme{
-  --sun-c:#f2a53a; --moon-c:#9a7fc9; --cloud-c:#9c96ad; --cloud-c2:#c3bfd0;
-  --rain-c:#4f9bd6; --snow-c:#dfe7f7; --storm-c:#d9b823; --fog-c:#8f899d;
-}
-
-/* Sun/Moon transition sweep overlay */
-#themeSweep{
-  position:fixed;inset:0;z-index:9999;pointer-events:none;
-  opacity:0;
-}
-
 /* ── Ambient floating notes — subtle, calm, fills empty space behind UI ── */
 .float-notes-layer{
   position:fixed;inset:0;z-index:0;
@@ -81,7 +47,7 @@ body.day-theme{
 .float-note{
   position:absolute;
   bottom:-10%;
-  font-size:18px;
+  font-size:20.5px;
   color:var(--gold);
   opacity:0;
   will-change:transform,opacity;
@@ -100,19 +66,6 @@ body.day-theme{
 }
 @media(prefers-reduced-motion:reduce){
   .float-note{animation:none;display:none;}
-}
-#themeSweep.sweep-day{
-  background:radial-gradient(circle at 50% 20%, rgba(255,224,150,.9), rgba(255,224,150,0) 60%);
-  animation:sweepIn 2.4s ease-out forwards;
-}
-#themeSweep.sweep-night{
-  background:radial-gradient(circle at 50% 20%, rgba(120,90,220,.55), rgba(20,10,30,0) 60%);
-  animation:sweepIn 2.4s ease-out forwards;
-}
-@keyframes sweepIn{
-  0%{opacity:0;}
-  25%{opacity:1;}
-  100%{opacity:0;}
 }
 
 
@@ -185,7 +138,7 @@ body.lang-ar .sidebar{border-right:none;border-left:1px solid var(--border);}
 .nav-item{
   display:flex;align-items:center;gap:10px;
   padding:12px 14px;border-radius:12px;
-  color:var(--muted);font-size:14px;font-weight:600;
+  color:var(--muted);font-size:16px;font-weight:600;
   cursor:pointer;transition:background .2s,color .2s;
   border:1px solid transparent;background:none;
   width:100%;text-align:left;font-family:inherit;
@@ -193,7 +146,7 @@ body.lang-ar .sidebar{border-right:none;border-left:1px solid var(--border);}
 body.lang-ar .nav-item{text-align:right;font-family:'Cairo',sans-serif;}
 .nav-item:hover{background:rgba(217,184,136,.08);color:var(--text);}
 .nav-item.active{background:linear-gradient(135deg,rgba(217,184,136,.15),rgba(110,38,64,.2));color:var(--gold);border-color:rgba(217,184,136,.22);}
-.nav-item .ic{font-size:17px;}
+.nav-item .ic{font-size:19.5px;}
 
 /* Lang toggle */
 .lang-toggle{
@@ -206,7 +159,7 @@ body.lang-ar .nav-item{text-align:right;font-family:'Cairo',sans-serif;}
   border:1px solid var(--border);
   background:rgba(217,184,136,.06);
   color:var(--muted);
-  font-size:13px;
+  font-size:15px;
   font-weight:600;
   width:100%;
   text-align:left;
@@ -251,7 +204,7 @@ body.lang-ar .lang-toggle{
 
 .sidebar-footer{
   margin-top:auto;
-  font-size:11px;
+  font-size:12.5px;
   color:var(--muted);
   text-align:center;
   opacity:.85;
@@ -259,7 +212,7 @@ body.lang-ar .lang-toggle{
 }
 .mobile-footer{
   display:none;
-  font-size:11px;
+  font-size:12.5px;
   color:var(--muted);
   text-align:center;
   opacity:.85;
@@ -353,10 +306,10 @@ body.lang-ar .lang-toggle{
   background:var(--surface);border:1px solid var(--border);border-radius:18px;
   padding:14px 22px;text-align:center;min-width:170px;
 }
-.clock-card .cc-label{font-size:11px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:4px;}
-.clock-card .cc-time{font-size:24px;font-weight:800;color:var(--gold);letter-spacing:.5px;font-family:'Cinzel',serif;}
-.clock-card .cc-time span{font-size:13px;color:var(--muted);margin-left:3px;}
-.clock-card .cc-date{font-size:11px;color:var(--muted);margin-top:3px;}
+.clock-card .cc-label{font-size:12.5px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:4px;}
+.clock-card .cc-time{font-size:27.5px;font-weight:800;color:var(--gold);letter-spacing:.5px;font-family:'Cinzel',serif;}
+.clock-card .cc-time span{font-size:15px;color:var(--muted);margin-left:3px;}
+.clock-card .cc-date{font-size:12.5px;color:var(--muted);margin-top:3px;}
 
 /* ── Hero ── */
 .hero{
@@ -380,11 +333,8 @@ body.lang-ar .lang-toggle{
 }
 .hero-text{flex:1;width:100%;position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;}
 .moon-deco{margin-bottom:14px;}
-.moon-deco .sun-icon{display:none;}
-.moon-deco .sun-ray{animation:sunPulse 3s ease-in-out infinite;transform-origin:35px 35px;}
-@keyframes sunPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
 .hero-text h1{
-  font-family:'Cinzel',serif;font-size:40px;font-weight:900;
+  font-family:'Cinzel',serif;font-size:46px;font-weight:900;
   background:linear-gradient(135deg,var(--gold),var(--rose),var(--purple),var(--gold2));
   background-size:300% auto;
   -webkit-background-clip:text;background-clip:text;color:transparent;
@@ -392,12 +342,12 @@ body.lang-ar .lang-toggle{
 }
 body.lang-ar .hero-text h1{font-family:'Cairo',sans-serif;}
 @keyframes gradShift{to{background-position:300% center;}}
-.hero-text .tagline{font-size:15px;color:var(--text);opacity:.85;margin-bottom:4px;}
-.hero-text .tagline-sub{font-size:13px;color:var(--muted);margin-bottom:22px;}
+.hero-text .tagline{font-size:17px;color:var(--text);opacity:.85;margin-bottom:4px;}
+.hero-text .tagline-sub{font-size:15px;color:var(--muted);margin-bottom:22px;}
 .btn-start{
   display:inline-flex;align-items:center;gap:10px;
   background:linear-gradient(135deg,var(--gold2),var(--gold));
-  color:#1a0820;font-weight:800;font-size:15px;
+  color:#1a0820;font-weight:800;font-size:17px;
   padding:13px 28px;border-radius:99px;border:none;cursor:pointer;
   box-shadow:0 10px 26px -6px var(--glow-g);
   transition:transform .2s,box-shadow .2s;font-family:inherit;
@@ -414,11 +364,11 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
   background:linear-gradient(135deg,rgba(80,20,100,.5),rgba(217,184,136,.12));
   border:1px solid var(--gold2);border-radius:18px;
   padding:18px 20px;margin-bottom:24px;
-  font-size:15px;font-weight:700;color:var(--gold);
+  font-size:17px;font-weight:700;color:var(--gold);
   animation:athanGlow 2.5s ease-in-out infinite;
 }
-.athan-banner .athan-title{font-size:18px;font-weight:800;}
-.athan-banner .athan-countdown{font-size:13px;color:var(--muted);}
+.athan-banner .athan-title{font-size:20.5px;font-weight:800;}
+.athan-banner .athan-countdown{font-size:15px;color:var(--muted);}
 @keyframes athanGlow{0%,100%{box-shadow:0 0 0 0 rgba(217,184,136,.2);}50%{box-shadow:0 0 22px 6px rgba(217,184,136,.12);}}
 
 /* ── Player Bar ── */
@@ -459,23 +409,23 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .np-art{
   width:54px;height:54px;border-radius:14px;
   background:linear-gradient(135deg,var(--maroon),var(--purple));
-  display:flex;align-items:center;justify-content:center;font-size:24px;
+  display:flex;align-items:center;justify-content:center;font-size:27.5px;
   flex-shrink:0;animation:artPulse 2.6s ease-in-out infinite;
 }
 @keyframes artPulse{0%,100%{box-shadow:0 0 0 0 var(--glow-p);}50%{box-shadow:0 0 0 8px transparent;}}
-.np-label{font-size:11px;color:var(--rose);display:flex;align-items:center;gap:5px;margin-bottom:3px;font-weight:700;}
+.np-label{font-size:12.5px;color:var(--rose);display:flex;align-items:center;gap:5px;margin-bottom:3px;font-weight:700;}
 .np-label .dot{width:7px;height:7px;border-radius:50%;background:#e8425f;box-shadow:0 0 6px #e8425f;animation:pulseDot 1.4s infinite;}
-.np-title{font-size:20px;font-weight:800;color:var(--text);}
-.np-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+.np-title{font-size:23px;font-weight:800;color:var(--text);}
+.np-sub{font-size:12.5px;color:var(--muted);margin-top:2px;}
 .np-ai{display:none;align-items:center;gap:6px;margin-top:5px;}
 .np-ai .ai-badge{
-  font-size:9px;font-weight:800;letter-spacing:.3px;
+  font-size:10.5px;font-weight:800;letter-spacing:.3px;
   padding:2px 7px;border-radius:20px;color:#1a0f22;
   background:linear-gradient(135deg,var(--gold),var(--purple));
   flex-shrink:0;
 }
 .np-ai .np-ai-text{
-    font-size:18px;
+    font-size:20.5px;
     font-weight:800;
     color:var(--gold);
     line-height:1.4;
@@ -489,7 +439,7 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .ctrl-btn{
   width:42px;height:42px;border-radius:50%;
   background:rgba(139,92,246,.08);border:1px solid var(--border);
-  color:var(--text);font-size:16px;cursor:pointer;
+  color:var(--text);font-size:18.5px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   transition:background .2s,transform .15s;
 }
@@ -497,7 +447,7 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
 .btn-play{
   width:64px;
   height:64px;
-  font-size:24px;
+  font-size:27.5px;
 
   background:linear-gradient(135deg,var(--purple2),var(--purple));
   color:#fff;
@@ -515,7 +465,7 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
     transform:scale(1.08);
 }
 .vol-row{display:flex;align-items:center;gap:8px;min-width:150px;}
-.vol-label{font-size:13px;color:var(--muted);min-width:20px;text-align:center;}
+.vol-label{font-size:15px;color:var(--muted);min-width:20px;text-align:center;}
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:160px;height:6px;border-radius:99px;
   background:linear-gradient(to right,var(--purple) var(--val,100%),rgba(139,92,246,.15) var(--val,100%));
@@ -554,7 +504,7 @@ input[type=range]::-webkit-slider-thumb{
 
     transition:height .12s ease;
 }
-.loading-text{width:100%;font-size:12px;color:var(--muted);text-align:center;}
+.loading-text{width:100%;font-size:14px;color:var(--muted);text-align:center;}
 
 .player-bar.playing{
     border-color:rgba(139,92,246,.35);
@@ -613,23 +563,23 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .info-card .ic{
-  font-size:22px;
+  font-size:25.5px;
 }
 
 .info-card h3{
-  font-size:14px;
+  font-size:16px;
   color:var(--gold);
   margin-bottom:5px;
 }
 
 .info-card p{
-  font-size:12.5px;
+  font-size:14.5px;
   color:var(--muted);
   line-height:1.6;
 }
 
 .info-card.quote p{
-  font-size:13.5px;
+  font-size:15.5px;
   color:var(--text);
   font-style:italic;
   line-height:1.7;
@@ -657,7 +607,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .panel-title{
-  font-size:18px;
+  font-size:20.5px;
   font-weight:800;
   color:var(--gold);
   margin-bottom:20px;
@@ -695,24 +645,24 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .prayer-item .p-icon{
-  font-size:30px;
+  font-size:34.5px;
   margin-bottom:10px;
 }
 
 .prayer-item .p-name{
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
   margin-bottom:6px;
 }
 
 .prayer-item .p-time{
-  font-size:19px;
+  font-size:22px;
   font-weight:800;
   color:var(--text);
 }
 
 .weather-loading{
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
   text-align:center;
   padding:30px 0;
@@ -720,7 +670,7 @@ input[type=range]::-webkit-slider-thumb{
 
 .weather-status-btn{
   font-family:inherit;
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
   background:transparent;
   border:none;
@@ -765,14 +715,14 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .weather-temp{
-  font-size:48px;
+  font-size:55px;
   font-weight:800;
   color:var(--gold);
   line-height:1;
 }
 
 .weather-desc{
-  font-size:16px;
+  font-size:18.5px;
   color:var(--muted);
 }
 
@@ -794,7 +744,7 @@ input[type=range]::-webkit-slider-thumb{
   display:inline-flex;
   align-items:center;
   gap:6px;
-  font-size:13.5px;
+  font-size:15.5px;
   font-weight:700;
   color:var(--rose);
   background:rgba(224,138,166,.08);
@@ -826,7 +776,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .forecast-item .f-day{
-  font-size:14px;
+  font-size:16px;
   color:var(--muted);
   margin-bottom:8px;
 }
@@ -838,7 +788,7 @@ input[type=range]::-webkit-slider-thumb{
 }
 
 .forecast-item .f-temp{
-  font-size:16px;
+  font-size:18.5px;
   font-weight:700;
   color:var(--text);
 }
@@ -852,7 +802,7 @@ input[type=range]::-webkit-slider-thumb{
 .panel-weather .weather-loading{position:relative;z-index:1;}
 
 .weather-advice{
-  font-size:18px;
+  font-size:20.5px;
   line-height:1.65;
   color:var(--text);
   opacity:.90;
@@ -981,9 +931,155 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 
 /* ── About ── */
 .about-page{display:none;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;}
-.about-page h2{font-family:'Cinzel',serif;font-size:24px;color:var(--gold);margin-bottom:16px;}
+.about-page h2{font-family:'Cinzel',serif;font-size:27.5px;color:var(--gold);margin-bottom:16px;}
 body.lang-ar .about-page h2{font-family:'Cairo',sans-serif;}
-.about-body p{font-size:14px;line-height:2;color:var(--text);opacity:.9;margin-bottom:14px;}
+.about-body p{font-size:16px;line-height:2;color:var(--text);opacity:.9;margin-bottom:14px;}
+
+/* ── News ── */
+.news-page{display:none;}
+.news-title{font-family:'Cinzel',serif;font-size:30px;color:var(--gold);margin-bottom:4px;}
+body.lang-ar .news-title{font-family:'Cairo',sans-serif;}
+.news-sub{font-size:15px;color:var(--muted);margin-bottom:22px;}
+.news-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px;}
+.news-sources-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:14px;color:var(--muted);}
+.news-source-chip{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 12px;font-size:13px;color:var(--muted);}
+.news-refresh-btn{background:transparent;border:1px solid var(--border);color:var(--gold2);font-size:14.5px;padding:8px 16px;border-radius:100px;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:6px;transition:background .2s,color .2s,border-color .2s;}
+.news-refresh-btn:hover{background:linear-gradient(135deg,rgba(217,184,136,.18),rgba(110,38,64,.22));color:var(--gold);border-color:rgba(217,184,136,.3);}
+.news-refresh-btn.spinning .ic{display:inline-block;animation:newsSpin 1s linear infinite;}
+@keyframes newsSpin{to{transform:rotate(360deg);}}
+.news-updated{font-size:13px;color:var(--muted);opacity:.85;}
+.news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
+.news-card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:inherit;transition:transform .2s,border-color .2s,background .2s;}
+.news-card:hover{transform:translateY(-3px);border-color:rgba(217,184,136,.35);background:var(--surface);}
+.news-card-top{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.news-source-tag{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;color:var(--gold2);text-transform:uppercase;letter-spacing:.05em;font-weight:700;}
+.news-time{font-size:12.5px;color:var(--muted);white-space:nowrap;}
+.news-card-title{font-size:16.5px;line-height:1.75;color:var(--text);font-weight:600;}
+body.lang-ar .news-card-title{font-family:'Cairo',sans-serif;}
+.news-card-desc{font-size:14.5px;line-height:1.8;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.news-card-link{font-size:13px;color:var(--gold2);margin-top:auto;display:inline-flex;align-items:center;gap:4px;}
+.news-status{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:34px;text-align:center;color:var(--muted);font-size:15.5px;line-height:1.9;}
+.news-status .ic{font-size:30px;display:block;margin-bottom:10px;}
+.news-skel{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:18px;height:140px;position:relative;overflow:hidden;}
+.news-skel::after{content:'';position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,rgba(217,184,136,.08) 50%,transparent 70%);background-size:200% 100%;animation:newsShimmer 1.4s infinite;}
+@keyframes newsShimmer{0%{background-position:200% 0;}100%{background-position:-200% 0;}}
+@media(max-width:640px){
+  .news-grid{grid-template-columns:1fr;}
+}
+
+/* ── World Cup 2026 ── */
+.wc-page{display:none;}
+.wc-title{font-family:'Cinzel',serif;font-size:30px;color:var(--gold);margin-bottom:4px;}
+body.lang-ar .wc-title{font-family:'Cairo',sans-serif;}
+.wc-sub{font-size:15px;color:var(--muted);margin-bottom:26px;}
+.wc-block{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:26px;margin-bottom:22px;}
+.wc-block-title{font-family:'Cinzel',serif;font-size:20.5px;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
+body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
+
+.wc-news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
+.wc-news-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;}
+.wc-news-card .wc-news-tag{font-size:12.5px;color:var(--gold2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700;}
+.wc-news-card .wc-news-text{font-size:15.5px;line-height:1.8;color:var(--text);opacity:.92;}
+
+.wc-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
+.wc-filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14.5px;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s,border-color .2s;}
+.wc-filter-btn.active,.wc-filter-btn:hover{background:linear-gradient(135deg,rgba(217,184,136,.18),rgba(110,38,64,.22));color:var(--gold);border-color:rgba(217,184,136,.3);}
+
+.wc-fixtures{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:18px;}
+.wc-match-card{
+  background:linear-gradient(160deg,var(--surface),var(--card));
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:18px 20px;
+  display:flex;flex-direction:column;gap:12px;
+  position:relative;
+  overflow:hidden;
+  opacity:0;
+  transform:translateY(20px) scale(.96);
+  animation:wcCardIn .65s cubic-bezier(.2,.8,.2,1) forwards;
+  animation-delay:var(--wc-delay,0s);
+  transition:transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s ease, box-shadow .35s ease;
+}
+.wc-match-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% -10%,rgba(217,184,136,.14),transparent 60%);
+  opacity:0;transition:opacity .35s ease;pointer-events:none;
+}
+.wc-match-card::after{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,transparent,rgba(217,184,136,.5),transparent);
+  opacity:0;transition:opacity .35s ease;
+}
+.wc-match-card:hover{
+  transform:translateY(-7px);
+  border-color:rgba(217,184,136,.4);
+  box-shadow:0 16px 36px rgba(0,0,0,.38), 0 0 0 1px rgba(217,184,136,.12);
+}
+.wc-match-card:hover::before,.wc-match-card:hover::after{opacity:1;}
+.wc-match-card[data-status="live"]{border-color:rgba(255,122,122,.32);}
+.wc-match-card[data-status="live"]::after{
+  opacity:1;background:linear-gradient(90deg,#ff7a7a,#ffb648,#ff7a7a);
+  background-size:200% 100%;animation:wcTopGlow 2.2s linear infinite;
+}
+@keyframes wcTopGlow{0%{background-position:0% 0;}100%{background-position:200% 0;}}
+@keyframes wcCardIn{to{opacity:1;transform:translateY(0) scale(1);}}
+@media(prefers-reduced-motion:reduce){
+  .wc-match-card{animation:none;opacity:1;transform:none;}
+}
+.wc-match-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);}
+.wc-match-stage{text-transform:uppercase;letter-spacing:.05em;}
+.wc-badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.03em;}
+.wc-badge-live{background:rgba(217,80,80,.18);color:#ff7a7a;animation:wcPulse 1.6s ease-in-out infinite;}
+.wc-badge-finished{background:rgba(120,120,120,.18);color:var(--muted);}
+.wc-badge-upcoming{background:rgba(139,92,246,.18);color:#b39bf5;}
+@keyframes wcPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
+
+.wc-match-mid{display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.wc-team{display:flex;align-items:center;gap:10px;flex:1;font-size:16.5px;font-weight:700;color:var(--text);}
+.wc-team.right{flex-direction:row-reverse;text-align:right;justify-content:flex-start;}
+body.lang-ar .wc-team.right{flex-direction:row;text-align:left;}
+body.lang-ar .wc-team:not(.right){flex-direction:row-reverse;}
+.wc-flag-img{width:30px;height:22px;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px var(--border), 0 2px 6px rgba(0,0,0,.35);flex-shrink:0;background:var(--surface);}
+.wc-flag-placeholder{width:30px;height:22px;border-radius:4px;background:var(--surface);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);flex-shrink:0;}
+.wc-score{font-family:'Cinzel',serif;font-size:23px;color:var(--gold);min-width:64px;text-align:center;letter-spacing:.05em;}
+.wc-vs{font-size:14px;color:var(--muted);min-width:64px;text-align:center;}
+
+.wc-match-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px dashed var(--border);padding-top:10px;}
+.wc-datetime{font-size:14px;color:var(--muted);}
+.wc-countdown{font-family:'Cinzel',serif;font-size:15px;color:var(--rose);letter-spacing:.03em;}
+.wc-channel{font-size:14px;color:var(--gold2);display:flex;align-items:center;gap:5px;}
+.wc-channel .ic{font-size:15px;}
+
+/* ── World Cup: champion celebration screen ── */
+.wc-champion{position:relative;min-height:520px;border-radius:26px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,rgba(217,184,136,.16),var(--card) 70%);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
+.wc-fireworks-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.wc-champion-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:40px 20px;text-align:center;}
+.wc-trophy-wrap{width:120px;filter:drop-shadow(0 0 22px rgba(217,184,136,.6));animation:wcTrophyFloat 3.2s ease-in-out infinite;}
+.wc-trophy-svg{width:100%;display:block;}
+.wc-trophy-star{animation:wcStarPulse 1.4s ease-in-out infinite;}
+@keyframes wcTrophyFloat{0%,100%{transform:translateY(0) rotate(-1.5deg);}50%{transform:translateY(-10px) rotate(1.5deg);}}
+@keyframes wcStarPulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+.wc-champion-flag-wrap{width:150px;height:110px;border-radius:10px;overflow:hidden;box-shadow:0 0 0 3px var(--gold),0 8px 30px rgba(0,0,0,.5);animation:wcFlagWave 2.6s ease-in-out infinite;}
+.wc-champion-flag{width:100%;height:100%;object-fit:cover;display:block;}
+@keyframes wcFlagWave{0%,100%{transform:perspective(300px) rotateY(0deg) scale(1);}50%{transform:perspective(300px) rotateY(6deg) scale(1.03);}}
+.wc-champion-title{font-family:'Cinzel',serif;font-size:30px;font-weight:800;background:linear-gradient(90deg,#fff3cf,#d9b888,#fff3cf);background-size:200% auto;-webkit-background-clip:text;background-clip:text;color:transparent;animation:wcShine 3s linear infinite;}
+body.lang-ar .wc-champion-title{font-family:'Cairo',sans-serif;}
+@keyframes wcShine{0%{background-position:0% center;}100%{background-position:200% center;}}
+.wc-champion-sub{font-size:15px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);}
+@media(max-width:640px){
+  .wc-champion{min-height:420px;}
+  .wc-trophy-wrap{width:90px;}
+  .wc-champion-flag-wrap{width:110px;height:82px;}
+  .wc-champion-title{font-size:23px;}
+}
+
+@media(max-width:640px){
+  .wc-news-grid{grid-template-columns:1fr;}
+  .wc-fixtures{grid-template-columns:1fr;}
+  .wc-match-mid{flex-wrap:wrap;}
+  .wc-team{font-size:15px;}
+  .wc-flag-img,.wc-flag-placeholder{width:24px;height:18px;}
+}
 
 /* ── About: featured portrait ── */
 .about-feature{
@@ -1043,7 +1139,7 @@ body.lang-ar .about-page h2{font-family:'Cairo',sans-serif;}
 .ap-signature{
   position:absolute;bottom:10px;right:14px;
   font-family:'Dancing Script',cursive;
-  font-size:22px;color:rgba(255,255,255,.92);
+  font-size:25.5px;color:rgba(255,255,255,.92);
   text-shadow:0 1px 4px rgba(0,0,0,.65);
   z-index:2;transform:rotate(-3deg);
   opacity:0;
@@ -1059,16 +1155,16 @@ body.lang-ar .about-page h2{font-family:'Cairo',sans-serif;}
 }
 .about-feature.in-view .about-lede{opacity:1;transform:translateY(0);}
 
-.ap-eyebrow{font-size:12px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+.ap-eyebrow{font-size:14px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;}
 body.lang-ar .ap-eyebrow{letter-spacing:1px;}
 
 .ap-divider{display:flex;align-items:center;gap:10px;margin:12px 0 16px;}
 .ap-divider span{flex:0 0 34px;height:1px;background:var(--gold2);opacity:.6;}
-.ap-divider i{color:var(--gold);font-style:normal;font-size:10px;}
+.ap-divider i{color:var(--gold);font-style:normal;font-size:11.5px;}
 
 .ap-quote{
   font-family:'Cinzel',serif;
-  font-size:19px;line-height:1.65;
+  font-size:22px;line-height:1.65;
   color:var(--text);font-weight:600;
   margin:0;
 }
@@ -1094,7 +1190,7 @@ body.lang-ar .ap-quote{font-family:'Cairo',sans-serif;}
   .about-portrait-outer{width:210px;}
   .ap-divider{justify-content:center;}
 }
-footer{text-align:center;font-size:12px;color:var(--muted);margin-top:30px;opacity:.7;}
+footer{text-align:center;font-size:14px;color:var(--muted);margin-top:30px;opacity:.7;}
 footer .heart{color:var(--rose);}
 
 @media(max-width:880px){
@@ -1177,7 +1273,7 @@ html, body { height: 100%; overflow: hidden; }
 .sidebar-logo-area::before { width: 96px;  height: 96px;  }
 .sidebar-logo-area::after  { width: 112px; height: 112px; }
 .nav { gap: 4px; }
-.nav-item { padding: 8px 10px; font-size: 13px; }
+.nav-item { padding: 8px 10px; font-size: 15px; }
 
 /* Main content scrollable inside */
 .content {
@@ -1191,8 +1287,8 @@ html, body { height: 100%; overflow: hidden; }
 /* Topbar */
 .topbar { margin-bottom: 8px; }
 .clock-card { padding: 8px 14px; min-width: 140px; }
-.clock-card .cc-time { font-size: 20px; }
-.clock-card .cc-date { font-size: 10px; }
+.clock-card .cc-time { font-size: 23px; }
+.clock-card .cc-date { font-size: 11.5px; }
 
 /* Hero section compact */
 .hero {
@@ -1201,12 +1297,12 @@ html, body { height: 100%; overflow: hidden; }
   min-height: 0;
   gap: 14px;
 }
-.hero-text h1        { font-size: 26px; margin-bottom: 4px; }
+.hero-text h1        { font-size: 30px; margin-bottom: 4px; }
 .moon-deco           { margin-bottom: 4px; }
 .moon-deco svg       { width: 42px; height: 42px; }
-.hero-text .tagline  { font-size: 13px; margin-bottom: 2px; }
-.hero-text .tagline-sub { font-size: 11px; margin-bottom: 12px; }
-.btn-start           { padding: 9px 18px; font-size: 13px; }
+.hero-text .tagline  { font-size: 15px; margin-bottom: 2px; }
+.hero-text .tagline-sub { font-size: 12.5px; margin-bottom: 12px; }
+.btn-start           { padding: 9px 18px; font-size: 15px; }
 
 /* Player bar compact */
 .player-bar {
@@ -1215,40 +1311,40 @@ html, body { height: 100%; overflow: hidden; }
   border-radius: 16px;
   gap: 14px;
 }
-.np-art    { width: 42px; height: 42px; border-radius: 10px; font-size: 18px; }
+.np-art    { width: 42px; height: 42px; border-radius: 10px; font-size: 20.5px; }
 .np-mini   { min-width: 160px; }
-.np-title  { font-size: 13px; }
-.np-sub    { font-size: 10px; }
-.np-ai .np-ai-text { font-size: 11px; }
-.btn-play  { width: 46px; height: 46px; font-size: 17px; }
-.ctrl-btn  { width: 36px; height: 36px; font-size: 14px; }
+.np-title  { font-size: 15px; }
+.np-sub    { font-size: 11.5px; }
+.np-ai .np-ai-text { font-size: 12.5px; }
+.btn-play  { width: 46px; height: 46px; font-size: 19.5px; }
+.ctrl-btn  { width: 36px; height: 36px; font-size: 16px; }
 .wave-container { height: 42px; }
 
 /* Cards & panels */
 .info-grid { gap: 8px; margin-bottom: 8px; }
 .info-card { padding: 10px 12px; border-radius: 14px; }
-.info-card h3 { font-size: 12px; margin-bottom: 3px; }
-.info-card p  { font-size: 11px; line-height: 1.5; }
+.info-card h3 { font-size: 14px; margin-bottom: 3px; }
+.info-card p  { font-size: 12.5px; line-height: 1.5; }
 .panels    { gap: 12px; }
 .panel     { padding: 18px 16px; border-radius: 18px; }
-.panel-title { font-size: 15px; margin-bottom: 12px; }
+.panel-title { font-size: 17px; margin-bottom: 12px; }
 .prayer-grid  { gap: 8px; }
 .prayer-item  { padding: 14px 6px; border-radius: 14px; }
-.prayer-item .p-icon { font-size: 20px; margin-bottom: 6px; }
-.prayer-item .p-name { font-size: 12px; }
-.prayer-item .p-time { font-size: 15px; }
+.prayer-item .p-icon { font-size: 23px; margin-bottom: 6px; }
+.prayer-item .p-name { font-size: 14px; }
+.prayer-item .p-time { font-size: 17px; }
 .weather-icon { width: 68px; height: 68px; }
-.weather-temp { font-size: 34px; }
-.weather-desc { font-size: 13px; }
+.weather-temp { font-size: 39px; }
+.weather-desc { font-size: 15px; }
 .weather-main { gap: 14px; margin-bottom: 16px; }
 .weather-left { gap: 14px; }
 .weather-right { padding-inline-start: 16px; gap: 8px; }
-.weather-advice { font-size: 12px; max-width: 22ch; }
-.weather-city { font-size: 12px; padding: 5px 12px; }
+.weather-advice { font-size: 14px; max-width: 22ch; }
+.weather-city { font-size: 14px; padding: 5px 12px; }
 .forecast-item { padding: 12px 6px; border-radius: 14px; }
 .forecast-item .f-icon { width: 32px; height: 32px; }
-.forecast-item .f-temp { font-size: 14px; }
-footer { margin-top: 10px; font-size: 11px; }
+.forecast-item .f-temp { font-size: 16px; }
+footer { margin-top: 10px; font-size: 12.5px; }
 
 /* ── MOBILE ≤ 880px ── */
 @media (max-width: 880px) {
@@ -1263,7 +1359,7 @@ footer { margin-top: 10px; font-size: 11px; }
   }
   /* Hero: row on tablet, compact */
   .hero        { flex-direction: row; text-align: left; padding: 10px 12px; gap: 10px; }
-  .hero-text h1 { font-size: 20px; }
+  .hero-text h1 { font-size: 23px; }
 
   /* Mobile bottom navigation bar */
   .mobile-nav {
@@ -1277,11 +1373,11 @@ footer { margin-top: 10px; font-size: 11px; }
   }
   .mobile-nav .nav-item {
     flex: 1; flex-direction: column; gap: 2px;
-    padding: 5px 4px; font-size: 10px;
+    padding: 5px 4px; font-size: 11.5px;
     border-radius: 0; border: none; background: none;
     max-width: 130px; text-align: center; justify-content: center;
   }
-  .mobile-nav .nav-item .ic    { font-size: 22px; }
+  .mobile-nav .nav-item .ic    { font-size: 25.5px; }
   .mobile-nav .nav-item.active { color: var(--gold); background: none; }
   .mobile-footer { display: block; }
 }
@@ -1332,18 +1428,17 @@ footer { margin-top: 10px; font-size: 11px; }
   background:linear-gradient(135deg,var(--occ-2,var(--card)),var(--occ-1,var(--surface)));
   border:1px solid var(--occ-glow,var(--border)); border-radius:999px;
   padding:9px 16px; box-shadow:0 8px 26px rgba(0,0,0,.35), 0 0 0 1px var(--occ-glow,transparent);
-  font-size:13.5px; font-weight:600; color:var(--text);
+  font-size:15.5px; font-weight:600; color:var(--text);
   opacity:0; transition:transform .7s cubic-bezier(.22,1,.36,1), opacity .7s ease;
   max-width:92vw; pointer-events:none;
 }
 #occBanner.show{opacity:1; transform:translateX(-50%) translateY(0);}
-#occBanner .occ-emoji{font-size:17px;}
+#occBanner .occ-emoji{font-size:19.5px;}
 #occBanner button{
-  background:none;border:none;color:var(--muted);font-size:16px;line-height:1;
+  background:none;border:none;color:var(--muted);font-size:18.5px;line-height:1;
   cursor:pointer;pointer-events:all;padding:2px 4px;margin-inline-start:2px;
 }
 #occBanner button:hover{color:var(--text);}
-body.day-theme #occBanner{box-shadow:0 8px 26px rgba(0,0,0,.12), 0 0 0 1px var(--occ-glow,transparent);}
 
 /* ── Season: Summer ── */
 body.season-summer .occ-sun{
@@ -1353,6 +1448,7 @@ body.season-summer .occ-sun{
 }
 body.season-summer .occ-sun svg{width:100%;height:100%;}
 body.season-summer .occ-sun .occ-ray{animation:sunPulse 3s ease-in-out infinite;transform-origin:50px 50px;}
+@keyframes sunPulse{0%,100%{opacity:.55;}50%{opacity:1;}}
 body.season-summer .occ-waves{
   display:block; left:0; right:0; bottom:0; height:46px;
   background:repeating-linear-gradient(100deg, rgba(126,195,242,.20) 0 40px, transparent 40px 80px);
@@ -1672,7 +1768,7 @@ body.occasion-sham-elnessim .occ-tint{
 }
 
 @media (max-width:480px){
-  #occBanner{font-size:12px; padding:7px 12px;}
+  #occBanner{font-size:14px; padding:7px 12px;}
   body.season-summer .occ-sun{width:80px;height:80px;}
   body.occasion-october6 .occ-medal{width:34px;height:52px;}
   body.occasion-sinai .occ-mountain{width:130px;height:60px;}
@@ -1689,7 +1785,6 @@ body.occasion-sham-elnessim .occ-tint{
 <div class="aurora aurora-1"></div>
 <div class="aurora aurora-2"></div>
 <div class="aurora aurora-3"></div>
-<div id="themeSweep"></div>
 <div class="float-notes-layer" id="floatNotesLayer" aria-hidden="true"></div>
 
 <!-- Occasion & Season Engine: particle canvas + fixed decorations + banner -->
@@ -1761,6 +1856,12 @@ body.occasion-sham-elnessim .occ-tint{
       <button class="nav-item" data-page="about">
         <span class="ic">👤</span><span data-en="About Fairouz" data-ar="عن فيروز">About Fairouz</span>
       </button>
+      <button class="nav-item" data-page="news">
+        <span class="ic">📰</span><span data-en="News" data-ar="الأخبار">News</span>
+      </button>
+      <button class="nav-item" data-page="worldcup">
+        <span class="ic">🏆</span><span data-en="World Cup 2026" data-ar="كأس العالم 2026">World Cup 2026</span>
+      </button>
     </nav>
     <div class="sidebar-decor" id="sidebarNotesLayer" aria-hidden="true"></div>
     <div class="sidebar-footer">
@@ -1788,6 +1889,12 @@ body.occasion-sham-elnessim .occ-tint{
     </button>
     <button class="nav-item" data-page="about">
       <span class="ic">👤</span><span data-en="About" data-ar="عن فيروز">About</span>
+    </button>
+    <button class="nav-item" data-page="news">
+      <span class="ic">📰</span><span data-en="News" data-ar="الأخبار">News</span>
+    </button>
+    <button class="nav-item" data-page="worldcup">
+      <span class="ic">🏆</span><span data-en="World Cup" data-ar="كأس العالم">World Cup</span>
     </button>
   </nav>
 
@@ -1825,19 +1932,6 @@ body.occasion-sham-elnessim .occ-tint{
               <circle cx="55" cy="16" r="1.4" fill="#f3e8e6" class="twinkle-star"/>
               <circle cx="60" cy="28" r="1" fill="#f3e8e6" class="twinkle-star" style="animation-delay:.6s"/>
               <circle cx="50" cy="10" r="1" fill="#f3e8e6" class="twinkle-star" style="animation-delay:1.2s"/>
-            </svg>
-            <svg class="sun-icon" width="70" height="70" viewBox="0 0 70 70" fill="none">
-              <circle cx="35" cy="35" r="13" fill="#f0a83a"/>
-              <g stroke="#f0a83a" stroke-width="3.2" stroke-linecap="round">
-                <line class="sun-ray" x1="35" y1="4"  x2="35" y2="13"/>
-                <line class="sun-ray" x1="35" y1="57" x2="35" y2="66" style="animation-delay:.3s"/>
-                <line class="sun-ray" x1="4"  y1="35" x2="13" y2="35" style="animation-delay:.6s"/>
-                <line class="sun-ray" x1="57" y1="35" x2="66" y2="35" style="animation-delay:.9s"/>
-                <line class="sun-ray" x1="12" y1="12" x2="18" y2="18" style="animation-delay:1.2s"/>
-                <line class="sun-ray" x1="52" y1="52" x2="58" y2="58" style="animation-delay:1.5s"/>
-                <line class="sun-ray" x1="12" y1="58" x2="18" y2="52" style="animation-delay:1.8s"/>
-                <line class="sun-ray" x1="52" y1="18" x2="58" y2="12" style="animation-delay:2.1s"/>
-              </g>
             </svg>
           </div>
           <h1 data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</h1>
@@ -1946,6 +2040,84 @@ body.occasion-sham-elnessim .occ-tint{
       </div>
     </div>
 
+    <div id="page-news" class="news-page">
+      <h2 class="news-title" data-en="News" data-ar="الأخبار">News</h2>
+      <p class="news-sub" data-en="Live headlines from the Arab world, the wider region, Iran and Israel — updated around the clock." data-ar="آخر العناوين من العالم العربي والمنطقة، وإيران وإسرائيل — تتحدّث على مدار الساعة.">Live headlines from the Arab world, the wider region, Iran and Israel — updated around the clock.</p>
+
+      <div class="news-toolbar">
+        <span></span>
+        <div style="display:flex;align-items:center;gap:12px;">
+          <span class="news-updated" id="newsUpdated"></span>
+          <button type="button" class="news-refresh-btn" id="newsRefreshBtn" onclick="fetchNews(true)">
+            <span class="ic">🔄</span><span data-en="Refresh" data-ar="تحديث">Refresh</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="newsContainer">
+        <div class="news-grid">
+          <div class="news-skel"></div><div class="news-skel"></div><div class="news-skel"></div>
+          <div class="news-skel"></div><div class="news-skel"></div><div class="news-skel"></div>
+        </div>
+      </div>
+    </div>
+
+    <div id="page-worldcup" class="wc-page">
+      <h2 class="wc-title" data-en="FIFA World Cup 2026" data-ar="كأس العالم FIFA 2026">FIFA World Cup 2026</h2>
+      <p class="wc-sub" data-en="United States · Mexico · Canada — June 11 to July 19, 2026" data-ar="الولايات المتحدة · المكسيك · كندا — من ١١ يونيو إلى ١٩ يوليو ٢٠٢٦">United States · Mexico · Canada — June 11 to July 19, 2026</p>
+
+      <div id="wcNormalContent">
+        <!-- News -->
+        <section class="wc-block">
+          <div class="wc-block-title">📰 <span data-en="Tournament News" data-ar="أخبار البطولة">Tournament News</span></div>
+          <div class="wc-news-grid" id="wcNewsGrid"></div>
+        </section>
+
+        <!-- Fixtures / Results -->
+        <section class="wc-block">
+          <div class="wc-block-title">⚽ <span data-en="Fixtures &amp; Results" data-ar="مواعيد ونتائج المباريات">Fixtures &amp; Results</span></div>
+          <div class="wc-filters" id="wcFilters">
+            <button class="wc-filter-btn active" data-filter="all" data-en="All" data-ar="الكل">All</button>
+            <button class="wc-filter-btn" data-filter="live" data-en="Live" data-ar="مباشر">Live</button>
+            <button class="wc-filter-btn" data-filter="upcoming" data-en="Upcoming" data-ar="القادمة">Upcoming</button>
+            <button class="wc-filter-btn" data-filter="finished" data-en="Results" data-ar="النتائج">Results</button>
+          </div>
+          <div class="wc-fixtures" id="wcFixtures"></div>
+        </section>
+      </div>
+
+      <!-- Champion celebration (shown only for 3 days after the final) -->
+      <div id="wcChampionSection" class="wc-champion" style="display:none;">
+        <canvas id="wcFireworksCanvas" class="wc-fireworks-canvas"></canvas>
+        <div class="wc-champion-inner">
+          <div class="wc-trophy-wrap">
+            <svg viewBox="0 0 100 120" class="wc-trophy-svg">
+              <defs>
+                <linearGradient id="wcTrophyGold" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stop-color="#fff3cf"/>
+                  <stop offset="45%" stop-color="#e8c169"/>
+                  <stop offset="100%" stop-color="#a9781f"/>
+                </linearGradient>
+              </defs>
+              <path d="M30 8 H70 V28 C70 42 60 50 50 50 C40 50 30 42 30 28 Z" fill="url(#wcTrophyGold)"/>
+              <path d="M30 12 C16 12 10 20 12 30 C14 40 24 44 30 40" fill="none" stroke="url(#wcTrophyGold)" stroke-width="4" stroke-linecap="round"/>
+              <path d="M70 12 C84 12 90 20 88 30 C86 40 76 44 70 40" fill="none" stroke="url(#wcTrophyGold)" stroke-width="4" stroke-linecap="round"/>
+              <rect x="46" y="50" width="8" height="22" fill="url(#wcTrophyGold)"/>
+              <path d="M32 72 H68 L64 84 H36 Z" fill="url(#wcTrophyGold)"/>
+              <rect x="26" y="84" width="48" height="10" rx="3" fill="url(#wcTrophyGold)"/>
+              <rect x="20" y="94" width="60" height="10" rx="4" fill="url(#wcTrophyGold)"/>
+              <circle class="wc-trophy-star" cx="50" cy="26" r="6" fill="#fff8e6"/>
+            </svg>
+          </div>
+          <div class="wc-champion-flag-wrap">
+            <img id="wcChampionFlag" class="wc-champion-flag" src="" alt="">
+          </div>
+          <div class="wc-champion-title" id="wcChampionTitle"></div>
+          <div class="wc-champion-sub" data-en="FIFA World Cup 2026 Champions" data-ar="أبطال كأس العالم FIFA 2026">FIFA World Cup 2026 Champions</div>
+        </div>
+      </div>
+    </div>
+
     <div class="mobile-footer">
       <div data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
       <div data-en="Developed by Aly Alaa" data-ar="تم تطويره من خلال Aly Alaa" style="margin-top:2px;">Developed by Aly Alaa</div>
@@ -2002,6 +2174,12 @@ function applyLang() {
   updateClock(); renderPrayers();
   if (currentAthanName) updateAthanBanner(currentAthanName);
   if (typeof refreshWeatherLang === 'function') refreshWeatherLang();
+  if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && document.getElementById('page-worldcup').style.display !== 'none') {
+    const wcState = wcLifecyclePhase(new Date());
+    if (wcState.phase === 'champion') { wcRenderChampion(wcState.final); }
+    else if (wcState.phase === 'ongoing') { wcRenderNews(); wcRenderFixtures(); }
+  }
+  if (typeof renderNewsList === 'function' && newsItemsCache.length) { renderNewsList(); }
 }
 
 // ── Navigation ──
@@ -2012,9 +2190,227 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     const page = btn.dataset.page;
     document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
     document.getElementById('page-about').style.display = page === 'about' ? 'block' : 'none';
+    document.getElementById('page-news').style.display = page === 'news' ? 'block' : 'none';
+    document.getElementById('page-worldcup').style.display = page === 'worldcup' ? 'block' : 'none';
     if (page === 'about') revealAboutPage();
+    if (page === 'news') fetchNews(false);
+    if (page === 'worldcup') initWorldCupPage();
   });
 });
+
+// ── News: live headlines from Sky News Arabia & Al Arabiya ──
+const NEWS_FEEDS = [
+  { name: 'Sky News Arabia', nameAr: 'سكاي نيوز عربية', icon: '📡', url: 'https://www.skynewsarabia.com/rss.xml' },
+  { name: 'Sky News Arabia', nameAr: 'سكاي نيوز عربية', icon: '📡', url: 'https://www.skynewsarabia.com/web/rss/middle-east.xml' },
+  { name: 'Al Arabiya', nameAr: 'العربية', icon: '📰', url: 'https://www.alarabiya.net/feed/rss2/ar.xml' },
+  { name: 'Al Arabiya', nameAr: 'العربية', icon: '📰', url: 'https://www.alarabiya.net/feed/rss2/ar/arab-and-world.xml' }
+];
+const NEWS_CACHE_KEY = 'fairouzNewsCacheV1';
+const NEWS_MAX_AGE_MS = 15 * 60 * 1000; // refresh feeds every 15 min at most
+let newsItemsCache = [];
+let newsLastFetchTs = 0;
+let newsAutoTimer = null;
+
+function newsFetchWithTimeout(url, ms) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), ms);
+  return fetch(url, { cache: 'no-store', signal: controller.signal }).finally(() => clearTimeout(timer));
+}
+
+function newsStripHtml(str) {
+  if (!str) return '';
+  const tmp = document.createElement('div');
+  tmp.innerHTML = str;
+  return (tmp.textContent || tmp.innerText || '').replace(/\s+/g, ' ').trim();
+}
+
+// Strategy 1: rss2json.com — purpose-built RSS→JSON proxy with CORS enabled, no key needed for light use
+async function newsFetchViaRss2Json(feed) {
+  const url = 'https://api.rss2json.com/v1/api.json?count=20&rss_url=' + encodeURIComponent(feed.url);
+  const res = await newsFetchWithTimeout(url, 9000);
+  if (!res.ok) throw new Error('rss2json http ' + res.status);
+  const data = await res.json();
+  if (data.status !== 'ok' || !Array.isArray(data.items)) throw new Error('rss2json bad payload');
+  return data.items.map(it => {
+    const date = it.pubDate ? new Date(it.pubDate.replace(' ', 'T') + 'Z') : new Date();
+    return {
+      title: newsStripHtml(it.title || ''),
+      link: it.link || '',
+      desc: newsStripHtml(it.description || '').slice(0, 160),
+      date: isNaN(date.getTime()) ? new Date() : date,
+      source: feed,
+      sourceUrl: feed.url
+    };
+  }).filter(it => it.title && it.link);
+}
+
+// Strategy 2/3: generic CORS proxies that hand back raw XML, which we parse ourselves
+function newsCorsUrl(target, mode) {
+  const enc = encodeURIComponent(target);
+  return mode === 0
+    ? 'https://api.allorigins.win/raw?url=' + enc
+    : 'https://corsproxy.io/?url=' + enc;
+}
+
+function newsParseFeed(xmlText, source) {
+  const items = [];
+  try {
+    const doc = new DOMParser().parseFromString(xmlText, 'text/xml');
+    if (doc.querySelector('parsererror')) return items;
+    doc.querySelectorAll('item').forEach(el => {
+      const title = newsStripHtml(el.querySelector('title')?.textContent || '');
+      const link = (el.querySelector('link')?.textContent || '').trim();
+      const pubDateRaw = el.querySelector('pubDate')?.textContent || el.getElementsByTagName('pubDate')[0]?.textContent || '';
+      const descRaw = el.querySelector('description')?.textContent || '';
+      const date = pubDateRaw ? new Date(pubDateRaw) : new Date();
+      if (!title || !link) return;
+      items.push({
+        title,
+        link,
+        desc: newsStripHtml(descRaw).slice(0, 160),
+        date: isNaN(date.getTime()) ? new Date() : date,
+        source,
+        sourceUrl: source.url
+      });
+    });
+  } catch (e) { /* ignore malformed feed */ }
+  return items;
+}
+
+async function newsFetchViaXmlProxy(feed, mode) {
+  const res = await newsFetchWithTimeout(newsCorsUrl(feed.url, mode), 9000);
+  if (!res.ok) throw new Error('proxy http ' + res.status);
+  const text = await res.text();
+  if (!text || text.length < 50) throw new Error('proxy empty response');
+  const items = newsParseFeed(text, feed);
+  if (!items.length) throw new Error('proxy parsed 0 items');
+  return items;
+}
+
+async function newsFetchViaDirect(feed) {
+  const res = await newsFetchWithTimeout(feed.url, 6000);
+  if (!res.ok) throw new Error('direct http ' + res.status);
+  const text = await res.text();
+  if (!text || text.length < 50) throw new Error('direct empty response');
+  const items = newsParseFeed(text, feed);
+  if (!items.length) throw new Error('direct parsed 0 items');
+  return items;
+}
+
+// Try every strategy for one feed until one works; a failing feed never blocks the others
+async function newsFetchFeedItems(feed) {
+  const strategies = [
+    () => newsFetchViaDirect(feed),
+    () => newsFetchViaRss2Json(feed),
+    () => newsFetchViaXmlProxy(feed, 0),
+    () => newsFetchViaXmlProxy(feed, 1)
+  ];
+  for (const run of strategies) {
+    try {
+      const items = await run();
+      if (items && items.length) return items;
+    } catch (e) { /* try next strategy */ }
+  }
+  return [];
+}
+
+function newsRelativeTime(date, lang) {
+  const diffSec = Math.round((date.getTime() - Date.now()) / 1000);
+  const rtf = new Intl.RelativeTimeFormat(lang === 'ar' ? 'ar' : 'en', { numeric: 'auto' });
+  const abs = Math.abs(diffSec);
+  if (abs < 60) return rtf.format(Math.round(diffSec), 'second');
+  if (abs < 3600) return rtf.format(Math.round(diffSec / 60), 'minute');
+  if (abs < 86400) return rtf.format(Math.round(diffSec / 3600), 'hour');
+  return rtf.format(Math.round(diffSec / 86400), 'day');
+}
+
+function renderNewsList() {
+  const container = document.getElementById('newsContainer');
+  if (!container) return;
+  const lang = currentLang;
+  if (!newsItemsCache.length) {
+    container.innerHTML = '<div class="news-status"><span class="ic">📭</span>' +
+      (lang === 'ar'
+        ? 'تعذّر تحميل الأخبار حاليًا. تفضّل بزيارة سكاي نيوز عربية أو العربية مباشرة.'
+        : "Couldn't load news right now. Visit Sky News Arabia or Al Arabiya directly.") +
+      '<br><br><a href="https://www.skynewsarabia.com" target="_blank" rel="noopener" style="color:var(--gold2);">skynewsarabia.com</a> · ' +
+      '<a href="https://www.alarabiya.net" target="_blank" rel="noopener" style="color:var(--gold2);">alarabiya.net</a>' +
+      '<br><br><button type="button" class="news-refresh-btn" onclick="fetchNews(true)"><span class="ic">🔄</span>' +
+      (lang === 'ar' ? 'إعادة المحاولة' : 'Try again') + '</button></div>';
+    return;
+  }
+  const html = newsItemsCache.slice(0, 24).map(item => {
+    const sourceName = lang === 'ar' ? item.source.nameAr : item.source.name;
+    return '<a class="news-card" href="' + item.link + '" target="_blank" rel="noopener">' +
+      '<div class="news-card-top">' +
+        '<span class="news-source-tag">' + item.source.icon + ' ' + sourceName + '</span>' +
+        '<span class="news-time">' + newsRelativeTime(item.date, lang) + '</span>' +
+      '</div>' +
+      '<div class="news-card-title">' + item.title + '</div>' +
+      (item.desc ? '<div class="news-card-desc">' + item.desc + '</div>' : '') +
+      '<span class="news-card-link">' + (lang === 'ar' ? 'اقرأ المزيد ←' : 'Read more →') + '</span>' +
+    '</a>';
+  }).join('');
+  container.innerHTML = '<div class="news-grid">' + html + '</div>';
+  const updatedEl = document.getElementById('newsUpdated');
+  if (updatedEl) {
+    updatedEl.textContent = (lang === 'ar' ? 'آخر تحديث: ' : 'Updated: ') + newsRelativeTime(new Date(newsLastFetchTs), lang);
+  }
+}
+
+async function fetchNews(force) {
+  const now = Date.now();
+  if (!force && newsItemsCache.length && (now - newsLastFetchTs) < NEWS_MAX_AGE_MS) {
+    renderNewsList();
+    return;
+  }
+  if (!force && !newsItemsCache.length) {
+    try {
+      const cached = JSON.parse(sessionStorage.getItem(NEWS_CACHE_KEY) || 'null');
+      if (cached && (now - cached.ts) < NEWS_MAX_AGE_MS) {
+        newsItemsCache = cached.items.map(i => ({ ...i, date: new Date(i.date), source: NEWS_FEEDS.find(f => f.url === i.sourceUrl) || NEWS_FEEDS[0] }));
+        newsLastFetchTs = cached.ts;
+        renderNewsList();
+        return;
+      }
+    } catch (e) { /* ignore bad cache */ }
+  }
+
+  const btn = document.getElementById('newsRefreshBtn');
+  if (btn) btn.classList.add('spinning');
+
+  const results = await Promise.all(NEWS_FEEDS.map(feed => newsFetchFeedItems(feed)));
+
+  let merged = [].concat(...results);
+  // de-duplicate by link
+  const seen = new Set();
+  merged = merged.filter(it => { if (seen.has(it.link)) return false; seen.add(it.link); return true; });
+  merged.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  if (merged.length) {
+    newsItemsCache = merged;
+    newsLastFetchTs = Date.now();
+    try {
+      sessionStorage.setItem(NEWS_CACHE_KEY, JSON.stringify({
+        ts: newsLastFetchTs,
+        items: merged.slice(0, 40).map(i => ({ title: i.title, link: i.link, desc: i.desc, date: i.date.toISOString(), sourceUrl: i.sourceUrl }))
+      }));
+    } catch (e) { /* storage may be full/unavailable */ }
+  } else if (!newsItemsCache.length) {
+    newsLastFetchTs = Date.now();
+  }
+
+  if (btn) btn.classList.remove('spinning');
+  renderNewsList();
+}
+
+// Keep headlines fresh while the News page is open
+if (!newsAutoTimer) {
+  newsAutoTimer = setInterval(() => {
+    const pageEl = document.getElementById('page-news');
+    if (pageEl && pageEl.style.display !== 'none') fetchNews(false);
+  }, NEWS_MAX_AGE_MS);
+}
 
 // ── About page: portrait reveal + tilt ──
 function revealAboutPage(){
@@ -2039,6 +2435,315 @@ function revealAboutPage(){
   });
   outer.addEventListener('mouseleave', ()=>{ inner.style.transform = 'rotateY(0) rotateX(0)'; });
 })();
+
+// ── World Cup 2026 ──
+const WC_TEAMS = {
+  GER:{en:'Germany',ar:'ألمانيا',iso:'de'}, PAR:{en:'Paraguay',ar:'باراغواي',iso:'py'},
+  NED:{en:'Netherlands',ar:'هولندا',iso:'nl'}, MAR:{en:'Morocco',ar:'المغرب',iso:'ma'},
+  CIV:{en:'Ivory Coast',ar:'ساحل العاج',iso:'ci'}, NOR:{en:'Norway',ar:'النرويج',iso:'no'},
+  FRA:{en:'France',ar:'فرنسا',iso:'fr'}, SWE:{en:'Sweden',ar:'السويد',iso:'se'},
+  MEX:{en:'Mexico',ar:'المكسيك',iso:'mx'}, ECU:{en:'Ecuador',ar:'الإكوادور',iso:'ec'},
+  ENG:{en:'England',ar:'إنجلترا',iso:'gb-eng'}, COD:{en:'Congo DR',ar:'الكونغو الديمقراطية',iso:'cd'},
+  BEL:{en:'Belgium',ar:'بلجيكا',iso:'be'}, SEN:{en:'Senegal',ar:'السنغال',iso:'sn'},
+  USA:{en:'USA',ar:'الولايات المتحدة',iso:'us'}, BIH:{en:'Bosnia & Herzegovina',ar:'البوسنة والهرسك',iso:'ba'},
+  ESP:{en:'Spain',ar:'إسبانيا',iso:'es'}, AUT:{en:'Austria',ar:'النمسا',iso:'at'},
+  POR:{en:'Portugal',ar:'البرتغال',iso:'pt'}, CRO:{en:'Croatia',ar:'كرواتيا',iso:'hr'},
+  SUI:{en:'Switzerland',ar:'سويسرا',iso:'ch'}, DZA:{en:'Algeria',ar:'الجزائر',iso:'dz'},
+  AUS:{en:'Australia',ar:'أستراليا',iso:'au'}, EGY:{en:'Egypt',ar:'مصر',iso:'eg'},
+  ARG:{en:'Argentina',ar:'الأرجنتين',iso:'ar'}, CPV:{en:'Cape Verde',ar:'الرأس الأخضر',iso:'cv'},
+  COL:{en:'Colombia',ar:'كولومبيا',iso:'co'}, GHA:{en:'Ghana',ar:'غانا',iso:'gh'},
+  CAN:{en:'Canada',ar:'كندا',iso:'ca'}, BRA:{en:'Brazil',ar:'البرازيل',iso:'br'},
+  W83:{en:'TBD',ar:'يُحدد لاحقًا',iso:null}
+};
+// beIN SPORTS holds exclusive MENA rights; select matches (marked free) also air on the free "beIN SPORTS" open channel.
+const WC_MATCHES = [
+  {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},note:{en:'GER won on penalties',ar:'ألمانيا فازت بركلات الترجيح'},free:false},
+  {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},note:{en:'MAR won on penalties',ar:'المغرب فاز بركلات الترجيح'},free:false},
+  {id:'53452561',stage:{en:'Round of 32',ar:'دور الـ32'},home:'CIV',away:'NOR',kickoff:'2026-06-30T17:00:00Z',status:'final',score:{home:1,away:2},free:false},
+  {id:'53452543',stage:{en:'Round of 32',ar:'دور الـ32'},home:'FRA',away:'SWE',kickoff:'2026-06-30T21:00:00Z',status:'final',score:{home:3,away:0},free:false},
+  {id:'53452563',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ECU',kickoff:'2026-07-01T02:00:00Z',status:'final',score:{home:2,away:0},free:true},
+  {id:'53452565',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ENG',away:'COD',kickoff:'2026-07-01T16:00:00Z',status:'final',score:{home:2,away:1},free:false},
+  {id:'53452555',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BEL',away:'SEN',kickoff:'2026-07-01T20:00:00Z',status:'final',score:{home:3,away:2},free:false},
+  {id:'53452553',stage:{en:'Round of 32',ar:'دور الـ32'},home:'USA',away:'BIH',kickoff:'2026-07-02T00:00:00Z',status:'final',score:{home:2,away:0},free:true},
+  {id:'53452551',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ESP',away:'AUT',kickoff:'2026-07-02T19:00:00Z',status:'final',score:{home:3,away:0},free:false},
+  {id:'53452549',stage:{en:'Round of 32',ar:'دور الـ32'},home:'POR',away:'CRO',kickoff:'2026-07-02T23:00:00Z',status:'final',score:{home:2,away:1},free:false},
+  {id:'53452505',stage:{en:'Round of 32',ar:'دور الـ32'},home:'SUI',away:'DZA',kickoff:'2026-07-03T03:00:00Z',status:'scheduled',free:true},
+  {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'scheduled',free:true},
+  {id:'53452569',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ARG',away:'CPV',kickoff:'2026-07-03T22:00:00Z',status:'scheduled',free:false},
+  {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'scheduled',free:false},
+  {id:'53452511',stage:{en:'Round of 32',ar:'دور الـ32'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'scheduled',free:false},
+  {id:'53452509',stage:{en:'Round of 32',ar:'دور الـ32'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'scheduled',free:false},
+  {id:'53452517',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'scheduled',free:false},
+  {id:'53452519',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'scheduled',free:false},
+  {id:'53452513',stage:{en:'Round of 32',ar:'دور الـ32'},home:'W83',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'scheduled',free:false},
+  {id:'53452515',stage:{en:'Round of 32',ar:'دور الـ32'},home:'USA',away:'BEL',kickoff:'2026-07-07T00:00:00Z',status:'scheduled',free:false},
+  /* Final — update home/away/status/score/winner once the finalists & result are known.
+     Setting status:'final' + winner:'<TEAM_CODE>' triggers the champion celebration screen. */
+  {id:'wcFinal2026',stage:{en:'Final',ar:'النهائي'},home:'W83',away:'W83',kickoff:'2026-07-19T18:00:00Z',status:'scheduled',free:true,winner:null}
+];
+const WC_FINAL_MATCH_ID = 'wcFinal2026';
+const WC_NEWS = [
+  {en:'The Round of 32 is underway across the United States, Mexico and Canada, with the first World Cup to feature 48 teams delivering upsets and penalty-shootout drama.', ar:'دور الـ32 يشتعل حاليًا في ملاعب الولايات المتحدة والمكسيك وكندا، في أول نسخة من كأس العالم بمشاركة 48 منتخبًا تشهد مفاجآت ومباريات حُسمت بركلات الترجيح.'},
+  {en:'Egypt reached the knockout rounds for the first time in its World Cup history and faces Australia in the Round of 32 on July 3.', ar:'منتخب مصر بلغ الأدوار الإقصائية لأول مرة في تاريخه بكأس العالم، ويواجه أستراليا في دور الـ32 يوم 3 يوليو.'},
+  {en:'Argentina, the defending champions, take on Cape Verde looking to continue their title defense after topping their group.', ar:'الأرجنتين، حاملة اللقب، تواجه الرأس الأخضر سعيًا لمواصلة الدفاع عن اللقب بعد تصدرها مجموعتها.'},
+  {en:'The final will be played on July 19, 2026 at MetLife Stadium in New Jersey, capping a tournament spanning three host nations.', ar:'ستُقام المباراة النهائية يوم 19 يوليو 2026 على ملعب ميتلايف في نيوجيرسي، لتختتم بطولة استضافتها ثلاث دول.'},
+  {en:'beIN SPORTS holds exclusive broadcast rights across the Middle East and North Africa, airing every match on its MAX channels, with a select number of matches — including Egypt\'s games — also shown free on the open beIN SPORTS channel.', ar:'تمتلك شبكة beIN SPORTS حقوق البث الحصرية في الشرق الأوسط وشمال إفريقيا، وتنقل جميع المباريات عبر قنوات MAX المشفّرة، مع إذاعة عدد مختار من المباريات — من بينها مباريات مصر — مجانًا عبر القناة المفتوحة.'}
+];
+
+let wcTimerHandle = null;
+let wcCurrentFilter = 'all';
+let wcInitialized = false;
+
+function wcMatchWindow(m){
+  const start = new Date(m.kickoff);
+  const end = new Date(start.getTime() + 130*60000); // ~130 min typical match window
+  return {start,end};
+}
+function wcIsSameLocalDay(a,b){
+  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
+}
+function wcStatusOf(m, now){
+  const {start,end} = wcMatchWindow(m);
+  if(m.status==='final') return 'finished';
+  if(now>=start && now<end) return 'live';
+  if(now<start) return 'upcoming';
+  return 'finished';
+}
+function wcFmtClock(d, lang){
+  return d.toLocaleTimeString(lang==='ar'?'ar-EG':'en-US',{hour:'2-digit',minute:'2-digit'});
+}
+function wcFmtDate(d, lang){
+  return d.toLocaleDateString(lang==='ar'?'ar-EG':'en-US',{weekday:'short',day:'numeric',month:'short'});
+}
+function wcCountdownStr(ms, lang){
+  if(ms<=0) return lang==='ar' ? 'بدأت المباراة' : 'Kicked off';
+  const total = Math.floor(ms/1000);
+  const h = String(Math.floor(total/3600)).padStart(2,'0');
+  const mnt = String(Math.floor((total%3600)/60)).padStart(2,'0');
+  const s = String(total%60).padStart(2,'0');
+  return h+':'+mnt+':'+s;
+}
+
+function wcRenderFixtures(){
+  const wrap = document.getElementById('wcFixtures');
+  if(!wrap) return;
+  const lang = currentLang;
+  const now = new Date();
+  wrap.innerHTML = '';
+  let cardIndex = 0;
+  WC_MATCHES.slice().sort((a,b)=> new Date(a.kickoff) - new Date(b.kickoff)).forEach(m=>{
+    const st = wcStatusOf(m, now);
+    if(wcCurrentFilter!=='all' && wcCurrentFilter!==st) return;
+    const home = WC_TEAMS[m.home], away = WC_TEAMS[m.away];
+    const kickoff = new Date(m.kickoff);
+    const card = document.createElement('div');
+    card.className = 'wc-match-card';
+    card.dataset.matchId = m.id;
+    card.dataset.status = st;
+    card.style.setProperty('--wc-delay', (Math.min(cardIndex,10) * 0.06) + 's');
+    cardIndex++;
+
+    const badge = st==='live' ? '<span class="wc-badge wc-badge-live" data-en="LIVE" data-ar="مباشر">'+(lang==='ar'?'مباشر':'LIVE')+'</span>'
+      : st==='finished' ? '<span class="wc-badge wc-badge-finished">'+(lang==='ar'?'انتهت':'Finished')+'</span>'
+      : '<span class="wc-badge wc-badge-upcoming">'+(lang==='ar'?'قادمة':'Upcoming')+'</span>';
+
+    const scoreOrVs = (st==='finished' || st==='live')
+      ? '<div class="wc-score">'+(m.score? m.score.home+' — '+m.score.away : '—')+'</div>'
+      : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
+
+    const channelText = m.free
+      ? (lang==='ar' ? 'beIN SPORTS المفتوحة + beIN SPORTS MAX' : 'beIN SPORTS (free) + beIN SPORTS MAX')
+      : 'beIN SPORTS MAX';
+
+    let countdownHtml = '';
+    if(st==='upcoming' && wcIsSameLocalDay(now, kickoff)){
+      countdownHtml = '<div class="wc-countdown" data-kickoff="'+m.kickoff+'">⏱ '+wcCountdownStr(kickoff-now, lang)+'</div>';
+    } else if(st==='live'){
+      countdownHtml = '<div class="wc-countdown">🔴 '+(lang==='ar'?'جارية الآن':'In progress')+'</div>';
+    }
+
+    const homeFlag = home.iso ? '<img class="wc-flag-img" src="https://flagcdn.com/40x30/'+home.iso+'.png" alt="'+(lang==='ar'?home.ar:home.en)+'" loading="lazy">' : '<span class="wc-flag-placeholder">?</span>';
+    const awayFlag = away.iso ? '<img class="wc-flag-img" src="https://flagcdn.com/40x30/'+away.iso+'.png" alt="'+(lang==='ar'?away.ar:away.en)+'" loading="lazy">' : '<span class="wc-flag-placeholder">?</span>';
+
+    card.innerHTML =
+      '<div class="wc-match-top"><span class="wc-match-stage">'+(lang==='ar'?m.stage.ar:m.stage.en)+'</span>'+badge+'</div>'+
+      '<div class="wc-match-mid">'+
+        '<div class="wc-team">'+homeFlag+'<span>'+(lang==='ar'?home.ar:home.en)+'</span></div>'+
+        scoreOrVs+
+        '<div class="wc-team right"><span>'+(lang==='ar'?away.ar:away.en)+'</span>'+awayFlag+'</div>'+
+      '</div>'+
+      '<div class="wc-match-bottom">'+
+        '<div class="wc-datetime">📅 '+wcFmtDate(kickoff,lang)+' — '+wcFmtClock(kickoff,lang)+' ('+(lang==='ar'?'بتوقيت القاهرة':'Cairo time')+')</div>'+
+        countdownHtml+
+        '<div class="wc-channel"><span class="ic">📺</span>'+channelText+'</div>'+
+      '</div>';
+    wrap.appendChild(card);
+  });
+  if(!wrap.children.length){
+    wrap.innerHTML = '<div class="wc-datetime" style="padding:12px 0;">'+(lang==='ar'?'لا توجد مباريات في هذا القسم حاليًا.':'No matches in this section right now.')+'</div>';
+  }
+}
+
+function wcRenderNews(){
+  const grid = document.getElementById('wcNewsGrid');
+  if(!grid) return;
+  const lang = currentLang;
+  grid.innerHTML = WC_NEWS.map(n=>
+    '<div class="wc-news-card"><div class="wc-news-tag">🏆 World Cup 2026</div><div class="wc-news-text">'+(lang==='ar'?n.ar:n.en)+'</div></div>'
+  ).join('');
+}
+
+// ── Tournament lifecycle: ongoing → champion celebration (3 days) → page removed entirely ──
+function wcGetFinalMatch(){
+  return WC_MATCHES.find(m=>m.id===WC_FINAL_MATCH_ID);
+}
+function wcLifecyclePhase(now){
+  const final = wcGetFinalMatch();
+  if(!final || final.status!=='final' || !final.winner) return {phase:'ongoing'};
+  const {end} = wcMatchWindow(final);
+  const daysSince = (now - end) / 86400000;
+  if(daysSince < 3) return {phase:'champion', final, daysSince};
+  return {phase:'removed', final, daysSince};
+}
+
+function wcRenderChampion(final){
+  const lang = currentLang;
+  const winner = WC_TEAMS[final.winner];
+  if(!winner) return;
+  const flagEl = document.getElementById('wcChampionFlag');
+  flagEl.src = winner.iso ? 'https://flagcdn.com/160x120/'+winner.iso+'.png' : '';
+  flagEl.alt = lang==='ar' ? winner.ar : winner.en;
+  const name = lang==='ar' ? winner.ar : winner.en;
+  document.getElementById('wcChampionTitle').textContent = lang==='ar'
+    ? ('🎉 مبروك لـ ' + name + ' بطلة كأس العالم 2026 🎉')
+    : ('🎉 Congratulations ' + name + ' — 2026 World Cup Champions 🎉');
+}
+
+function wcApplyLifecycle(){
+  const now = new Date();
+  const {phase, final} = wcLifecyclePhase(now);
+  const navBtns = document.querySelectorAll('.nav-item[data-page="worldcup"]');
+  const pageEl = document.getElementById('page-worldcup');
+  const normalEl = document.getElementById('wcNormalContent');
+  const champEl = document.getElementById('wcChampionSection');
+
+  if(phase==='removed'){
+    // Tournament page is retired 3 days after the final — remove nav entry & page entirely.
+    navBtns.forEach(b=>b.style.display='none');
+    if(pageEl){
+      pageEl.style.display='none';
+      // If the user was on this page, bounce them home.
+      if(pageEl.style.display==='none' && document.querySelector('.nav-item[data-page="worldcup"].active')){
+        document.querySelector('.nav-item[data-page="home"]').click();
+      }
+    }
+    wcStopFireworks();
+    return false;
+  }
+
+  navBtns.forEach(b=>b.style.display='');
+  if(phase==='champion'){
+    if(normalEl) normalEl.style.display='none';
+    if(champEl) champEl.style.display='flex';
+    wcRenderChampion(final);
+    wcStartFireworks();
+  } else {
+    if(normalEl) normalEl.style.display='';
+    if(champEl) champEl.style.display='none';
+    wcStopFireworks();
+  }
+  return true;
+}
+
+// ── Fireworks canvas (runs only while the champion screen is visible) ──
+let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwResizeHandler=null;
+function wcSpawnBurst(cw,ch){
+  const cx = cw*(0.2+Math.random()*0.6), cy = ch*(0.2+Math.random()*0.45);
+  const colors = ['#f4d06f','#e08aa6','#8b5cf6','#f3e8f6','#6ee7b7','#f97362'];
+  const color = colors[Math.floor(Math.random()*colors.length)];
+  const count = 26 + Math.floor(Math.random()*14);
+  for(let i=0;i<count;i++){
+    const angle = (Math.PI*2*i)/count + Math.random()*0.2;
+    const speed = 1.4 + Math.random()*2.4;
+    wcFwParticles.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,color,size:1.6+Math.random()*1.6});
+  }
+}
+function wcFwLoop(){
+  if(!wcFwCtx) return;
+  const canvas = wcFwCtx.canvas;
+  wcFwCtx.clearRect(0,0,canvas.width,canvas.height);
+  if(Math.random()<0.045) wcSpawnBurst(canvas.width, canvas.height);
+  wcFwParticles.forEach(p=>{
+    p.vy += 0.035; p.x += p.vx; p.y += p.vy; p.life -= 0.014;
+    wcFwCtx.globalAlpha = Math.max(p.life,0);
+    wcFwCtx.fillStyle = p.color;
+    wcFwCtx.beginPath();
+    wcFwCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
+    wcFwCtx.fill();
+  });
+  wcFwCtx.globalAlpha = 1;
+  wcFwParticles = wcFwParticles.filter(p=>p.life>0);
+  wcFwRAF = requestAnimationFrame(wcFwLoop);
+}
+function wcStartFireworks(){
+  const canvas = document.getElementById('wcFireworksCanvas');
+  if(!canvas || wcFwRAF) return;
+  const resize = ()=>{ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; };
+  resize();
+  wcFwResizeHandler = resize;
+  window.addEventListener('resize', wcFwResizeHandler);
+  wcFwCtx = canvas.getContext('2d');
+  wcFwParticles = [];
+  wcFwRAF = requestAnimationFrame(wcFwLoop);
+}
+function wcStopFireworks(){
+  if(wcFwRAF){ cancelAnimationFrame(wcFwRAF); wcFwRAF=null; }
+  if(wcFwResizeHandler){ window.removeEventListener('resize', wcFwResizeHandler); wcFwResizeHandler=null; }
+  wcFwCtx=null; wcFwParticles=[];
+}
+
+function wcTick(){
+  const now = new Date();
+  document.querySelectorAll('.wc-countdown[data-kickoff]').forEach(el=>{
+    const kickoff = new Date(el.dataset.kickoff);
+    const diff = kickoff - now;
+    if(!wcIsSameLocalDay(now, kickoff) || diff<=0){
+      wcRenderFixtures(); // day rolled over or match started — re-render statuses/badges
+      return;
+    }
+    el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
+  });
+}
+
+function initWorldCupPage(){
+  const stillActive = wcApplyLifecycle();
+  if(!stillActive) return; // page was retired — nothing more to render
+  const phase = wcLifecyclePhase(new Date()).phase;
+  if(phase==='champion'){
+    if(wcTimerHandle){ clearInterval(wcTimerHandle); wcTimerHandle=null; }
+    return; // champion screen has its own animation loop, no fixtures to render
+  }
+  wcRenderNews();
+  wcRenderFixtures();
+  if(!wcInitialized){
+    document.getElementById('wcFilters').addEventListener('click', e=>{
+      const btn = e.target.closest('.wc-filter-btn');
+      if(!btn) return;
+      document.querySelectorAll('.wc-filter-btn').forEach(b=>b.classList.remove('active'));
+      btn.classList.add('active');
+      wcCurrentFilter = btn.dataset.filter;
+      wcRenderFixtures();
+    });
+    wcInitialized = true;
+  }
+  if(wcTimerHandle) clearInterval(wcTimerHandle);
+  wcTimerHandle = setInterval(wcTick, 1000);
+}
+
+// Check lifecycle on load (so the nav item is already hidden/updated before the user clicks it)
+// and re-check hourly in case the final result gets filled in, or 3 days pass, while the tab stays open.
+window.addEventListener('load', wcApplyLifecycle);
+setInterval(wcApplyLifecycle, 60*60*1000);
 
 // ── Clock ──
 function updateClock() {
@@ -2649,9 +3354,6 @@ if (cityLabel) cityLabel.textContent = locationName;
     lastWeatherData=wData;
     renderWeatherText(cur, wData, locationName, lastWeatherFlag);
     renderWeatherFx(cur.weather_code, cur.temperature_2m, cur.is_day);
-    if(wData.daily?.sunrise?.[0] && wData.daily?.sunset?.[0]){
-      setupDayNightCycle(new Date(wData.daily.sunrise[0]), new Date(wData.daily.sunset[0]));
-    }
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
     saveWeatherCache(lat, lon, locationName, wData, lastWeatherFlag);
@@ -2717,75 +3419,6 @@ setInterval(() => {
     fetchWeather(lastWeatherCoords.lat, lastWeatherCoords.lon);
   }
 }, 60 * 60 * 1000);
-
-// ── Day / Night auto-theme — follows real sunrise & sunset at the listener's location ──
-let dnSunrise=null, dnSunset=null, dnIsDay=null, dnRetimer=null;
-let dnManualOverride=null; // null = auto (follow sunrise/sunset), true = forced day, false = forced night
-function dnComputeIsDay(now){
-  if(!dnSunrise || !dnSunset) return null;
-  return now>=dnSunrise && now<dnSunset;
-}
-function dnPlaySweep(toDay){
-  const el=document.getElementById('themeSweep');
-  if(!el) return;
-  el.classList.remove('sweep-day','sweep-night');
-  void el.offsetWidth; // restart animation
-  el.classList.add(toDay?'sweep-day':'sweep-night');
-}
-function updateThemeToggleUI(isDay){
-  const icon=document.getElementById('themeIcon');
-  const name=document.getElementById('themeName');
-  if(!icon||!name) return;
-  icon.textContent = isDay ? '🌙' : '☀️';
-  name.dataset.en = isDay ? 'Dark Mode' : 'Light Mode';
-  name.dataset.ar = isDay ? 'الوضع الداكن' : 'الوضع الفاتح';
-  name.textContent = currentLang==='ar' ? name.dataset.ar : name.dataset.en;
-}
-function toggleManualTheme(){
-  const isDay = document.body.classList.contains('day-theme');
-  const goingDay = !isDay;
-  dnManualOverride = goingDay;
-  dnPlaySweep(goingDay);
-  document.body.classList.toggle('day-theme', goingDay);
-  updateThemeToggleUI(goingDay);
-}
-function dnApply(now, animate){
-  if(dnManualOverride!==null) return; // user took manual control, don't auto-switch
-  const isDay = dnComputeIsDay(now);
-  if(isDay===null) return;
-  if(dnIsDay===null){
-    document.body.classList.toggle('day-theme', isDay);
-  } else if(isDay!==dnIsDay){
-    if(animate) dnPlaySweep(isDay);
-    document.body.classList.toggle('day-theme', isDay);
-  }
-  dnIsDay=isDay;
-  updateThemeToggleUI(isDay);
-}
-function dnScheduleNextFlip(){
-  if(dnRetimer) clearTimeout(dnRetimer);
-  const now=new Date();
-  // figure out the next boundary (today's sunrise, today's sunset, or tomorrow's sunrise as a fallback)
-  let next = now < dnSunrise ? dnSunrise : (now < dnSunset ? dnSunset : null);
-  if(!next){
-    // after sunset: assume next sunrise is ~ same time tomorrow as a gentle approximation
-    next = new Date(dnSunrise.getTime() + 24*60*60*1000);
-  }
-  const ms = Math.max(1000, next.getTime() - now.getTime());
-  dnRetimer = setTimeout(()=>{ dnApply(new Date(), true); dnScheduleNextFlip(); }, Math.min(ms, 2147483000));
-}
-function setupDayNightCycle(sunrise, sunset){
-
-  // خليه يفتح Dark Mode دائمًا
-  dnSunrise = sunrise;
-  dnSunset = sunset;
-
-  dnManualOverride = false;
-
-  document.body.classList.remove('day-theme');
-
-  updateThemeToggleUI(false);
-}
 
 
 // ── Starfield ──
