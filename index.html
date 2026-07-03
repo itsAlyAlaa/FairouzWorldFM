@@ -147,6 +147,10 @@ body.lang-ar .nav-item{text-align:right;font-family:'Cairo',sans-serif;}
 .nav-item:hover{background:rgba(217,184,136,.08);color:var(--text);}
 .nav-item.active{background:linear-gradient(135deg,rgba(217,184,136,.15),rgba(110,38,64,.2));color:var(--gold);border-color:rgba(217,184,136,.22);}
 .nav-item .ic{font-size:19.5px;}
+.nav-item .ic svg{width:20px;height:20px;display:block;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;transition:stroke .2s ease,filter .3s ease;}
+.nav-item .ic svg .ic-fill{fill:currentColor;stroke:none;}
+.nav-item:hover .ic svg{filter:drop-shadow(0 0 3px var(--glow-g));}
+.nav-item.active .ic svg{filter:drop-shadow(0 0 5px var(--glow-g));}
 
 /* Lang toggle */
 .lang-toggle{
@@ -976,10 +980,6 @@ body.lang-ar .wc-title{font-family:'Cairo',sans-serif;}
 .wc-block-title{font-family:'Cinzel',serif;font-size:20.5px;color:var(--gold);margin-bottom:16px;display:flex;align-items:center;gap:8px;}
 body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
 
-.wc-news-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;}
-.wc-news-card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:16px;}
-.wc-news-card .wc-news-tag{font-size:12.5px;color:var(--gold2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px;font-weight:700;}
-.wc-news-card .wc-news-text{font-size:15.5px;line-height:1.8;color:var(--text);opacity:.92;}
 
 .wc-filters{display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;}
 .wc-filter-btn{background:transparent;border:1px solid var(--border);color:var(--muted);font-size:14.5px;padding:7px 14px;border-radius:100px;cursor:pointer;font-family:inherit;transition:background .2s,color .2s,border-color .2s;}
@@ -1074,7 +1074,6 @@ body.lang-ar .wc-champion-title{font-family:'Cairo',sans-serif;}
 }
 
 @media(max-width:640px){
-  .wc-news-grid{grid-template-columns:1fr;}
   .wc-fixtures{grid-template-columns:1fr;}
   .wc-match-mid{flex-wrap:wrap;}
   .wc-team{font-size:15px;}
@@ -1378,6 +1377,7 @@ footer { margin-top: 10px; font-size: 12.5px; }
     max-width: 130px; text-align: center; justify-content: center;
   }
   .mobile-nav .nav-item .ic    { font-size: 25.5px; }
+  .mobile-nav .nav-item .ic svg{ width:24px; height:24px; }
   .mobile-nav .nav-item.active { color: var(--gold); background: none; }
   .mobile-footer { display: block; }
 }
@@ -1851,16 +1851,16 @@ body.occasion-sham-elnessim .occ-tint{
     </div>
     <nav class="nav">
       <button class="nav-item active" data-page="home">
-        <span class="ic">🏠</span><span data-en="Home" data-ar="الرئيسية">Home</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.2 10v8.3a1.2 1.2 0 0 0 1.2 1.2h3.1v-5.6h3v5.6h3.1a1.2 1.2 0 0 0 1.2-1.2V10"/><path d="M14.6 6.6c1.6-1 3.6.1 3.7 2v1.1" stroke-dasharray="1.5 2"/></svg></span><span data-en="Home" data-ar="الرئيسية">Home</span>
       </button>
       <button class="nav-item" data-page="about">
-        <span class="ic">👤</span><span data-en="About Fairouz" data-ar="عن فيروز">About Fairouz</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><rect x="9.3" y="2.3" width="5.4" height="10.4" rx="2.7"/><path d="M5.3 11v1a6.7 6.7 0 0 0 13.4 0v-1"/><line x1="12" y1="19.3" x2="12" y2="22"/><line x1="8.7" y1="22" x2="15.3" y2="22"/></svg></span><span data-en="About Fairouz" data-ar="عن فيروز">About Fairouz</span>
       </button>
       <button class="nav-item" data-page="news">
-        <span class="ic">📰</span><span data-en="News" data-ar="الأخبار">News</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M4.3 4.3h12.6a1.8 1.8 0 0 1 1.8 1.8v12.6a1 1 0 0 1-1 1H6.3a2 2 0 0 1-2-2V4.3z"/><path d="M18.7 8.3h.9a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><line x1="7.3" y1="8" x2="14.7" y2="8"/><line x1="7.3" y1="11.3" x2="14.7" y2="11.3"/><line x1="7.3" y1="14.6" x2="11.7" y2="14.6"/></svg></span><span data-en="News" data-ar="الأخبار">News</span>
       </button>
       <button class="nav-item" data-page="worldcup">
-        <span class="ic">🏆</span><span data-en="World Cup 2026" data-ar="كأس العالم 2026">World Cup 2026</span>
+        <span class="ic"><svg viewBox="0 0 24 24"><path d="M8 3.3h8v4a4 4 0 0 1-8 0v-4z"/><path d="M8 4.3H5.2a1 1 0 0 0-1 1v1a4 4 0 0 0 4 4"/><path d="M16 4.3h2.8a1 1 0 0 1 1 1v1a4 4 0 0 1-4 4"/><path d="M12 11.3v4.4"/><path d="M9 19.7h6"/><path d="M12 15.7v4"/></svg></span><span data-en="World Cup 2026" data-ar="كأس العالم 2026">World Cup 2026</span>
       </button>
     </nav>
     <div class="sidebar-decor" id="sidebarNotesLayer" aria-hidden="true"></div>
@@ -1885,16 +1885,16 @@ body.occasion-sham-elnessim .occ-tint{
   <!-- Mobile bottom nav (shown only on mobile via CSS) -->
   <nav class="mobile-nav" style="display:none;">
     <button class="nav-item active" data-page="home">
-      <span class="ic">🏠</span><span data-en="Home" data-ar="الرئيسية">Home</span>
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5"/><path d="M6.2 10v8.3a1.2 1.2 0 0 0 1.2 1.2h3.1v-5.6h3v5.6h3.1a1.2 1.2 0 0 0 1.2-1.2V10"/><path d="M14.6 6.6c1.6-1 3.6.1 3.7 2v1.1" stroke-dasharray="1.5 2"/></svg></span><span data-en="Home" data-ar="الرئيسية">Home</span>
     </button>
     <button class="nav-item" data-page="about">
-      <span class="ic">👤</span><span data-en="About" data-ar="عن فيروز">About</span>
+      <span class="ic"><svg viewBox="0 0 24 24"><rect x="9.3" y="2.3" width="5.4" height="10.4" rx="2.7"/><path d="M5.3 11v1a6.7 6.7 0 0 0 13.4 0v-1"/><line x1="12" y1="19.3" x2="12" y2="22"/><line x1="8.7" y1="22" x2="15.3" y2="22"/></svg></span><span data-en="About" data-ar="عن فيروز">About</span>
     </button>
     <button class="nav-item" data-page="news">
-      <span class="ic">📰</span><span data-en="News" data-ar="الأخبار">News</span>
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M4.3 4.3h12.6a1.8 1.8 0 0 1 1.8 1.8v12.6a1 1 0 0 1-1 1H6.3a2 2 0 0 1-2-2V4.3z"/><path d="M18.7 8.3h.9a1 1 0 0 1 1 1v9a2 2 0 0 1-2 2"/><line x1="7.3" y1="8" x2="14.7" y2="8"/><line x1="7.3" y1="11.3" x2="14.7" y2="11.3"/><line x1="7.3" y1="14.6" x2="11.7" y2="14.6"/></svg></span><span data-en="News" data-ar="الأخبار">News</span>
     </button>
     <button class="nav-item" data-page="worldcup">
-      <span class="ic">🏆</span><span data-en="World Cup" data-ar="كأس العالم">World Cup</span>
+      <span class="ic"><svg viewBox="0 0 24 24"><path d="M8 3.3h8v4a4 4 0 0 1-8 0v-4z"/><path d="M8 4.3H5.2a1 1 0 0 0-1 1v1a4 4 0 0 0 4 4"/><path d="M16 4.3h2.8a1 1 0 0 1 1 1v1a4 4 0 0 1-4 4"/><path d="M12 11.3v4.4"/><path d="M9 19.7h6"/><path d="M12 15.7v4"/></svg></span><span data-en="World Cup" data-ar="كأس العالم">World Cup</span>
     </button>
   </nav>
 
@@ -2067,12 +2067,6 @@ body.occasion-sham-elnessim .occ-tint{
       <p class="wc-sub" data-en="United States · Mexico · Canada — June 11 to July 19, 2026" data-ar="الولايات المتحدة · المكسيك · كندا — من ١١ يونيو إلى ١٩ يوليو ٢٠٢٦">United States · Mexico · Canada — June 11 to July 19, 2026</p>
 
       <div id="wcNormalContent">
-        <!-- News -->
-        <section class="wc-block">
-          <div class="wc-block-title">📰 <span data-en="Tournament News" data-ar="أخبار البطولة">Tournament News</span></div>
-          <div class="wc-news-grid" id="wcNewsGrid"></div>
-        </section>
-
         <!-- Fixtures / Results -->
         <section class="wc-block">
           <div class="wc-block-title">⚽ <span data-en="Fixtures &amp; Results" data-ar="مواعيد ونتائج المباريات">Fixtures &amp; Results</span></div>
@@ -2177,7 +2171,7 @@ function applyLang() {
   if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && document.getElementById('page-worldcup').style.display !== 'none') {
     const wcState = wcLifecyclePhase(new Date());
     if (wcState.phase === 'champion') { wcRenderChampion(wcState.final); }
-    else if (wcState.phase === 'ongoing') { wcRenderNews(); wcRenderFixtures(); }
+    else if (wcState.phase === 'ongoing') { wcRenderFixtures(); }
   }
   if (typeof renderNewsList === 'function' && newsItemsCache.length) { renderNewsList(); }
 }
@@ -2482,14 +2476,6 @@ const WC_MATCHES = [
   {id:'wcFinal2026',stage:{en:'Final',ar:'النهائي'},home:'W83',away:'W83',kickoff:'2026-07-19T18:00:00Z',status:'scheduled',free:true,winner:null}
 ];
 const WC_FINAL_MATCH_ID = 'wcFinal2026';
-const WC_NEWS = [
-  {en:'The Round of 32 is underway across the United States, Mexico and Canada, with the first World Cup to feature 48 teams delivering upsets and penalty-shootout drama.', ar:'دور الـ32 يشتعل حاليًا في ملاعب الولايات المتحدة والمكسيك وكندا، في أول نسخة من كأس العالم بمشاركة 48 منتخبًا تشهد مفاجآت ومباريات حُسمت بركلات الترجيح.'},
-  {en:'Egypt reached the knockout rounds for the first time in its World Cup history and faces Australia in the Round of 32 on July 3.', ar:'منتخب مصر بلغ الأدوار الإقصائية لأول مرة في تاريخه بكأس العالم، ويواجه أستراليا في دور الـ32 يوم 3 يوليو.'},
-  {en:'Argentina, the defending champions, take on Cape Verde looking to continue their title defense after topping their group.', ar:'الأرجنتين، حاملة اللقب، تواجه الرأس الأخضر سعيًا لمواصلة الدفاع عن اللقب بعد تصدرها مجموعتها.'},
-  {en:'The final will be played on July 19, 2026 at MetLife Stadium in New Jersey, capping a tournament spanning three host nations.', ar:'ستُقام المباراة النهائية يوم 19 يوليو 2026 على ملعب ميتلايف في نيوجيرسي، لتختتم بطولة استضافتها ثلاث دول.'},
-  {en:'beIN SPORTS holds exclusive broadcast rights across the Middle East and North Africa, airing every match on its MAX channels, with a select number of matches — including Egypt\'s games — also shown free on the open beIN SPORTS channel.', ar:'تمتلك شبكة beIN SPORTS حقوق البث الحصرية في الشرق الأوسط وشمال إفريقيا، وتنقل جميع المباريات عبر قنوات MAX المشفّرة، مع إذاعة عدد مختار من المباريات — من بينها مباريات مصر — مجانًا عبر القناة المفتوحة.'}
-];
-
 let wcTimerHandle = null;
 let wcCurrentFilter = 'all';
 let wcInitialized = false;
@@ -2582,15 +2568,6 @@ function wcRenderFixtures(){
   if(!wrap.children.length){
     wrap.innerHTML = '<div class="wc-datetime" style="padding:12px 0;">'+(lang==='ar'?'لا توجد مباريات في هذا القسم حاليًا.':'No matches in this section right now.')+'</div>';
   }
-}
-
-function wcRenderNews(){
-  const grid = document.getElementById('wcNewsGrid');
-  if(!grid) return;
-  const lang = currentLang;
-  grid.innerHTML = WC_NEWS.map(n=>
-    '<div class="wc-news-card"><div class="wc-news-tag">🏆 World Cup 2026</div><div class="wc-news-text">'+(lang==='ar'?n.ar:n.en)+'</div></div>'
-  ).join('');
 }
 
 // ── Tournament lifecycle: ongoing → champion celebration (3 days) → page removed entirely ──
@@ -2723,7 +2700,6 @@ function initWorldCupPage(){
     if(wcTimerHandle){ clearInterval(wcTimerHandle); wcTimerHandle=null; }
     return; // champion screen has its own animation loop, no fixtures to render
   }
-  wcRenderNews();
   wcRenderFixtures();
   if(!wcInitialized){
     document.getElementById('wcFilters').addEventListener('click', e=>{
@@ -3280,7 +3256,7 @@ async function refreshWeatherLang(){
 
       const geoData = await geoRes.json();
 
-      const city =
+      const geoCity =
         geoData.address?.city ||
         geoData.address?.town ||
         geoData.address?.village ||
@@ -3292,7 +3268,7 @@ async function refreshWeatherLang(){
       const countryCode = geoData.address?.country_code || '';
 
 const locationName =
-    country ? `${city}, ${country}` : city;
+    country ? `${geoCity}, ${country}` : geoCity;
 
 lastWeatherCity = locationName;
 lastWeatherFlag = countryFlagEmoji(countryCode);
