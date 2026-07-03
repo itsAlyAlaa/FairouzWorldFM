@@ -794,6 +794,13 @@ input[type=range]::-webkit-slider-thumb{
   border-radius:999px;
   white-space:nowrap;
 }
+.weather-flag-img{
+  width:18px;
+  height:13px;
+  object-fit:cover;
+  border-radius:2px;
+  flex-shrink:0;
+}
 
 .forecast-grid{
   display:grid;
@@ -2331,7 +2338,8 @@ function renderWeatherFx(code, temp, isDay){
 let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null, lastWeatherFlag='';
 function countryFlagEmoji(cc){
   if(!cc || cc.length!==2) return '';
-  return String.fromCodePoint(...[...cc.toUpperCase()].map(c=>127397+c.charCodeAt(0)));
+  const code = cc.toLowerCase();
+  return `<img src="https://flagcdn.com/24x18/${code}.png" alt="${cc.toUpperCase()}" class="weather-flag-img">`;
 }
 function renderWeatherText(cur, wData, city, flag){
   const flagPart = flag !== undefined ? flag : lastWeatherFlag;
