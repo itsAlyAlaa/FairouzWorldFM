@@ -11,7 +11,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Cairo:wght@400;600;700;800;900&family=Inter:wght@400;500;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet">
 <style>
 :root{
   --bg:#0d0610; --bg2:#160a1a; --surface:#1e0f26; --card:#22112c;
@@ -983,7 +983,117 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 .about-page{display:none;background:var(--card);border:1px solid var(--border);border-radius:22px;padding:34px;}
 .about-page h2{font-family:'Cinzel',serif;font-size:24px;color:var(--gold);margin-bottom:16px;}
 body.lang-ar .about-page h2{font-family:'Cairo',sans-serif;}
-.about-page p{font-size:14px;line-height:2;color:var(--text);opacity:.9;margin-bottom:14px;}
+.about-body p{font-size:14px;line-height:2;color:var(--text);opacity:.9;margin-bottom:14px;}
+
+/* ── About: featured portrait ── */
+.about-feature{
+  display:flex;
+  align-items:center;
+  gap:38px;
+  margin-bottom:30px;
+  padding-bottom:26px;
+  border-bottom:1px solid var(--border);
+}
+.about-portrait-outer{
+  position:relative;
+  width:250px;
+  flex-shrink:0;
+  perspective:900px;
+  opacity:0;
+  transform:translateY(28px) scale(.94);
+  transition:opacity 1s cubic-bezier(.2,.8,.2,1), transform 1s cubic-bezier(.2,.8,.2,1);
+}
+.about-feature.in-view .about-portrait-outer{opacity:1;transform:translateY(0) scale(1);}
+
+.about-portrait-glow{
+  position:absolute;inset:-18px;
+  background:radial-gradient(circle, var(--glow-g), transparent 70%);
+  filter:blur(6px);
+  opacity:.5;
+  z-index:0;
+  animation:apGlowPulse 4.5s ease-in-out infinite;
+}
+@keyframes apGlowPulse{0%,100%{opacity:.35;}50%{opacity:.75;}}
+
+.about-portrait-inner{
+  position:relative;z-index:1;
+  border-radius:18px;
+  overflow:hidden;
+  border:1px solid var(--gold2);
+  box-shadow:0 20px 46px -18px rgba(0,0,0,.6), 0 0 0 6px rgba(217,184,136,.06);
+  transition:transform .25s ease-out;
+  transform-style:preserve-3d;
+  will-change:transform;
+}
+.about-portrait-img{width:100%;display:block;aspect-ratio:2/3;object-fit:cover;}
+
+.ap-corner{
+  position:absolute;width:20px;height:20px;
+  border:2px solid var(--gold);
+  opacity:0;
+  transition:opacity .6s ease;
+  z-index:2;pointer-events:none;
+}
+.about-feature.in-view .ap-corner{opacity:.85;}
+.ap-corner.tl{top:8px;left:8px;border-right:none;border-bottom:none;transition-delay:.5s;}
+.ap-corner.tr{top:8px;right:8px;border-left:none;border-bottom:none;transition-delay:.6s;}
+.ap-corner.bl{bottom:8px;left:8px;border-right:none;border-top:none;transition-delay:.7s;}
+.ap-corner.br{bottom:8px;right:8px;border-left:none;border-top:none;transition-delay:.8s;}
+
+.ap-signature{
+  position:absolute;bottom:10px;right:14px;
+  font-family:'Dancing Script',cursive;
+  font-size:22px;color:rgba(255,255,255,.92);
+  text-shadow:0 1px 4px rgba(0,0,0,.65);
+  z-index:2;transform:rotate(-3deg);
+  opacity:0;
+  transition:opacity .8s ease .9s;
+}
+.about-feature.in-view .ap-signature{opacity:1;}
+
+.about-lede{
+  flex:1;min-width:0;
+  opacity:0;
+  transform:translateY(18px);
+  transition:opacity .9s ease .3s, transform .9s ease .3s;
+}
+.about-feature.in-view .about-lede{opacity:1;transform:translateY(0);}
+
+.ap-eyebrow{font-size:12px;letter-spacing:3px;color:var(--gold);font-weight:700;text-transform:uppercase;}
+body.lang-ar .ap-eyebrow{letter-spacing:1px;}
+
+.ap-divider{display:flex;align-items:center;gap:10px;margin:12px 0 16px;}
+.ap-divider span{flex:0 0 34px;height:1px;background:var(--gold2);opacity:.6;}
+.ap-divider i{color:var(--gold);font-style:normal;font-size:10px;}
+
+.ap-quote{
+  font-family:'Cinzel',serif;
+  font-size:19px;line-height:1.65;
+  color:var(--text);font-weight:600;
+  margin:0;
+}
+body.lang-ar .ap-quote{font-family:'Cairo',sans-serif;}
+
+.about-body{
+  opacity:0;
+  transform:translateY(16px);
+  transition:opacity .9s ease .5s, transform .9s ease .5s;
+}
+.about-feature.in-view ~ .about-body{opacity:1;transform:translateY(0);}
+
+@media(prefers-reduced-motion:reduce){
+  .about-portrait-outer,.about-lede,.about-body,.ap-corner,.ap-signature{transition:none!important;}
+  .about-feature.in-view .about-portrait-outer,
+  .about-feature.in-view .about-lede,
+  .about-feature.in-view ~ .about-body{opacity:1;transform:none;}
+  .about-feature.in-view .ap-corner,.about-feature.in-view .ap-signature{opacity:1;}
+}
+
+@media(max-width:700px){
+  .about-feature{flex-direction:column;text-align:center;gap:22px;}
+  .about-portrait-outer{width:210px;}
+  .ap-divider{justify-content:center;}
+}
 footer{text-align:center;font-size:12px;color:var(--muted);margin-top:30px;opacity:.7;}
 footer .heart{color:var(--rose);}
 
@@ -1805,9 +1915,35 @@ body.occasion-sham-elnessim .occ-tint{
 
     <div id="page-about" class="about-page">
       <h2 data-en="About Fairouz" data-ar="عن فيروز">About Fairouz</h2>
-      <p data-en="Fairouz, born Nouhad Haddad, is a Lebanese singer widely regarded as one of the greatest voices in the history of Arab music. Her career began in the 1950s, and over decades she built an extraordinary musical legacy that weaves together Lebanese folk tradition, classical melody, and deeply emotional songs." data-ar="فيروز، واسمها الحقيقي نهاد حداد، مطربة لبنانية تُعد من أعظم الأصوات في تاريخ الموسيقى العربية. بدأت مسيرتها الفنية في الخمسينات، وقدّمت على مدار عقود طويلة تراثًا غنائيًا واسعًا يمزج بين الطابع الشعبي اللبناني والألحان الكلاسيكية والأغاني الوطنية والعاطفية.">Fairouz, born Nouhad Haddad, is a Lebanese singer widely regarded as one of the greatest voices in the history of Arab music. Her career began in the 1950s, and over decades she built an extraordinary musical legacy that weaves together Lebanese folk tradition, classical melody, and deeply emotional songs.</p>
-      <p data-en="She collaborated primarily with the Rahbani Brothers, producing musicals and timeless works that became part of the collective Arab memory. Her distinctive voice and quiet elegance made her a symbol of nostalgia and authenticity for generations across Lebanon and the Arab world." data-ar="تعاونت فيروز بشكل أساسي مع الأخوين رحباني، وقدّمت معهم مسرحيات غنائية وأعمالاً خالدة أصبحت جزءًا من الذاكرة الجماعية العربية. صوتها المميز وأسلوبها الهادئ جعلا منها رمزًا للحنين والأصالة عند أجيال متعددة في لبنان والعالم العربي.">She collaborated primarily with the Rahbani Brothers, producing musicals and timeless works that became part of the collective Arab memory.</p>
-      <p data-en="To this day, Fairouz's songs fill quiet mornings and family evenings, continuing to find their way into the hearts of new listeners around the world." data-ar="حتى اليوم، تبقى أغاني فيروز حاضرة في الصباحات الهادئة والسهرات العائلية، وتستمر في إيجاد طريقها إلى قلوب مستمعين جدد حول العالم.">To this day, Fairouz's songs fill quiet mornings and family evenings, continuing to find their way into the hearts of new listeners around the world.</p>
+
+      <div class="about-feature" id="aboutFeature">
+        <div class="about-portrait-outer" id="aboutPortrait">
+          <div class="about-portrait-glow"></div>
+          <div class="about-portrait-inner">
+            <picture>
+              <source srcset="fairouz-poster.webp" type="image/webp">
+              <img src="fairouz-poster.jpg" alt="Fairouz" class="about-portrait-img" loading="lazy">
+            </picture>
+            <span class="ap-corner tl"></span>
+            <span class="ap-corner tr"></span>
+            <span class="ap-corner bl"></span>
+            <span class="ap-corner br"></span>
+            <div class="ap-signature">Fairouz</div>
+          </div>
+        </div>
+
+        <div class="about-lede">
+          <div class="ap-eyebrow" data-en="THE VOICE OF LEBANON" data-ar="صوت لبنان">THE VOICE OF LEBANON</div>
+          <div class="ap-divider"><span></span><i>◆</i><span></span></div>
+          <p class="ap-quote" data-en="A voice unlike any other — a homeland's story, sung since the earliest days." data-ar="صوتٌ لا يُشبه أحد.. حكايةُ وطنٍ تُغنّى منذ بدايات الزمن.">A voice unlike any other — a homeland's story, sung since the earliest days.</p>
+        </div>
+      </div>
+
+      <div class="about-body">
+        <p data-en="Fairouz, born Nouhad Haddad, is a Lebanese singer widely regarded as one of the greatest voices in the history of Arab music. Her career began in the 1950s, and over decades she built an extraordinary musical legacy that weaves together Lebanese folk tradition, classical melody, and deeply emotional songs." data-ar="فيروز، واسمها الحقيقي نهاد حداد، مطربة لبنانية تُعد من أعظم الأصوات في تاريخ الموسيقى العربية. بدأت مسيرتها الفنية في الخمسينات، وقدّمت على مدار عقود طويلة تراثًا غنائيًا واسعًا يمزج بين الطابع الشعبي اللبناني والألحان الكلاسيكية والأغاني الوطنية والعاطفية.">Fairouz, born Nouhad Haddad, is a Lebanese singer widely regarded as one of the greatest voices in the history of Arab music. Her career began in the 1950s, and over decades she built an extraordinary musical legacy that weaves together Lebanese folk tradition, classical melody, and deeply emotional songs.</p>
+        <p data-en="She collaborated primarily with the Rahbani Brothers, producing musicals and timeless works that became part of the collective Arab memory. Her distinctive voice and quiet elegance made her a symbol of nostalgia and authenticity for generations across Lebanon and the Arab world." data-ar="تعاونت فيروز بشكل أساسي مع الأخوين رحباني، وقدّمت معهم مسرحيات غنائية وأعمالاً خالدة أصبحت جزءًا من الذاكرة الجماعية العربية. صوتها المميز وأسلوبها الهادئ جعلا منها رمزًا للحنين والأصالة عند أجيال متعددة في لبنان والعالم العربي.">She collaborated primarily with the Rahbani Brothers, producing musicals and timeless works that became part of the collective Arab memory.</p>
+        <p data-en="To this day, Fairouz's songs fill quiet mornings and family evenings, continuing to find their way into the hearts of new listeners around the world." data-ar="حتى اليوم، تبقى أغاني فيروز حاضرة في الصباحات الهادئة والسهرات العائلية، وتستمر في إيجاد طريقها إلى قلوب مستمعين جدد حول العالم.">To this day, Fairouz's songs fill quiet mornings and family evenings, continuing to find their way into the hearts of new listeners around the world.</p>
+      </div>
     </div>
 
     <div class="mobile-footer">
@@ -1876,8 +2012,33 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     const page = btn.dataset.page;
     document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
     document.getElementById('page-about').style.display = page === 'about' ? 'block' : 'none';
+    if (page === 'about') revealAboutPage();
   });
 });
+
+// ── About page: portrait reveal + tilt ──
+function revealAboutPage(){
+  const feature = document.getElementById('aboutFeature');
+  if(!feature) return;
+  feature.classList.remove('in-view');
+  void feature.offsetWidth; // force reflow so the transition replays every visit
+  requestAnimationFrame(() => feature.classList.add('in-view'));
+}
+(function initAboutTilt(){
+  const outer = document.getElementById('aboutPortrait');
+  const inner = outer ? outer.querySelector('.about-portrait-inner') : null;
+  if(!outer || !inner) return;
+  const canHover = window.matchMedia('(hover:hover) and (pointer:fine)').matches;
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if(!canHover || reduceMotion) return;
+  outer.addEventListener('mousemove', e=>{
+    const r = outer.getBoundingClientRect();
+    const px = (e.clientX - r.left) / r.width - 0.5;
+    const py = (e.clientY - r.top) / r.height - 0.5;
+    inner.style.transform = `rotateY(${px*10}deg) rotateX(${-py*10}deg)`;
+  });
+  outer.addEventListener('mouseleave', ()=>{ inner.style.transform = 'rotateY(0) rotateX(0)'; });
+})();
 
 // ── Clock ──
 function updateClock() {
@@ -1906,7 +2067,7 @@ const audio=new Audio();
 audio.crossOrigin='anonymous'; // رجعناها هنا لأن الرابط المباشر يدعم الـ CORS بشكل صحيح
 audio.preload='none';
 
-let isPlaying=false,isMuted=false,hasStarted=false,retryCount=0; const MAX_RETRY=5;
+let isPlaying=false,isMuted=false,hasStarted=false,isStarting=false,retryCount=0; const MAX_RETRY=5;
 const btnPlay=document.getElementById('btnPlay');
 const btnMute=document.getElementById('btnMute');
 const volSlider=document.getElementById('volSlider');
@@ -2016,10 +2177,13 @@ function disconnectMetadata(){
 }
 
 function startRadio(){
-  hasStarted=true;
+  if(isStarting||isPlaying) return;
+  isStarting=true;
   loadingText.textContent=currentLang==='ar'?'جاري الاتصال بالبث...':'Connecting...';
   audio.src=PRIMARY_STREAM; audio.volume=volSlider.value/100; audio.load();
   audio.play().then(()=>{
+    isStarting=false;
+    hasStarted=true;
     isPlaying=true;
     retryCount=0;
     btnPlay.textContent='⏸';
@@ -2027,7 +2191,15 @@ function startRadio(){
     npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
     connectMetadata();
-  }).catch(()=>attemptRetry());
+  }).catch((err)=>{
+    isStarting=false;
+    if(err && err.name==='NotAllowedError'){
+      // المتصفح مانع التشغيل التلقائي لحد ما المستخدم يعمل أي تفاعل (دوس/سكرول) — مش عطل في البث
+      loadingText.textContent=currentLang==='ar'?'دوس في أي حتة عشان تشغل الراديو 🎵':'Tap anywhere to start the radio 🎵';
+      return;
+    }
+    attemptRetry();
+  });
 }
 
 function attemptRetry(){
@@ -2081,10 +2253,15 @@ btnMute.addEventListener('click',()=>{isMuted=!isMuted;audio.muted=isMuted;btnMu
 volSlider.addEventListener('input',function(){audio.volume=this.value/100;this.style.setProperty('--val',this.value+'%');volValue.textContent=this.value+'%';});
 volSlider.style.setProperty('--val','100%');
 
-// Autoplay on load
+// Autoplay on load (works automatically on returning visitors / some browsers)
 window.addEventListener('load',()=>{setTimeout(()=>{if(!hasStarted)startRadio();},800);});
-// Fallback: first click
-document.addEventListener('click',function once(){if(!hasStarted)startRadio();document.removeEventListener('click',once);},{once:true});
+// Fallback: browsers block audio-with-sound autoplay until a real user gesture happens.
+// We listen for the *first* tap/click/key/scroll anywhere on the page (desktop + mobile)
+// and use it to start playback — this is the closest to "automatic" browsers allow.
+function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
+['click','touchstart','keydown','scroll'].forEach(evt=>{
+  document.addEventListener(evt, tryStartFromGesture, {passive:true});
+});
 
 // ── Prayer Times ──
 let prayers=[
