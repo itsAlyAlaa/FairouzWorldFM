@@ -3348,7 +3348,8 @@ async function wcPollLive(){
       m.liveMinute = fx.fixture.status.elapsed;
       m.score = { home: homeGoals, away: awayGoals };
       changed = true;
-      if(wcLiveLastScore[m.id] !== scoreKey){
+      // التحقق مما إذا كانت النتيجة تغيرت أو إذا كان هذا أول جلب للمباراة أثناء البث المباشر
+      if(!wcLiveLastScore[m.id] || wcLiveLastScore[m.id] !== scoreKey){
         wcLiveLastScore[m.id] = scoreKey;
         await wcFetchLiveEvents(m, fx.fixture.id, fx.teams.home.id);
       }
@@ -3462,11 +3463,18 @@ function wcRenderFixtures(){
     }
 
     // Live match events feed — goals / cards / VAR, entered by the site owner as they happen.
-    // Optional per-match field: events:[{minute, type:'goal'|'yellow'|'red'|'var', team:'home'|'away', player:{en,ar}}]
     let eventsHtml = '';
     if(m.events && m.events.length && (st==='finished' || st==='live')){
       const icon = {goal:'⚽', yellow:'🟨', red:'🟥', var:'📺'};
-      const rows = m.events.slice().sort((a,b)=>a.minute-b.minute).map(ev=>{
+      
+      // دالة مساعدة لتحويل الدقائق النصية مثل "90+3" إلى رقم نقي لترتيبها بشكل صحيح
+      const parseMin = (mStr) => {
+        if (typeof mStr === 'number') return mStr;
+        const parts = String(mStr).split('+');
+        return parts.reduce((acc, p) => acc + (parseInt(p, 10) || 0), 0);
+      };
+
+      const rows = m.events.slice().sort((a,b) => parseMin(a.minute) - parseMin(b.minute)).map(ev=>{
         const teamAbbr = ev.team==='home' ? m.home : m.away;
         const label = ev.player ? (lang==='ar'?ev.player.ar:ev.player.en) : teamAbbr;
         return '<div class="wc-event-row"><span class="wc-event-min">'+ev.minute+"'"+'</span><span class="wc-event-ic">'+(icon[ev.type]||'•')+'</span><span class="wc-event-label">'+label+' · '+teamAbbr+'</span></div>';
