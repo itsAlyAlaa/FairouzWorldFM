@@ -3224,15 +3224,7 @@ const WC_TEAMS = {
   CAN:{en:'Canada',ar:'كندا',iso:'ca'}, BRA:{en:'Brazil',ar:'البرازيل',iso:'br'},
   W83:{en:'TBD',ar:'يُحدد لاحقًا',iso:null}
 };
-// beIN SPORTS holds exclusive MENA rights; select matches (marked free) also air on the free "beIN SPORTS" open channel.
-// Live/finished matches can optionally include:
-//   score:{home:N,away:N}                → shown as soon as it's known, even while status is still "scheduled"
-//                                            (the card switches to "live" automatically once kickoff time passes)
-//   note:{en:'...',ar:'...'}              → shown under the score, e.g. penalty-shootout result
-//   scorers:{home:[{minute:13,name:{en:'Player Name',ar:'اسم اللاعب'}}], away:[...]}  → goal-scorer list
-//   events:[{minute:23, type:'goal'|'yellow'|'red'|'var', team:'home'|'away', player:{en:'Name',ar:'اسم'}}]
-//         → chronological in-match feed (goals/cards/VAR). Append entries as they happen and redeploy;
-//           this is manual data entry, the site has no live feed of its own — see note below.
+
 const WC_MATCHES = [
   {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},note:{en:'GER won on penalties',ar:'ألمانيا فازت بركلات الترجيح'},free:false},
   {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},note:{en:'MAR won on penalties',ar:'المغرب فاز بركلات الترجيح'},free:false},
@@ -3254,8 +3246,6 @@ const WC_MATCHES = [
   {id:'53452519',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'scheduled',free:false},
   {id:'53452513',stage:{en:'Round of 32',ar:'دور الـ32'},home:'W83',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'scheduled',free:false},
   {id:'53452515',stage:{en:'Round of 32',ar:'دور الـ32'},home:'USA',away:'BEL',kickoff:'2026-07-07T00:00:00Z',status:'scheduled',free:false},
-  /* Final — update home/away/status/score/winner once the finalists & result are known.
-     Setting status:'final' + winner:'<TEAM_CODE>' triggers the champion celebration screen. */
   {id:'wcFinal2026',stage:{en:'Final',ar:'النهائي'},home:'W83',away:'W83',kickoff:'2026-07-19T18:00:00Z',status:'scheduled',free:true,winner:null}
 ];
 const WC_FINAL_MATCH_ID = 'wcFinal2026';
@@ -3263,25 +3253,16 @@ let wcTimerHandle = null;
 let wcCurrentFilter = 'upcoming';
 let wcInitialized = false;
 
-/* ══════════════════════════════════════════════════════════════
-   LIVE DATA (real scores/minute/events from API-Football)
-   ──────────────────────────────────────────────────────────────
-   1) Create a free account: https://dashboard.api-football.com
-   2) Paste your key below and set enabled:true
-   3) Free plan = ~100 requests/day, so keep pollMs reasonable
-      (45–60s is safe; going lower risks running out mid-tournament)
-   ══════════════════════════════════════════════════════════════ */
 const WC_LIVE_API = {
-  enabled: true,           // ← set to true once you've added your key
+  enabled: true,
   key: '10aaa77724f14208a6e93b829b52e480',
-  league: 1,                // FIFA World Cup
+  league: 1, // FIFA World Cup
   season: 2026,
   pollMs: 45000
 };
 let wcLastLivePoll = 0;
-let wcLiveLastScore = {};   // matchId -> "home-away" string, used to only re-fetch events when the score actually changes
+let wcLiveLastScore = {};
 
-// A few team names differ between our short codes and API-Football's official names.
 const WC_NAME_ALIASES = {
   'ivory coast':'civ', "cote d'ivoire":'civ', 'côte d’ivoire':'civ',
   'congo dr':'cod', 'dr congo':'cod',
@@ -3289,9 +3270,11 @@ const WC_NAME_ALIASES = {
   'bosnia and herzegovina':'bih', 'bosnia & herzegovina':'bih',
   'cape verde':'cpv', 'cabo verde':'cpv', 'republic of cabo verde':'cpv'
 };
+
 function wcNormalizeName(name){
   return (name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
 }
+
 function wcCodeForApiName(apiName){
   const n = wcNormalizeName(apiName);
   if(WC_NAME_ALIASES[n]) return WC_NAME_ALIASES[n];
@@ -3300,14 +3283,31 @@ function wcCodeForApiName(apiName){
   }
   return null;
 }
-function wcFindMatchByApiTeams(apiHomeName, apiAwayName){
-  const homeCode = wcCodeForApiName(apiHomeName), awayCode = wcCodeForApiName(apiAwayName);
-  if(!homeCode || !awayCode) return null;
-  return WC_MATCHES.find(m => m.home.toLowerCase()===homeCode && m.away.toLowerCase()===awayCode);
+
+function wcFindMatchByApiTeams(apiHomeName, apiAwayName, fx){
+  if (fx && fx.teams) {
+    const apiHomeIso = (fx.teams.home.name === 'USA' ? 'us' : (fx.teams.home.name === 'Cabo Verde' || fx.teams.home.name === 'Cape Verde' ? 'cv' : ''));
+    const apiAwayIso = (fx.teams.away.name === 'USA' ? 'us' : (fx.teams.away.name === 'Cabo Verde' || fx.teams.away.name === 'Cape Verde' ? 'cv' : ''));
+    
+    const matched = WC_MATCHES.find(m => {
+      const localHomeIso = WC_TEAMS[m.home]?.iso;
+      const localAwayIso = WC_TEAMS[m.away]?.iso;
+      if (apiHomeIso && apiAwayIso && localHomeIso && localAwayIso) {
+        return localHomeIso === apiHomeIso && localAwayIso === apiAwayIso;
+      }
+      return false;
+    });
+    if (matched) return matched;
+  }
+
+  const homeCode = wcCodeForApiName(apiHomeName);
+  const awayCode = wcCodeForApiName(apiAwayName);
+  if(homeCode && awayCode) {
+    return WC_MATCHES.find(m => m.home.toLowerCase()===homeCode && m.away.toLowerCase()===awayCode);
+  }
+  return null;
 }
 
-// Pulls goal/card events for one live fixture — only called when its score just changed,
-// to stay well inside the free plan's daily request budget.
 async function wcFetchLiveEvents(m, apiFixtureId, apiHomeTeamId){
   try{
     const res = await fetch('https://v3.football.api-sports.io/fixtures/events?fixture='+apiFixtureId, {
@@ -3331,7 +3331,6 @@ async function wcFetchLiveEvents(m, apiFixtureId, apiHomeTeamId){
   }catch(err){ console.warn('World Cup: failed to fetch live events', err); }
 }
 
-// Main poller — one lightweight call gets every currently-live World Cup fixture at once.
 async function wcPollLive(){
   if(!WC_LIVE_API.enabled || !WC_LIVE_API.key || WC_LIVE_API.key==='YOUR_API_FOOTBALL_KEY') return;
   try{
@@ -3341,24 +3340,27 @@ async function wcPollLive(){
     let changed = false;
     
     for(const fx of (data.response||[])){
-      const m = wcFindMatchByApiTeams(fx.teams.home.name, fx.teams.away.name);
+      const m = wcFindMatchByApiTeams(fx.teams.home.name, fx.teams.away.name, fx);
       if(!m) continue;
       
       const homeGoals = fx.goals.home ?? 0;
       const awayGoals = fx.goals.away ?? 0;
       const scoreKey = homeGoals+'-'+awayGoals;
       
-      m.status = 'live';
-      m.score = { home: homeGoals, away: awayGoals };
-      
-      // تحديد حالة الماتش والوقت بدقة من الـ API
-      const apiStatus = fx.fixture.status.short; // مثلاً ET, PEN, 1H, 2H
+      const apiStatus = fx.fixture.status.short; 
       const elapsed = fx.fixture.status.elapsed ?? 90;
+      
+      if(['FT', 'AET', 'PEN'].includes(apiStatus)){
+        m.status = 'final';
+      } else {
+        m.status = 'live';
+      }
+      
+      m.score = { home: homeGoals, away: awayGoals };
       
       if(apiStatus === 'ET') {
         m.liveMinuteLabel = currentLang === 'ar' ? `شوط إضافي — د ${elapsed}` : `Extra Time — ${elapsed}'`;
-      } else if(apiStatus === 'PEN') {
-        // لو ضربات جزاء، نكتب النتيجة الإجمالية لو متوفرة
+      } else if(apiStatus === 'PEN' || (fx.score?.penalty?.home !== null && fx.score?.penalty?.home !== undefined)) {
         const penHome = fx.score.penalty.home ?? '';
         const penAway = fx.score.penalty.away ?? '';
         const penStr = penHome !== '' ? ` (${penHome}-${penAway})` : '';
@@ -3376,7 +3378,9 @@ async function wcPollLive(){
     }
     if(changed) wcRenderFixtures();
   }catch(err){ console.warn('World Cup: live poll failed', err); }
-}function wcPollLiveIfDue(){
+}
+
+function wcPollLiveIfDue(){
   if(!WC_LIVE_API.enabled) return;
   const now = Date.now();
   if(now - wcLastLivePoll < WC_LIVE_API.pollMs) return;
@@ -3386,25 +3390,32 @@ async function wcPollLive(){
 
 function wcMatchWindow(m){
   const start = new Date(m.kickoff);
-  const end = new Date(start.getTime() + 180*60000); // زيادة الوقت لـ 180 دقيقة لاستيعاب الأشواط الإضافية
+  const end = new Date(start.getTime() + 180*60000); 
   return {start,end};
 }
+
 function wcIsSameLocalDay(a,b){
   return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
 }
+
 function wcStatusOf(m, now){
-  const {start,end} = wcMatchWindow(m);
   if(m.status==='final') return 'finished';
+  if(m.status==='live') return 'live';
+  
+  const {start,end} = wcMatchWindow(m);
   if(now>=start && now<end) return 'live';
   if(now<start) return 'upcoming';
   return 'finished';
 }
+
 function wcFmtClock(d, lang){
   return d.toLocaleTimeString(lang==='ar'?'ar-EG':'en-US',{hour:'2-digit',minute:'2-digit'});
 }
+
 function wcFmtDate(d, lang){
   return d.toLocaleDateString(lang==='ar'?'ar-EG':'en-US',{weekday:'short',day:'numeric',month:'short'});
 }
+
 function wcCountdownStr(ms, lang){
   if(ms<=0) return lang==='ar' ? 'بدأت المباراة' : 'Kicked off';
   const total = Math.floor(ms/1000);
@@ -3413,6 +3424,7 @@ function wcCountdownStr(ms, lang){
   const s = String(total%60).padStart(2,'0');
   return h+':'+mnt+':'+s;
 }
+
 function wcLiveMinuteLabel(start, now){
   const elapsedSec = Math.floor((now-start)/1000);
   const mins = Math.floor(elapsedSec/60) + 1;
@@ -3420,6 +3432,7 @@ function wcLiveMinuteLabel(start, now){
   const minLabel = mins>90 ? ('90+'+(mins-90)) : String(mins);
   return minLabel+':'+secs+"'";
 }
+
 function wcLiveNowStr(start, now, lang, m){
   if (m && m.liveMinuteLabel) {
     return (lang==='ar' ? ('مباشر الآن — ' + m.liveMinuteLabel) : ('Live now — ' + m.liveMinuteLabel));
@@ -3427,6 +3440,7 @@ function wcLiveNowStr(start, now, lang, m){
   const minLabel = wcLiveMinuteLabel(start, now);
   return (lang==='ar' ? ('مباشر الآن — ' + minLabel) : ('Live now — ' + minLabel));
 }
+
 function wcRenderFixtures(){
   const wrap = document.getElementById('wcFixtures');
   if(!wrap) return;
@@ -3469,26 +3483,22 @@ function wcRenderFixtures(){
       ? '<div class="wc-score">'+(m.score ? (m.score.home+' — '+m.score.away) : (st==='live' ? '0 — 0' : '—'))+'</div>'
       : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
 
-    // Penalty-shootout / extra-time result note (e.g. "EGY won on penalties")
     const noteHtml = (m.note && (st==='finished' || st==='live'))
       ? '<div class="wc-note">'+(lang==='ar'?m.note.ar:m.note.en)+'</div>' : '';
 
-    // Goal scorers (optional per-match field: scorers:{home:[{minute,name:{en,ar}}], away:[...]})
     let scorersHtml = '';
     if(m.scorers && (st==='finished' || st==='live')){
       const fmtList = (arr)=> (arr||[]).map(g=> '<span>⚽ '+(lang==='ar'?g.name.ar:g.name.en)+" "+g.minute+"'"+'</span>').join('');
       scorersHtml = '<div class="wc-scorers">'+
         '<div class="wc-scorers-col">'+fmtList(m.scorers.home)+'</div>'+
         '<div class="wc-scorers-col right">'+fmtList(m.scorers.away)+'</div>'+
-      '</div>';
+        '</div>';
     }
 
-    // Live match events feed — goals / cards / VAR, entered by the site owner as they happen.
     let eventsHtml = '';
     if(m.events && m.events.length && (st==='finished' || st==='live')){
       const icon = {goal:'⚽', yellow:'🟨', red:'🟥', var:'📺'};
       
-      // دالة مساعدة لتحويل الدقائق النصية مثل "90+3" إلى رقم نقي لترتيبها بشكل صحيح
       const parseMin = (mStr) => {
         if (typeof mStr === 'number') return mStr;
         const parts = String(mStr).split('+');
@@ -3511,7 +3521,7 @@ function wcRenderFixtures(){
     if(st==='upcoming' && wcIsSameLocalDay(now, kickoff)){
       countdownHtml = '<div class="wc-countdown" data-kickoff="'+m.kickoff+'">⏱ '+wcCountdownStr(kickoff-now, lang)+'</div>';
     } else if(st==='live'){
-      countdownHtml = '<div class="wc-countdown wc-countdown-live" data-live-start="'+m.kickoff+'" data-match-id="'+m.id+'"><span class="wc-live-dot"></span><span class="wc-live-text">'+wcLiveNowStr(kickoff, now, lang, m.liveMinute)+'</span></div>';
+      countdownHtml = '<div class="wc-countdown wc-countdown-live" data-live-start="'+m.kickoff+'" data-match-id="'+m.id+'"><span class="wc-live-dot"></span><span class="wc-live-text">'+wcLiveNowStr(kickoff, now, lang, m)+'</span></div>';
     }
 
     const homeFlag = home.iso ? '<img class="wc-flag-img" src="https://flagcdn.com/40x30/'+home.iso+'.png" alt="'+(lang==='ar'?home.ar:home.en)+'" loading="lazy">' : '<span class="wc-flag-placeholder">?</span>';
@@ -3539,10 +3549,10 @@ function wcRenderFixtures(){
   }
 }
 
-// ── Tournament lifecycle: ongoing → champion celebration (3 days) → page removed entirely ──
 function wcGetFinalMatch(){
   return WC_MATCHES.find(m=>m.id===WC_FINAL_MATCH_ID);
 }
+
 function wcLifecyclePhase(now){
   const final = wcGetFinalMatch();
   if(!final || final.status!=='final' || !final.winner) return {phase:'ongoing'};
@@ -3574,11 +3584,9 @@ function wcApplyLifecycle(){
   const champEl = document.getElementById('wcChampionSection');
 
   if(phase==='removed'){
-    // Tournament page is retired 3 days after the final — remove nav entry & page entirely.
     navBtns.forEach(b=>b.style.display='none');
     if(pageEl){
       pageEl.style.display='none';
-      // If the user was on this page, bounce them home.
       if(pageEl.style.display==='none' && document.querySelector('.nav-item[data-page="worldcup"].active')){
         document.querySelector('.nav-item[data-page="home"]').click();
       }
@@ -3601,8 +3609,8 @@ function wcApplyLifecycle(){
   return true;
 }
 
-// ── Fireworks canvas (runs only while the champion screen is visible) ──
 let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwResizeHandler=null;
+
 function wcSpawnBurst(cw,ch){
   const cx = cw*(0.2+Math.random()*0.6), cy = ch*(0.2+Math.random()*0.45);
   const colors = ['#f4d06f','#e08aa6','#8b5cf6','#f3e8f6','#6ee7b7','#f97362'];
@@ -3614,6 +3622,7 @@ function wcSpawnBurst(cw,ch){
     wcFwParticles.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,color,size:1.6+Math.random()*1.6});
   }
 }
+
 function wcFwLoop(){
   if(!wcFwCtx) return;
   const canvas = wcFwCtx.canvas;
@@ -3631,6 +3640,7 @@ function wcFwLoop(){
   wcFwParticles = wcFwParticles.filter(p=>p.life>0);
   wcFwRAF = requestAnimationFrame(wcFwLoop);
 }
+
 function wcStartFireworks(){
   const canvas = document.getElementById('wcFireworksCanvas');
   if(!canvas || wcFwRAF) return;
@@ -3642,6 +3652,7 @@ function wcStartFireworks(){
   wcFwParticles = [];
   wcFwRAF = requestAnimationFrame(wcFwLoop);
 }
+
 function wcStopFireworks(){
   if(wcFwRAF){ cancelAnimationFrame(wcFwRAF); wcFwRAF=null; }
   if(wcFwResizeHandler){ window.removeEventListener('resize', wcFwResizeHandler); wcFwResizeHandler=null; }
@@ -3655,12 +3666,12 @@ function wcTick(){
     const kickoff = new Date(el.dataset.kickoff);
     const diff = kickoff - now;
     if(!wcIsSameLocalDay(now, kickoff) || diff<=0){
-      wcRenderFixtures(); // day rolled over or match started — re-render statuses/badges
+      wcRenderFixtures(); 
       return;
     }
     el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
   });
- document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
+  document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
     const start = new Date(el.dataset.liveStart);
     const end = new Date(start.getTime() + 180*60000);
     if(now>=end){
@@ -3675,11 +3686,11 @@ function wcTick(){
 
 function initWorldCupPage(){
   const stillActive = wcApplyLifecycle();
-  if(!stillActive) return; // page was retired — nothing more to render
+  if(!stillActive) return; 
   const phase = wcLifecyclePhase(new Date()).phase;
   if(phase==='champion'){
     if(wcTimerHandle){ clearInterval(wcTimerHandle); wcTimerHandle=null; }
-    return; // champion screen has its own animation loop, no fixtures to render
+    return; 
   }
   wcRenderFixtures();
   if(!wcInitialized){
@@ -3697,8 +3708,6 @@ function initWorldCupPage(){
   wcTimerHandle = setInterval(wcTick, 1000);
 }
 
-// Check lifecycle on load (so the nav item is already hidden/updated before the user clicks it)
-// and re-check hourly in case the final result gets filled in, or 3 days pass, while the tab stays open.
 window.addEventListener('load', wcApplyLifecycle);
 setInterval(wcApplyLifecycle, 60*60*1000);
 
