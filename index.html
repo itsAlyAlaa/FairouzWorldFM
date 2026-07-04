@@ -1065,6 +1065,7 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
   box-shadow:0 14px 30px -10px rgba(0,0,0,.55);
   opacity:0; visibility:hidden; transform:translateY(10px) scale(.92); transform-origin:bottom right;
   transition:opacity .22s ease, transform .22s ease, visibility .22s;
+  overflow:hidden; /* keep the rotated volume slider clipped inside the panel */
 }
 
 .mp-vol-pop.open{opacity:1; visibility:visible; transform:translateY(0) scale(1);}
@@ -1089,6 +1090,9 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
   .mp-play-btn{width:38px; height:38px; font-size:14px;}
   .mp-title{max-width:88px; font-size:12.5px;}
   .mp-vol-btn{width:30px; height:30px;}
+  .mp-vol-pop{padding:12px 8px 14px;}
+  .mp-vol-slider-wrap{height:80px; width:24px;}
+  .mp-vol-slider-wrap input[type=range]{width:72px;}
 }
 /* prefers-reduced-motion override removed per request — animations always run */
 
