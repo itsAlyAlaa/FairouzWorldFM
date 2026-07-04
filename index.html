@@ -3287,7 +3287,7 @@ const WC_NAME_ALIASES = {
   'congo dr':'cod', 'dr congo':'cod',
   'usa':'usa', 'united states':'usa',
   'bosnia and herzegovina':'bih', 'bosnia & herzegovina':'bih',
-  'cape verde':'cpv', 'cabo verde':'cpv'
+  'cape verde':'cpv', 'cabo verde':'cpv', 'republic of cabo verde':'cpv'
 };
 function wcNormalizeName(name){
   return (name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
@@ -3339,16 +3339,36 @@ async function wcPollLive(){
     const res = await fetch(url, { headers:{ 'x-apisports-key': WC_LIVE_API.key } });
     const data = await res.json();
     let changed = false;
+    
     for(const fx of (data.response||[])){
       const m = wcFindMatchByApiTeams(fx.teams.home.name, fx.teams.away.name);
       if(!m) continue;
-      const homeGoals = fx.goals.home ?? 0, awayGoals = fx.goals.away ?? 0;
+      
+      const homeGoals = fx.goals.home ?? 0;
+      const awayGoals = fx.goals.away ?? 0;
       const scoreKey = homeGoals+'-'+awayGoals;
+      
       m.status = 'live';
-      m.liveMinute = fx.fixture.status.elapsed;
       m.score = { home: homeGoals, away: awayGoals };
+      
+      // تحديد حالة الماتش والوقت بدقة من الـ API
+      const apiStatus = fx.fixture.status.short; // مثلاً ET, PEN, 1H, 2H
+      const elapsed = fx.fixture.status.elapsed ?? 90;
+      
+      if(apiStatus === 'ET') {
+        m.liveMinuteLabel = currentLang === 'ar' ? `شوط إضافي — د ${elapsed}` : `Extra Time — ${elapsed}'`;
+      } else if(apiStatus === 'PEN') {
+        // لو ضربات جزاء، نكتب النتيجة الإجمالية لو متوفرة
+        const penHome = fx.score.penalty.home ?? '';
+        const penAway = fx.score.penalty.away ?? '';
+        const penStr = penHome !== '' ? ` (${penHome}-${penAway})` : '';
+        m.liveMinuteLabel = currentLang === 'ar' ? `ركلات الترجيح${penStr}` : `Penalties${penStr}`;
+      } else {
+        m.liveMinuteLabel = `${elapsed}'`;
+      }
+      
       changed = true;
-      // التحقق مما إذا كانت النتيجة تغيرت أو إذا كان هذا أول جلب للمباراة أثناء البث المباشر
+      
       if(!wcLiveLastScore[m.id] || wcLiveLastScore[m.id] !== scoreKey){
         wcLiveLastScore[m.id] = scoreKey;
         await wcFetchLiveEvents(m, fx.fixture.id, fx.teams.home.id);
@@ -3356,8 +3376,7 @@ async function wcPollLive(){
     }
     if(changed) wcRenderFixtures();
   }catch(err){ console.warn('World Cup: live poll failed', err); }
-}
-function wcPollLiveIfDue(){
+}function wcPollLiveIfDue(){
   if(!WC_LIVE_API.enabled) return;
   const now = Date.now();
   if(now - wcLastLivePoll < WC_LIVE_API.pollMs) return;
@@ -3401,11 +3420,13 @@ function wcLiveMinuteLabel(start, now){
   const minLabel = mins>90 ? ('90+'+(mins-90)) : String(mins);
   return minLabel+':'+secs+"'";
 }
-function wcLiveNowStr(start, now, lang, realMinute){
-  const minLabel = (realMinute!=null) ? (realMinute+"'") : wcLiveMinuteLabel(start, now);
-  return (lang==='ar' ? ('مباشر الآن — '+minLabel) : ('Live now — '+minLabel));
+function wcLiveNowStr(start, now, lang, m){
+  if (m && m.liveMinuteLabel) {
+    return (lang==='ar' ? ('مباشر الآن — ' + m.liveMinuteLabel) : ('Live now — ' + m.liveMinuteLabel));
+  }
+  const minLabel = wcLiveMinuteLabel(start, now);
+  return (lang==='ar' ? ('مباشر الآن — ' + minLabel) : ('Live now — ' + minLabel));
 }
-
 function wcRenderFixtures(){
   const wrap = document.getElementById('wcFixtures');
   if(!wrap) return;
@@ -3641,14 +3662,14 @@ function wcTick(){
   });
  document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
     const start = new Date(el.dataset.liveStart);
-    const end = new Date(start.getTime() + 180*60000); // تحديث هنا أيضاً لـ 180
+    const end = new Date(start.getTime() + 180*60000);
     if(now>=end){
-      wcRenderFixtures(); // match window ended — re-render as finished
+      wcRenderFixtures();
       return;
     }
     const textEl = el.querySelector('.wc-live-text');
     const m = WC_MATCHES.find(x=>x.id===el.dataset.matchId);
-    if(textEl) textEl.textContent = wcLiveNowStr(start, now, currentLang, m && m.liveMinute);
+    if(textEl) textEl.textContent = wcLiveNowStr(start, now, currentLang, m);
   });
 }
 
