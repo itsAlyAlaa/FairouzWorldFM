@@ -1104,6 +1104,182 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
 }
 /* prefers-reduced-motion override removed per request — animations always run */
 
+/* ══════════════════════════════════════════════
+   PALESTINE SOLIDARITY BADGE — global component
+   Shown fixed on every page. Pure CSS/SVG/JS, no images/GIFs.
+   ══════════════════════════════════════════════ */
+.pal-badge{
+  --pr:#e4312b; --pg:#149954; --pk:#0b0b0b; --pw:#f5f3ef;
+  position:fixed; left:16px; bottom:24px; z-index:840;
+  width:230px; user-select:none; -webkit-tap-highlight-color:transparent;
+  filter:drop-shadow(0 10px 26px rgba(0,0,0,.5));
+  opacity:0; transform:translateY(16px);
+  animation:palEnter .9s cubic-bezier(.19,1,.22,1) .4s forwards;
+}
+@keyframes palEnter{to{opacity:1;transform:translateY(0);}}
+
+/* Sparkles */
+.pal-sparkle-layer{position:absolute; inset:-18px; pointer-events:none; overflow:visible; z-index:3;}
+.pal-spark{
+  position:absolute; left:var(--px,50%); top:var(--py,50%);
+  width:var(--sz,4px); height:var(--sz,4px); border-radius:50%;
+  background:radial-gradient(circle,#fff 0%,rgba(255,255,255,.6) 40%,rgba(255,255,255,0) 75%);
+  opacity:0; will-change:transform,opacity;
+  animation:palSparkFloat 1.5s ease-out forwards;
+}
+@keyframes palSparkFloat{
+  0%{opacity:0; transform:translate(0,0) scale(.3);}
+  18%{opacity:1;}
+  100%{opacity:0; transform:translate(var(--sx,0),var(--sy,-30px)) scale(1);}
+}
+
+/* Card */
+.pal-card{
+  position:relative; display:flex; align-items:center; gap:9px;
+  background:linear-gradient(160deg,#111815,#070a08 72%);
+  border:1px solid rgba(20,153,84,.32);
+  border-radius:40px; padding:7px 13px 7px 7px; height:60px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.03);
+  transition:transform .4s cubic-bezier(.22,1,.36,1), box-shadow .4s ease, border-color .4s ease;
+  will-change:transform;
+}
+.pal-badge:hover .pal-card, .pal-badge:focus-within .pal-card, .pal-badge.pal-touch .pal-card{
+  transform:scale(1.04);
+  box-shadow:0 0 0 1px rgba(228,49,43,.28), 0 0 24px rgba(20,153,84,.4), 0 0 40px rgba(228,49,43,.12);
+  border-color:rgba(228,49,43,.5);
+}
+
+/* Medallion: dome + waving flag + dove */
+.pal-medallion{position:relative; width:46px; height:46px; flex-shrink:0;}
+.pal-med-svg{position:absolute; inset:0; width:100%; height:100%; border-radius:50%; display:block; overflow:hidden;}
+.pal-dome-shape{transform-origin:50px 68px; animation:palDomeGlow 4.5s ease-in-out infinite;}
+@keyframes palDomeGlow{0%,100%{filter:drop-shadow(0 0 0 rgba(201,152,47,0));}50%{filter:drop-shadow(0 0 3px rgba(201,152,47,.55));}}
+
+.pal-flag-wrap{
+  position:absolute; left:-9px; bottom:-8px; width:44px; height:26px;
+  overflow:visible; pointer-events:none; z-index:2;
+  transform-origin:0% 100%;
+  animation:palFlagSway 3.2s ease-in-out infinite;
+}
+@keyframes palFlagSway{
+  0%,100%{transform:rotate(-2.5deg) skewY(1deg);}
+  50%{transform:rotate(2.5deg) skewY(-1deg);}
+}
+.pal-flag-wrap svg{width:100%; height:100%; display:block;}
+.pal-stripe{transform-origin:0% 50%; animation:palStripeWave 2.6s ease-in-out infinite;}
+.pal-stripe.pal-s1{animation-delay:0s;}
+.pal-stripe.pal-s2{animation-delay:.12s;}
+.pal-stripe.pal-s3{animation-delay:.24s;}
+.pal-stripe.pal-s4{animation-delay:.36s;}
+@keyframes palStripeWave{
+  0%,100%{transform:translateY(0) scaleX(1);}
+  50%{transform:translateY(-1.4px) scaleX(1.02);}
+}
+
+.pal-dove{
+  position:absolute; right:-11px; top:-13px; width:26px; height:26px; z-index:2;
+  animation:palDoveFloat 3.6s ease-in-out infinite;
+}
+@keyframes palDoveFloat{
+  0%,100%{transform:translateY(0) rotate(-4deg);}
+  50%{transform:translateY(-4px) rotate(4deg);}
+}
+.pal-dove svg{width:100%; height:100%; display:block; overflow:visible;}
+.pal-wing{transform-origin:50% 50%; animation:palWingFlap 0.62s ease-in-out infinite;}
+.pal-wing-l{animation-delay:0s;}
+.pal-wing-r{animation-delay:.03s;}
+@keyframes palWingFlap{
+  0%,100%{transform:rotate(0deg) scaleY(1);}
+  50%{transform:rotate(-18deg) scaleY(.82);}
+}
+
+/* Text content */
+.pal-content{min-width:0; flex:1; display:flex; flex-direction:column; gap:1px;}
+.pal-heading{
+  font-size:8.5px; font-weight:700; letter-spacing:.14em; text-transform:uppercase;
+  color:#9db8ab; opacity:0; animation:palFadeUp .7s ease .75s forwards;
+}
+.pal-brand{
+  font-family:'Cinzel',serif; font-weight:800; font-size:16.5px; line-height:1.1;
+  letter-spacing:.02em; white-space:nowrap;
+  background:linear-gradient(90deg,var(--pr) 0%,var(--pw) 42%,var(--pw) 58%,var(--pg) 100%);
+  background-size:220% 100%;
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  opacity:0; transform:translateY(6px);
+  animation:palFadeUp .8s cubic-bezier(.19,1,.22,1) .9s forwards, palBrandShift 6s ease-in-out 1.8s infinite;
+}
+body.lang-ar .pal-brand{font-family:'Cairo',sans-serif;}
+@keyframes palFadeUp{to{opacity:1; transform:translateY(0);}}
+@keyframes palBrandShift{0%,100%{background-position:0% 50%;}50%{background-position:100% 50%;}}
+.pal-tags{
+  font-size:8px; font-weight:600; letter-spacing:.03em; color:#8a9b93;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  opacity:0; animation:palFadeUp .7s ease 1.05s forwards;
+}
+.pal-tags b{color:#c7d6cf; font-weight:700;}
+
+/* Map + pulsing heart */
+.pal-map-wrap{position:relative; width:22px; height:46px; flex-shrink:0; display:flex; align-items:center; justify-content:center;}
+.pal-map-wrap svg{width:100%; height:100%; overflow:visible;}
+.pal-map-outline{
+  fill:none; stroke:var(--pr); stroke-width:2; stroke-linejoin:round;
+  filter:drop-shadow(0 0 3px rgba(228,49,43,.75)) drop-shadow(0 0 7px rgba(228,49,43,.35));
+  animation:palMapGlow 2.8s ease-in-out infinite;
+}
+@keyframes palMapGlow{
+  0%,100%{filter:drop-shadow(0 0 2px rgba(228,49,43,.6)) drop-shadow(0 0 5px rgba(228,49,43,.25));}
+  50%{filter:drop-shadow(0 0 4px rgba(228,49,43,.95)) drop-shadow(0 0 10px rgba(228,49,43,.5));}
+}
+.pal-heart{
+  fill:#fff; transform-origin:center; transform-box:fill-box;
+  filter:drop-shadow(0 0 3px rgba(255,255,255,.85)) drop-shadow(0 0 7px rgba(228,49,43,.6));
+  animation:palHeartBeat 1.7s ease-in-out infinite;
+}
+@keyframes palHeartBeat{
+  0%,100%{transform:scale(1);}
+  20%{transform:scale(1.22);}
+  35%{transform:scale(.94);}
+  50%{transform:scale(1.14);}
+  70%{transform:scale(1);}
+}
+
+/* Ribbon strip */
+.pal-ribbon{
+  margin-top:6px; text-align:center; padding:4px 10px; border-radius:14px;
+  background:linear-gradient(90deg,rgba(228,49,43,.14),rgba(255,255,255,.06),rgba(20,153,84,.14));
+  border:1px solid rgba(255,255,255,.08);
+  font-size:8px; font-weight:700; letter-spacing:.09em; text-transform:uppercase; color:#d7e2dc;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  opacity:0; transform:translateY(6px);
+  animation:palFadeUp .7s ease 1.2s forwards;
+}
+
+/* Hover: brighten sparkle field ambiently via extra class toggled in JS */
+.pal-badge:hover .pal-brand, .pal-badge.pal-touch .pal-brand{animation-duration:2.4s;}
+
+@media (max-width:640px){
+  .pal-badge{width:196px; left:10px; bottom:calc(14px + env(safe-area-inset-bottom));}
+  .pal-card{height:52px; padding:6px 10px 6px 6px; gap:7px; border-radius:34px;}
+  .pal-medallion{width:38px; height:38px;}
+  .pal-dove{width:21px; height:21px; right:-9px; top:-10px;}
+  .pal-flag-wrap{width:36px; height:21px; left:-7px; bottom:-6px;}
+  .pal-brand{font-size:14px;}
+  .pal-heading{font-size:7.5px;}
+  .pal-tags{font-size:7.2px;}
+  .pal-map-wrap{width:16px; height:38px;}
+  .pal-ribbon{font-size:7px; padding:3px 8px; margin-top:5px;}
+}
+
+/* Respect Reduce Motion: calm the component down automatically */
+@media (prefers-reduced-motion: reduce){
+  .pal-badge{animation:none; opacity:1; transform:none;}
+  .pal-dome-shape, .pal-flag-wrap, .pal-stripe, .pal-dove, .pal-wing,
+  .pal-brand, .pal-map-outline, .pal-heart{animation:none !important;}
+  .pal-heading, .pal-tags, .pal-ribbon{animation:none !important; opacity:1 !important; transform:none !important;}
+  .pal-card{transition:none;}
+  .pal-sparkle-layer{display:none;}
+}
+
 /* ── Support ── */
 .support-page{display:none;}
 .sup-hero{text-align:center;margin-bottom:22px;}
@@ -2827,6 +3003,61 @@ body.occasion-sham-elnessim .occ-tint{
   </div>
 </div>
 
+<!-- Palestine solidarity badge — global component, present on every page, all code-driven (no images/GIFs) -->
+<div class="pal-badge" id="palBadge" role="img" aria-label="We stand with Palestine — freedom, justice, humanity">
+  <div class="pal-sparkle-layer" id="palSparkleLayer" aria-hidden="true"></div>
+  <div class="pal-card">
+    <div class="pal-medallion" aria-hidden="true">
+      <svg class="pal-med-svg" viewBox="0 0 100 100">
+        <defs>
+          <radialGradient id="palSky" cx="50%" cy="32%" r="75%">
+            <stop offset="0%" stop-color="#31232f"/>
+            <stop offset="100%" stop-color="#0d0710"/>
+          </radialGradient>
+        </defs>
+        <circle cx="50" cy="50" r="50" fill="url(#palSky)"/>
+        <g class="pal-dome-shape">
+          <rect x="28" y="66" width="44" height="13" rx="2" fill="#0e0a10"/>
+          <rect x="34" y="56" width="32" height="12" fill="#140f18"/>
+          <path d="M33 56 Q50 26 67 56 Z" fill="#c9982f"/>
+          <rect x="47.5" y="16" width="5" height="12" fill="#c9982f"/>
+          <circle cx="50" cy="14" r="3" fill="#c9982f"/>
+          <circle cx="42" cy="30" r="1.3" fill="#f3e8e6"/>
+          <circle cx="60" cy="24" r="1" fill="#f3e8e6"/>
+        </g>
+      </svg>
+      <div class="pal-flag-wrap">
+        <svg viewBox="0 0 100 60">
+          <path class="pal-stripe pal-s1" d="M4 10 Q28 2 52 10 T100 8 L100 22 Q70 15 45 24 T4 24 Z" fill="#e4312b"/>
+          <path class="pal-stripe pal-s2" d="M4 24 Q28 16 52 24 T100 22 L100 36 Q70 29 45 38 T4 38 Z" fill="#0b0b0b"/>
+          <path class="pal-stripe pal-s3" d="M4 38 Q28 30 52 38 T100 36 L100 48 Q70 42 45 50 T4 50 Z" fill="#f5f3ef"/>
+          <path class="pal-stripe pal-s4" d="M4 50 Q28 42 52 50 T100 48 L100 58 Q70 52 45 58 T4 58 Z" fill="#149954"/>
+        </svg>
+      </div>
+      <div class="pal-dove" aria-hidden="true">
+        <svg viewBox="0 0 40 40">
+          <path d="M20 22c-1.5-3-.7-6.5 2-8 1.5 3.5 4 4 6 3.3-.6 3-3.3 5-6 5-1 2-1.5 3.7-2 5-1.3-2-.6-3.6 0-5.3z" fill="#f4f2ef"/>
+          <path class="pal-wing pal-wing-l" d="M19 20c-4-1.5-9-.6-12 2 3.5 2.2 8.3 2 11 0 .6-.7.8-1.4 1-2z" fill="#e8e5e0"/>
+          <path class="pal-wing pal-wing-r" d="M21 20c2-2.8 6-4 10-2.8-2 2.8-6.2 4-9.4 3.3-.4-.1-.5-.3-.6-.5z" fill="#e8e5e0"/>
+          <circle cx="22.5" cy="16.5" r="1" fill="#2a2a2a"/>
+        </svg>
+      </div>
+    </div>
+    <div class="pal-content">
+      <div class="pal-heading" data-en="We stand with" data-ar="نقف مع">We stand with</div>
+      <div class="pal-brand" data-en="Palestine" data-ar="فلسطين">Palestine</div>
+      <div class="pal-tags"><b data-en="Freedom" data-ar="حرية">Freedom</b> · <b data-en="Justice" data-ar="عدالة">Justice</b> · <b data-en="Humanity" data-ar="إنسانية">Humanity</b></div>
+    </div>
+    <div class="pal-map-wrap" aria-hidden="true">
+      <svg viewBox="0 0 40 90">
+        <path class="pal-map-outline" d="M20 4 C29 9 32 20 27 30 C33 39 31 50 25 57 C30 66 27 78 20 86 C13 78 10 66 15 57 C9 50 7 39 13 30 C8 20 11 9 20 4 Z"/>
+        <circle class="pal-heart" cx="20" cy="43" r="4.5"/>
+      </svg>
+    </div>
+  </div>
+  <div class="pal-ribbon" data-en="From the river to the sea" data-ar="من النهر إلى البحر">From the river to the sea</div>
+</div>
+
 <script>
 // ── Language ──
 let currentLang = 'en';
@@ -4262,6 +4493,57 @@ function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
   }
   setInterval(syncMiniPlayer, 400);
   syncMiniPlayer();
+})();
+
+// ── Palestine solidarity badge: ambient sparkles + touch feedback + reduced-motion respect ──
+(function(){
+  const badge = document.getElementById('palBadge');
+  const layer = document.getElementById('palSparkleLayer');
+  if(!badge || !layer) return;
+
+  const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+  let sparkleTimer = null;
+
+  function spawnSpark(boost){
+    if(motionQuery.matches) return;
+    const count = boost ? 2 : 1;
+    for(let i=0;i<count;i++){
+      const s = document.createElement('span');
+      s.className = 'pal-spark';
+      const px = Math.random()*100; // % across the badge width
+      const py = 30 + Math.random()*70; // bias toward lower/mid area
+      const sx = (Math.random()*36-18).toFixed(1)+'px';
+      const sy = (-(18+Math.random()*24)).toFixed(1)+'px';
+      const sz = (2.5+Math.random()*2.5).toFixed(1)+'px';
+      s.style.setProperty('--px', px+'%');
+      s.style.setProperty('--py', py+'%');
+      s.style.setProperty('--sx', sx);
+      s.style.setProperty('--sy', sy);
+      s.style.setProperty('--sz', sz);
+      s.addEventListener('animationend', ()=>s.remove());
+      layer.appendChild(s);
+    }
+  }
+
+  function startAmbientSparkles(){
+    stopAmbientSparkles();
+    if(motionQuery.matches) return;
+    sparkleTimer = setInterval(()=>spawnSpark(false), 1100);
+  }
+  function stopAmbientSparkles(){
+    if(sparkleTimer){ clearInterval(sparkleTimer); sparkleTimer = null; }
+  }
+
+  badge.addEventListener('mouseenter', ()=>{ spawnSpark(true); });
+  badge.addEventListener('touchstart', ()=>{
+    badge.classList.add('pal-touch');
+    spawnSpark(true);
+    setTimeout(()=>badge.classList.remove('pal-touch'), 900);
+  }, {passive:true});
+
+  motionQuery.addEventListener ? motionQuery.addEventListener('change', startAmbientSparkles)
+                                : motionQuery.addListener(startAmbientSparkles);
+  startAmbientSparkles();
 })();
 
 // ── Prayer Times ──
