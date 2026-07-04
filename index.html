@@ -2827,6 +2827,11 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     if (page === 'about') revealAboutPage();
     if (page === 'news') fetchNews(false);
     if (page === 'worldcup') initWorldCupPage();
+    // Reset scroll position to top so the new page always opens from the start
+    // (fixes pages opening mid-scroll on mobile instead of at the top like desktop)
+    const contentEl = document.querySelector('.content');
+    if (contentEl) contentEl.scrollTop = 0;
+    window.scrollTo(0, 0);
     const miniPlayerEl = document.getElementById('miniPlayer');
     if (miniPlayerEl) {
       miniPlayerEl.classList.toggle('show', page !== 'home');
