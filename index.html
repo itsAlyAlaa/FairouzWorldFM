@@ -1087,7 +1087,7 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
 .mp-mute-btn:hover{background:rgba(217,184,136,.14); color:var(--gold);}
 
 @media(max-width:880px){
-  .mini-player{bottom:88px; right:14px;}
+  .mini-player{bottom:calc(16px + env(safe-area-inset-bottom)); right:14px;}
   .mp-title{max-width:110px;}
 }
 @media(max-width:480px){
@@ -1746,7 +1746,7 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .sidebar   { display: none; }
   .content   {
     flex: 1;
-    padding: 8px 10px calc(100px + env(safe-area-inset-bottom));
+    padding: calc(76px + env(safe-area-inset-top)) 10px 20px;
     overflow-y: auto;
     max-height: 100vh;
   }
@@ -1754,14 +1754,16 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .hero        { flex-direction: row; text-align: left; padding: 10px 12px; gap: 10px; }
   .hero-text h1 { font-size: 23px; }
 
-  /* Mobile bottom navigation bar */
+  /* Mobile navigation bar — moved to the top, above the language/clock bar,
+     to match the desktop layout where the nav sits above everything else */
   .mobile-nav {
     display: flex !important;
-    position: fixed; bottom: 0; left: 0; right: 0; z-index: 200;
+    position: fixed; top: 0; bottom: auto; left: 0; right: 0; z-index: 200;
     background: rgba(13,6,16,.97);
-    border-top: 1px solid var(--border);
+    border-top: none;
+    border-bottom: 1px solid var(--border);
     backdrop-filter: blur(14px);
-    padding: 6px 0 calc(6px + env(safe-area-inset-bottom));
+    padding: calc(6px + env(safe-area-inset-top)) 0 6px;
     justify-content: center;
   }
   .mobile-nav .nav-item {
