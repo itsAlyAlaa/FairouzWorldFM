@@ -3367,7 +3367,7 @@ function wcPollLiveIfDue(){
 
 function wcMatchWindow(m){
   const start = new Date(m.kickoff);
-  const end = new Date(start.getTime() + 130*60000); // ~130 min typical match window
+  const end = new Date(start.getTime() + 180*60000); // زيادة الوقت لـ 180 دقيقة لاستيعاب الأشواط الإضافية
   return {start,end};
 }
 function wcIsSameLocalDay(a,b){
@@ -3639,9 +3639,9 @@ function wcTick(){
     }
     el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
   });
-  document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
+ document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
     const start = new Date(el.dataset.liveStart);
-    const end = new Date(start.getTime() + 130*60000);
+    const end = new Date(start.getTime() + 180*60000); // تحديث هنا أيضاً لـ 180
     if(now>=end){
       wcRenderFixtures(); // match window ended — re-render as finished
       return;
