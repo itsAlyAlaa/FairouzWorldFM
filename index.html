@@ -1746,7 +1746,7 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .sidebar   { display: none; }
   .content   {
     flex: 1;
-    padding: 8px 10px 72px;
+    padding: 8px 10px calc(100px + env(safe-area-inset-bottom));
     overflow-y: auto;
     max-height: 100vh;
   }
