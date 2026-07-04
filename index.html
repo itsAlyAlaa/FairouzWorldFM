@@ -37,7 +37,7 @@ body{
   transition:background 2.2s ease, color 1.6s ease;
 }
 body, body *{transition:background-color 1.6s ease, border-color 1.6s ease, color 1.4s ease;}
-body.lang-ar{font-family:'Cairo',sans-serif; direction:rtl;}
+body.lang-ar{font-family:'Cairo',sans-serif; direction:ltr;}
 #starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 2.2s ease;}
 .aurora{position:fixed;border-radius:50%;filter:blur(90px);opacity:.22;z-index:0;pointer-events:none;animation:drift 16s ease-in-out infinite alternate;transition:opacity 2.2s ease;}
 @keyframes drift{0%{transform:translate(0,0) scale(1);}100%{transform:translate(30px,-25px) scale(1.08);}}
@@ -230,7 +230,7 @@ body.lang-ar .lang-toggle{
   line-height:1.6;
 }
 .mobile-footer{
-  display:none;
+  display:block;
   font-size:12.5px;
   color:var(--muted);
   text-align:center;
@@ -1008,7 +1008,7 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
 }
 .mini-player.show{display:block; opacity:1; transform:translateY(0) scale(1); animation:mpPopIn .45s cubic-bezier(.2,.8,.2,1);}
 @keyframes mpPopIn{0%{opacity:0;transform:translateY(24px) scale(.85);}100%{opacity:1;transform:translateY(0) scale(1);}}
-body.lang-ar .mini-player{right:auto; left:24px;}
+
 
 .mp-bar{
   display:flex; 
@@ -1023,7 +1023,7 @@ body.lang-ar .mini-player{right:auto; left:24px;}
   max-width:280px;
   transition:box-shadow .3s ease, border-color .3s ease, transform .3s ease;
 }
-body.lang-ar .mp-bar{padding:8px 8px 8px 18px;}
+
 .mini-player.playing .mp-bar{border-color:rgba(139,92,246,.4); box-shadow:0 14px 34px -10px rgba(139,92,246,.35), 0 0 0 1px rgba(217,184,136,.08);}
 .mp-bar:hover{transform:translateY(-2px);}
 
@@ -1072,7 +1072,7 @@ body.lang-ar .mp-bar{padding:8px 8px 8px 18px;}
   opacity:0; visibility:hidden; transform:translateY(10px) scale(.92); transform-origin:bottom right;
   transition:opacity .22s ease, transform .22s ease, visibility .22s;
 }
-body.lang-ar .mp-vol-pop{right:auto; left:0; transform-origin:bottom left;}
+
 .mp-vol-pop.open{opacity:1; visibility:visible; transform:translateY(0) scale(1);}
 .mp-vol-val{font-size:12px; color:var(--muted); font-weight:700;}
 .mp-vol-slider-wrap{height:96px; width:28px; display:flex; align-items:center; justify-content:center;}
@@ -1088,12 +1088,10 @@ body.lang-ar .mp-vol-pop{right:auto; left:0; transform-origin:bottom left;}
 
 @media(max-width:880px){
   .mini-player{bottom:88px; right:14px;}
-  body.lang-ar .mini-player{left:14px;}
   .mp-title{max-width:110px;}
 }
 @media(max-width:480px){
   .mp-bar{padding:6px 14px 6px 6px; gap:9px;}
-  body.lang-ar .mp-bar{padding:6px 6px 6px 14px;}
   .mp-play-btn{width:38px; height:38px; font-size:14px;}
   .mp-title{max-width:88px; font-size:12.5px;}
   .mp-vol-btn{width:30px; height:30px;}
@@ -1412,8 +1410,6 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 .wc-match-mid{display:flex;align-items:center;justify-content:space-between;gap:10px;}
 .wc-team{display:flex;align-items:center;gap:10px;flex:1;font-size:16.5px;font-weight:700;color:var(--text);}
 .wc-team.right{flex-direction:row-reverse;text-align:right;justify-content:flex-start;}
-body.lang-ar .wc-team.right{flex-direction:row;text-align:left;}
-body.lang-ar .wc-team:not(.right){flex-direction:row-reverse;}
 .wc-flag-img{width:30px;height:22px;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px var(--border), 0 2px 6px rgba(0,0,0,.35);flex-shrink:0;background:var(--surface);}
 .wc-flag-placeholder{width:30px;height:22px;border-radius:4px;background:var(--surface);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);flex-shrink:0;}
 .wc-score{font-family:'Cinzel',serif;font-size:23px;color:var(--gold);min-width:64px;text-align:center;letter-spacing:.05em;}
@@ -1422,7 +1418,6 @@ body.lang-ar .wc-team:not(.right){flex-direction:row-reverse;}
 .wc-scorers{display:flex;justify-content:space-between;gap:10px;margin-top:6px;}
 .wc-scorers-col{flex:1;font-size:12.5px;color:var(--muted);line-height:1.6;}
 .wc-scorers-col.right{text-align:right;}
-body.lang-ar .wc-scorers-col.right{text-align:left;}
 .wc-scorers-col span{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .wc-scorers-col .ball{margin:0 3px;}
 .wc-events{margin-top:8px;padding-top:8px;border-top:1px dashed var(--border);display:flex;flex-direction:column;gap:4px;}
@@ -2780,7 +2775,7 @@ function applyLang() {
   const body = document.body;
   if (currentLang === 'ar') {
     body.classList.add('lang-ar');
-    body.setAttribute('dir','rtl'); body.setAttribute('lang','ar');
+    body.setAttribute('dir','ltr'); body.setAttribute('lang','ar');
     document.getElementById('langFlag').innerHTML =
   '<img src="https://flagcdn.com/24x18/gb.png" alt="English" width="20" height="15">';
     document.getElementById('langName').textContent = 'English';
