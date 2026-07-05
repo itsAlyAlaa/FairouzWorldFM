@@ -1440,9 +1440,9 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
   box-shadow:0 16px 36px rgba(0,0,0,.38), 0 0 0 1px rgba(217,184,136,.12);
 }
 .wc-match-card:hover::before,.wc-match-card:hover::after{opacity:1;}
-.wc-match-card[data-status="live"]{border-color:rgba(255,122,122,.32);}
-.wc-match-card[data-status="live"]::after{
-  opacity:1;background:linear-gradient(90deg,#ff7a7a,#ffb648,#ff7a7a);
+.wc-match-card[data-final="true"]{border-color:rgba(217,184,136,.4);}
+.wc-match-card[data-final="true"]::after{
+  opacity:1;background:linear-gradient(90deg,#d9b888,#fff3cf,#d9b888);
   background-size:200% 100%;animation:wcTopGlow 2.2s linear infinite;
 }
 @keyframes wcTopGlow{0%{background-position:0% 0;}100%{background-position:200% 0;}}
@@ -1452,7 +1452,7 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 .wc-match-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);}
 .wc-match-stage{text-transform:uppercase;letter-spacing:.05em;}
 .wc-badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.03em;}
-.wc-badge-live{background:rgba(217,80,80,.18);color:#ff7a7a;animation:wcPulse 1.6s ease-in-out infinite;}
+.wc-badge-final{background:rgba(217,184,136,.2);color:var(--gold);animation:wcPulse 2.4s ease-in-out infinite;}
 .wc-badge-finished{background:rgba(120,120,120,.18);color:var(--muted);}
 .wc-badge-upcoming{background:rgba(139,92,246,.18);color:#b39bf5;}
 @keyframes wcPulse{0%,100%{opacity:1;}50%{opacity:.55;}}
@@ -1478,9 +1478,6 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 .wc-match-bottom{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;border-top:1px dashed var(--border);padding-top:10px;}
 .wc-datetime{font-size:14px;color:var(--muted);}
 .wc-countdown{font-family:'Cinzel',serif;font-size:15px;color:var(--rose);letter-spacing:.03em;display:flex;align-items:center;gap:8px;}
-.wc-countdown-live{color:#3ddc71;}
-.wc-live-dot{width:9px;height:9px;border-radius:50%;background:#3ddc71;flex-shrink:0;box-shadow:0 0 6px rgba(61,220,113,.85);animation:wcLiveBlink 1.1s ease-in-out infinite;}
-@keyframes wcLiveBlink{0%,100%{opacity:1;box-shadow:0 0 8px rgba(61,220,113,.9);}50%{opacity:.2;box-shadow:0 0 2px rgba(61,220,113,.3);}}
 .wc-channel{font-size:14px;color:var(--gold2);display:flex;align-items:center;gap:5px;}
 .wc-channel .ic{font-size:15px;}
 
@@ -2601,11 +2598,14 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="wc-block-title">⚽ <span data-en="Fixtures &amp; Results" data-ar="مواعيد ونتائج المباريات">Fixtures &amp; Results</span></div>
           <div class="wc-filters" id="wcFilters">
             <button class="wc-filter-btn active" data-filter="upcoming" data-en="Upcoming" data-ar="القادمة">Upcoming</button>
-            <button class="wc-filter-btn" data-filter="live" data-en="Live" data-ar="مباشر">Live</button>
             <button class="wc-filter-btn" data-filter="finished" data-en="Results" data-ar="النتائج">Results</button>
+            <button class="wc-filter-btn" data-filter="final" data-en="🏆 Final" data-ar="🏆 النهائي">🏆 Final</button>
             <button class="wc-filter-btn" data-filter="all" data-en="All" data-ar="الكل">All</button>
           </div>
-          <div class="wc-fixtures" id="wcFixtures"></div>
+          <div class="wc-fixtures-wrap" style="position:relative;">
+            <canvas id="wcFinalTabFireworks" class="wc-fireworks-canvas" style="display:none;"></canvas>
+            <div class="wc-fixtures" id="wcFixtures"></div>
+          </div>
         </section>
       </div>
 
@@ -3397,8 +3397,8 @@ const WC_MATCHES = [
   {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'final',score:{home:1,away:1},note:{en:'EGY won on penalties',ar:'مصر فازت بركلات الترجيح'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
   {id:'53452569',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ARG',away:'CPV',kickoff:'2026-07-03T22:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Decided in extra time (1-1 after 90 mins)',ar:'حُسمت في الوقت الإضافي (بعد 1-1 في الـ90 دقيقة)'},free:false,channels:['beIN SPORTS MAX 2 + beIN SPORTS MAX 4']},
   {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'final',score:{home:1,away:0},free:true,channels:['beIN SPORTS MAX 1 + beIN SPORTS MAX 3 (free)']},
-  {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'scheduled',free:false},
-  {id:'53452509',stage:{en:'Round of 16',ar:'دور الـ16'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'scheduled',free:false},
+  {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'final',score:{home:0,away:3},free:false},
+  {id:'53452509',stage:{en:'Round of 16',ar:'دور الـ16'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'final',score:{home:0,away:1},free:false},
   {id:'53452517',stage:{en:'Round of 16',ar:'دور الـ16'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'scheduled',free:false},
   {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'scheduled',free:false},
   {id:'53452513',stage:{en:'Round of 16',ar:'دور الـ16'},home:'POR',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'scheduled',free:false},
@@ -3409,266 +3409,12 @@ const WC_MATCHES = [
 ];
 const WC_FINAL_MATCH_ID = 'wcFinal2026';
 let wcTimerHandle = null;
-let wcBackfillTimerHandle = null;
-let wcLiveTimerHandle = null;
 let wcCurrentFilter = 'upcoming';
 let wcInitialized = false;
 
-// مهم: مفتاح الـ API اتشال من هنا خالص. المتصفح مبقاش بينادي على api-sports.io مباشرة
-// (كان ده سبب "Failed to fetch" لأن الـ API ده مصمم يتنادى من سيرفر مش من متصفح).
-// دلوقتي كل الطلبات بتعدي على البروكسي (Cloudflare Worker) اللي بيحتفظ بالمفتاح بشكل سري.
-// غيّر القيمة دي برابط الـ Worker بتاعك بعد النشر (شوف ملف worker.js المرفق والتعليمات).
-const WC_PROXY_URL = 'https://wc-proxy.itsalyalaa.workers.dev';
-
-const WC_LIVE_API = {
-  enabled: true,
-  league: 1, 
-  season: 2026,
-  basePollMs: 90000,   // كل 90 ثانية (بدل 20) عشان الخطة المجانية 100 طلب/يوم بس متكفيش مع بولينج سريع جدًا
-  pollMs: 90000,
-  maxPollMs: 300000
-};
-let wcLastLivePoll = 0;
-let wcLiveApiLastError = null;
-
-// دالة جلب أحداث المباراة (أهداف/بطاقات) ونجم المباراة
-async function wcFetchMatchDetails(m) {
-  if (!WC_LIVE_API.enabled) return;
-  if (m.events) return;
-  try {
-    const url = `${WC_PROXY_URL}?endpoint=fixtures/events&fixture=${m.id}`;
-    const res = await fetch(url);
-    const data = await res.json();
-    m.events = (data && data.response) || [];
-
-    // نجم المباراة: تقدير بأعلى تقييم لاعب (API-Football لا توفر حقل "Man of the Match" مباشر)
-    try {
-      const purl = `${WC_PROXY_URL}?endpoint=fixtures/players&fixture=${m.id}`;
-      const pres = await fetch(purl);
-      const pdata = await pres.json();
-      let best = null;
-      (pdata.response || []).forEach(teamBlock => {
-        (teamBlock.players || []).forEach(p => {
-          const rating = parseFloat(p.statistics && p.statistics[0] && p.statistics[0].games && p.statistics[0].games.rating);
-          if (!isNaN(rating) && (!best || rating > best.rating)) {
-            best = { name: p.player.name, rating };
-          }
-        });
-      });
-      if (best) m.motm = best;
-    } catch (e) { /* نجم المباراة اختياري، تجاهل الفشل */ }
-
-    wcRenderFixtures();
-  } catch (err) {
-    console.warn('Failed to fetch match events', err);
-  }
-}
-
-function wcLogApiError(context, data, res){
-  const msg = (data && data.errors && (Array.isArray(data.errors) ? data.errors.join(', ') : JSON.stringify(data.errors)))
-    || (res && !res.ok && (res.status+' '+res.statusText))
-    || 'unknown error';
-  wcLiveApiLastError = { context, msg, at: Date.now() };
-  console.warn('[World Cup live data] '+context+' failed → '+msg);
-}
-
-const WC_NAME_ALIASES = {
-  'ivory coast':'civ', "cote d'ivoire":'civ', 'côte d’ivoire':'civ',
-  'congo dr':'cod', 'dr congo':'cod',
-  'usa':'usa', 'united states':'usa',
-  'bosnia and herzegovina':'bih', 'bosnia & herzegovina':'bih',
-  'cape verde':'cpv', 'cabo verde':'cpv', 'republic of cabo verde':'cpv'
-};
-
-function wcNormalizeName(name){
-  return (name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').trim();
-}
-
-function wcCodeForApiName(apiName){
-  const n = wcNormalizeName(apiName);
-  if(WC_NAME_ALIASES[n]) return WC_NAME_ALIASES[n];
-  for(const code in WC_TEAMS){
-    if(wcNormalizeName(WC_TEAMS[code].en) === n) return code.toLowerCase();
-  }
-  return null;
-}
-
-function wcFindMatchByApiTeams(apiHomeName, apiAwayName, fx){
-  if (fx && fx.teams) {
-    const apiHomeIso = (fx.teams.home.name === 'USA' ? 'us' : (fx.teams.home.name === 'Cabo Verde' || fx.teams.home.name === 'Cape Verde' ? 'cv' : ''));
-    const apiAwayIso = (fx.teams.away.name === 'USA' ? 'us' : (fx.teams.away.name === 'Cabo Verde' || fx.teams.away.name === 'Cape Verde' ? 'cv' : ''));
-    
-    const matched = WC_MATCHES.find(m => {
-      const localHomeIso = WC_TEAMS[m.home]?.iso;
-      const localAwayIso = WC_TEAMS[m.away]?.iso;
-      if (apiHomeIso && apiAwayIso && localHomeIso && localAwayIso) {
-        return localHomeIso === apiHomeIso && localAwayIso === apiAwayIso;
-      }
-      return false;
-    });
-    if (matched) return matched;
-  }
-
-  const homeCode = wcCodeForApiName(apiHomeName);
-  const awayCode = wcCodeForApiName(apiAwayName);
-  if(homeCode && awayCode) {
-    return WC_MATCHES.find(m => m.home.toLowerCase()===homeCode && m.away.toLowerCase()===awayCode);
-  }
-  return null;
-}
-
-function wcLiveApiBackoff(){
-  WC_LIVE_API.pollMs = Math.min(WC_LIVE_API.pollMs * 2, WC_LIVE_API.maxPollMs);
-}
-function wcLiveApiRecover(){
-  WC_LIVE_API.pollMs = WC_LIVE_API.basePollMs;
-}
-
-function wcBuildAutoNote(m, fx){
-  if(m.note) return; 
-  const ft = fx.score && fx.score.fulltime;
-  const et = fx.score && fx.score.extratime;
-  const pen = fx.score && fx.score.penalty;
-  const home = WC_TEAMS[m.home], away = WC_TEAMS[m.away];
-  const hasPen = pen && (pen.home!==null && pen.home!==undefined);
-  const hasEt = et && (et.home!==null && et.home!==undefined);
-  if(hasPen){
-    const winner = pen.home > pen.away ? home : away;
-    m.note = {
-      en: (hasEt ? `Finished ${et.home}-${et.away} after extra time — ` : '') + `${winner.en} won ${pen.home}-${pen.away} on penalties`,
-      ar: (hasEt ? `انتهت ${et.home}-${et.away} بعد الوقت الإضافي — ` : '') + `${winner.ar} فازت ${pen.home}-${pen.away} بركلات الترجيح`
-    };
-  } else if(hasEt){
-    m.note = { en: `Decided in extra time (${ft ? ft.home+'-'+ft.away+' after 90 mins' : ''})`, ar: `حُسمت في الوقت الإضافي${ft?(' (بعد '+ft.home+'-'+ft.away+' في الـ90 دقيقة)'):''}` };
-  }
-}
-
-async function wcPollLive(){
-  if(!WC_LIVE_API.enabled) return;
-  try{
-    const url = WC_PROXY_URL+'?endpoint=fixtures&league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&live=all';
-    const res = await fetch(url);
-    const data = await res.json();
-    if(!res.ok || (data && data.errors && Object.keys(data.errors).length)){ wcLogApiError('live poll', data, res); wcLiveApiBackoff(); return; }
-    wcLiveApiRecover();
-    let changed = false;
-    const nowMs = Date.now();
-    
-    for(const fx of (data.response||[])){
-      const m = wcFindMatchByApiTeams(fx.teams.home.name, fx.teams.away.name, fx);
-      if(!m) continue;
-      
-      const homeGoals = fx.goals.home ?? 0;
-      const awayGoals = fx.goals.away ?? 0;
-      
-      const apiStatus = fx.fixture.status.short; 
-      const elapsed = fx.fixture.status.elapsed ?? 90;
-      const wasFinal = m.status === 'final';
-      
-      if(['FT', 'AET', 'PEN'].includes(apiStatus)){
-        m.status = 'final';
-        wcFetchMatchDetails(m); // جلب الأحداث فور انتهاء المباراة
-      } else {
-        m.status = 'live';
-        const half = apiStatus==='1H' ? '1H' : apiStatus==='2H' ? '2H' : apiStatus==='ET' ? (elapsed<=105?'ET1':'ET2') : apiStatus==='HT' ? 'HT' : apiStatus==='BT' ? 'BT' : apiStatus;
-        m.liveClock = { baseMinute: elapsed, baseTime: nowMs, half, apiStatus };
-      }
-      
-      m.score = { home: homeGoals, away: awayGoals };
-      
-      if(apiStatus === 'HT'){
-        m.liveMinuteLabel = currentLang === 'ar' ? 'استراحة نهاية الشوط الأول' : 'Half-time break';
-      } else if(apiStatus === 'BT'){
-        m.liveMinuteLabel = currentLang === 'ar' ? 'استراحة قبل الأشواط الإضافية' : 'Break before extra time';
-      } else if(apiStatus === 'ET') {
-        m.liveMinuteLabel = null;
-      } else if(apiStatus === 'PEN' || (fx.score?.penalty?.home !== null && fx.score?.penalty?.home !== undefined)) {
-        const penHome = fx.score.penalty.home ?? '';
-        const penAway = fx.score.penalty.away ?? '';
-        const penStr = penHome !== '' ? ` (${penHome}-${penAway})` : '';
-        m.liveMinuteLabel = currentLang === 'ar' ? `ركلات الترجيح${penStr}` : `Penalties${penStr}`;
-      } else {
-        m.liveMinuteLabel = null;
-      }
-      
-      changed = true;
-      
-      if(m.status==='final' && !wasFinal){
-        wcBuildAutoNote(m, fx);
-        m.liveClock = null;
-      }
-    }
-    if(changed) wcRenderFixtures();
-  }catch(err){ console.warn('World Cup: live poll failed', err); wcLiveApiBackoff(); }
-}
-
-const wcBackfilledDates = new Set();
-let wcBackfillRunning = false;
-
-async function wcBackfillFinishedResults(){
-  if(!WC_LIVE_API.enabled) return;
-  if(wcBackfillRunning) return;
-  wcBackfillRunning = true;
-  try{
-    const now = new Date();
-    const needsBackfill = WC_MATCHES.filter(m=>{
-      if(m.status==='final') return false; 
-      const {end} = wcMatchWindow(m);
-      return now>=end; 
-    });
-    const dates = [...new Set(needsBackfill.map(m=> new Date(m.kickoff).toISOString().slice(0,10)))]
-      .filter(d=>!wcBackfilledDates.has(d));
-    if(!dates.length){ wcBackfillRunning = false; return; }
-
-    let changed = false;
-    for(const date of dates){
-      try{
-        const url = WC_PROXY_URL+'?endpoint=fixtures&league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&date='+date;
-        const res = await fetch(url);
-        const data = await res.json();
-        if(!res.ok || (data && data.errors && Object.keys(data.errors).length)){ wcLogApiError('backfill '+date, data, res); wcLiveApiBackoff(); continue; }
-        wcBackfilledDates.add(date); 
-        for(const fx of (data.response||[])){
-          const m = wcFindMatchByApiTeams(fx.teams.home.name, fx.teams.away.name, fx);
-          if(!m || m.status==='final') continue;
-          const apiStatus = fx.fixture.status.short;
-          if(['FT','AET','PEN'].includes(apiStatus)){
-            m.status = 'final';
-            m.score = { home: fx.goals.home ?? 0, away: fx.goals.away ?? 0 };
-            wcBuildAutoNote(m, fx);
-            wcFetchMatchDetails(m); // جلب الأحداث للمباريات المنتهية
-            changed = true;
-          }
-        }
-      }catch(err){ console.warn('World Cup: backfill failed for', date, err); }
-    }
-    if(changed) wcRenderFixtures();
-  } finally {
-    wcBackfillRunning = false;
-  }
-}
-
-// ... بقية الدوال (wcAnyMatchInLiveWindow, wcMatchWindow, etc.) كما هي ...
-
-function wcAnyMatchInLiveWindow(now){
-  return WC_MATCHES.some(m=>{
-    if(m.status==='final') return false;
-    const {start,end} = wcMatchWindow(m);
-    return now>=start && now<end;
-  });
-}
-
-function wcPollLiveIfDue(){
-  if(!WC_LIVE_API.enabled) return;
-  const now = Date.now();
-  if(!wcAnyMatchInLiveWindow(new Date(now))){
-    wcLiveApiRecover();
-    return; 
-  }
-  if(now - wcLastLivePoll < WC_LIVE_API.pollMs) return;
-  wcLastLivePoll = now;
-  wcPollLive();
-}
+// لا يوجد أي اتصال بأي API خارجي هنا. كل بيانات المباريات (المواعيد، النتائج،
+// القنوات الناقلة) تُقرأ مباشرة من مصفوفة WC_MATCHES بالأسفل، وبالتالي الصفحة
+// تتحدّث فورًا لكل الزوار بمجرد تعديل هذه المصفوفة، بدون أي طلب شبكة أو مفتاح API.
 
 function wcMatchWindow(m){
   const start = new Date(m.kickoff);
@@ -3676,18 +3422,9 @@ function wcMatchWindow(m){
   return {start,end};
 }
 
-function wcIsSameLocalDay(a,b){
-  return a.getFullYear()===b.getFullYear() && a.getMonth()===b.getMonth() && a.getDate()===b.getDate();
-}
-
 function wcStatusOf(m, now){
-  if(m.status==='final') return 'finished';
-  if(m.status==='live') return 'live';
-  
-  const {start,end} = wcMatchWindow(m);
-  if(now>=start && now<end) return 'live';
-  if(now<start) return 'upcoming';
-  return 'finished';
+  // لا وجود لحالة "مباشر": المباراة إما "قادمة" أو "منتهية" (بعد إدخال نتيجتها يدويًا في WC_MATCHES).
+  return m.status==='final' ? 'finished' : 'upcoming';
 }
 
 function wcFmtClock(d, lang){
@@ -3707,43 +3444,7 @@ function wcCountdownStr(ms, lang){
   return h+':'+mnt+':'+s;
 }
 
-function wcHalfCap(half){
-  switch(half){
-    case '1H': return 45;
-    case '2H': return 90;
-    case 'ET1': return 105;
-    case 'ET2': return 120;
-    default: return 130;
-  }
-}
-
-function wcLiveMinuteLabel(start, now, m){
-  if(m && m.liveClock){
-    const {baseMinute, baseTime, half} = m.liveClock;
-    const elapsedMs = now - baseTime;
-    const addMin = Math.floor(elapsedMs/60000);
-    const secs = String(Math.floor((elapsedMs%60000)/1000)).padStart(2,'0');
-    const mins = baseMinute + addMin;
-    const cap = wcHalfCap(half);
-    const label = mins<=cap ? (mins+':'+secs) : (cap+'+'+(mins-cap)+':'+secs);
-    return label+"'";
-  }
-  const elapsedSec = Math.floor((now-start)/1000);
-  const mins = Math.floor(elapsedSec/60) + 1;
-  const secs = String(elapsedSec%60).padStart(2,'0');
-  const minLabel = mins>90 ? ('90+'+(mins-90)) : String(mins);
-  return minLabel+':'+secs+"'";
-}
-
-function wcLiveNowStr(start, now, lang, m){
-  if (m && m.liveMinuteLabel) {
-    return (lang==='ar' ? ('مباشر الآن — ' + m.liveMinuteLabel) : ('Live now — ' + m.liveMinuteLabel));
-  }
-  const minLabel = wcLiveMinuteLabel(start, now, m);
-  return (lang==='ar' ? ('مباشر الآن — ' + minLabel) : ('Live now — ' + minLabel));
-}
-
-// الدالة المحدثة للرندرة
+// دالة الرندرة
 function wcRenderFixtures(){
   const wrap = document.getElementById('wcFixtures');
   if(!wrap) return;
@@ -3759,36 +3460,14 @@ function wcRenderFixtures(){
     : (new Date(a.kickoff) - new Date(b.kickoff))
   ).forEach(m=>{
     const st = wcStatusOf(m, now);
-    if(wcCurrentFilter!=='all' && wcCurrentFilter!==st) return;
+    const isFinalMatch = (m.id === WC_FINAL_MATCH_ID);
+    if(wcCurrentFilter === 'final'){
+      if(!isFinalMatch) return;
+    } else if(wcCurrentFilter!=='all' && wcCurrentFilter!==st){
+      return;
+    }
     const home = WC_TEAMS[m.home], away = WC_TEAMS[m.away];
     const kickoff = new Date(m.kickoff);
-
-    // بناء قائمة الهدافين والبطاقات ونجم المباراة
-    let scorersHtml = '', eventsHtml = '';
-    if (m.events && m.events.length) {
-      const homeGoals = [], awayGoals = [], cardRows = [];
-      m.events.forEach(ev => {
-        const evTeamCode = wcCodeForApiName(ev.team && ev.team.name);
-        const isHome = evTeamCode === m.home.toLowerCase();
-        const playerName = (ev.player && ev.player.name) || '';
-        const minute = (ev.time && ev.time.elapsed != null) ? ev.time.elapsed + (ev.time.extra ? '+' + ev.time.extra : '') : '';
-        if (ev.type === 'Goal' && ev.detail !== 'Missed Penalty') {
-          const suffix = ev.detail === 'Penalty' ? (lang === 'ar' ? ' (ركلة جزاء)' : ' (pen)') : ev.detail === 'Own Goal' ? (lang === 'ar' ? ' (هدف عكسي)' : ' (OG)') : '';
-          const label = '<span>⚽<span class="ball"></span>' + playerName + suffix + ' ' + minute + "'" + '</span>';
-          (isHome ? homeGoals : awayGoals).push(label);
-        } else if (ev.type === 'Card') {
-          const icon = ev.detail === 'Red Card' ? '🟥' : '🟨';
-          cardRows.push('<div class="wc-event-row"><span class="wc-event-min">' + minute + "'" + '</span><span class="wc-event-ic">' + icon + '</span><span>' + playerName + '</span></div>');
-        }
-      });
-      if (homeGoals.length || awayGoals.length) {
-        scorersHtml = '<div class="wc-scorers"><div class="wc-scorers-col">' + homeGoals.join('') + '</div><div class="wc-scorers-col right">' + awayGoals.join('') + '</div></div>';
-      }
-      if (m.motm && m.motm.name) {
-        cardRows.push('<div class="wc-event-row"><span class="wc-event-ic">⭐</span><span>' + (lang === 'ar' ? 'نجم المباراة: ' : 'Player of the Match: ') + m.motm.name + '</span></div>');
-      }
-      if (cardRows.length) eventsHtml = '<div class="wc-events">' + cardRows.join('') + '</div>';
-    }
 
     const dateKey = kickoff.getFullYear()+'-'+kickoff.getMonth()+'-'+kickoff.getDate();
     if(dateKey!==lastDateKey){
@@ -3803,27 +3482,27 @@ function wcRenderFixtures(){
     card.className = 'wc-match-card';
     card.dataset.matchId = m.id;
     card.dataset.status = st;
+    if(isFinalMatch) card.dataset.final = 'true';
     card.style.setProperty('--wc-delay', (Math.min(cardIndex,10) * 0.06) + 's');
     cardIndex++;
 
-    const badge = st==='live' ? '<span class="wc-badge wc-badge-live" data-en="LIVE" data-ar="مباشر">'+(lang==='ar'?'مباشر':'LIVE')+'</span>'
-      : st==='finished' ? '<span class="wc-badge wc-badge-finished">'+(lang==='ar'?'انتهت':'Finished')+'</span>'
+    // شارة "النهائي" تظهر بدل شارة "قادمة" على مباراة النهائي طالما لم تُلعب بعد
+    const badge = st==='finished' ? '<span class="wc-badge wc-badge-finished">'+(lang==='ar'?'انتهت':'Finished')+'</span>'
+      : isFinalMatch ? '<span class="wc-badge wc-badge-final">🏆 '+(lang==='ar'?'النهائي':'Final')+'</span>'
       : '<span class="wc-badge wc-badge-upcoming">'+(lang==='ar'?'قادمة':'Upcoming')+'</span>';
 
-    const scoreOrVs = (st==='finished' || st==='live')
-      ? '<div class="wc-score">'+(m.score ? (m.score.home+' — '+m.score.away) : (st==='live' ? '0 — 0' : '—'))+'</div>'
+    const scoreOrVs = st==='finished'
+      ? '<div class="wc-score">'+(m.score.home+' — '+m.score.away)+'</div>'
       : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
 
-    const noteHtml = (m.note && (st==='finished' || st==='live'))
+    const noteHtml = (m.note && st==='finished')
       ? '<div class="wc-note" dir="auto">'+(lang==='ar'?m.note.ar:m.note.en)+'</div>' : '';
 
     let channelText = (m.channels && m.channels.length) ? m.channels.join(' + ') : (m.free ? (lang==='ar' ? 'beIN SPORTS المفتوحة + beIN SPORTS MAX' : 'beIN SPORTS (free) + beIN SPORTS MAX') : 'beIN SPORTS MAX');
 
     let countdownHtml = '';
-    if(st==='upcoming' && wcIsSameLocalDay(now, kickoff)){
+    if(st==='upcoming'){
       countdownHtml = '<div class="wc-countdown" data-kickoff="'+m.kickoff+'">⏱ '+wcCountdownStr(kickoff-now, lang)+'</div>';
-    } else if(st==='live'){
-      countdownHtml = '<div class="wc-countdown wc-countdown-live"><span class="wc-live-dot"></span><span class="wc-live-text">'+(lang==='ar'?'مباشر':'Live')+'</span></div>';
     }
 
     const homeFlag = home.iso ? '<img class="wc-flag-img" src="https://flagcdn.com/40x30/'+home.iso+'.png" alt="'+(lang==='ar'?home.ar:home.en)+'" loading="lazy">' : '<span class="wc-flag-placeholder">?</span>';
@@ -3837,8 +3516,6 @@ function wcRenderFixtures(){
         '<div class="wc-team right"><span>'+(lang==='ar'?away.ar:away.en)+'</span>'+awayFlag+'</div>'+
       '</div>'+
       noteHtml+
-      scorersHtml+
-      eventsHtml+ // الهدافون والبطاقات ونجم المباراة
       '<div class="wc-match-bottom">'+
         '<div class="wc-datetime">📅 '+wcFmtDate(kickoff,lang)+' — '+wcFmtClock(kickoff,lang)+' ('+(lang==='ar'?'بتوقيت القاهرة':'Cairo time')+')</div>'+
         countdownHtml+
@@ -3849,6 +3526,7 @@ function wcRenderFixtures(){
   if(!wrap.children.length){
     wrap.innerHTML = '<div class="wc-datetime" style="padding:12px 0;">'+(lang==='ar'?'لا توجد مباريات في هذا القسم حاليًا.':'No matches in this section right now.')+'</div>';
   }
+  wcSyncFinalTabFireworks();
 }
 
 // ... باقي الدوال (wcGetFinalMatch, wcApplyLifecycle, wcStartFireworks, etc.) كما هي ...
@@ -3920,7 +3598,7 @@ function wcApplyLifecycle(){
   return true;
 }
 
-let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwResizeHandler=null;
+let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwResizeHandler=null, wcFwActiveCanvasId=null;
 
 function wcSpawnBurst(cw,ch){
   const cx = cw*(0.2+Math.random()*0.6), cy = ch*(0.2+Math.random()*0.45);
@@ -3952,45 +3630,86 @@ function wcFwLoop(){
   wcFwRAF = requestAnimationFrame(wcFwLoop);
 }
 
-function wcStartFireworks(){
-  const canvas = document.getElementById('wcFireworksCanvas');
-  if(!canvas || wcFwRAF) return;
+function wcStartFireworks(canvasId){
+  const id = canvasId || 'wcFireworksCanvas';
+  const canvas = document.getElementById(id);
+  if(!canvas) return;
+  if(wcFwRAF){
+    if(wcFwActiveCanvasId === id) return; // already running on this canvas
+    wcStopFireworks(); // switch engine to the newly requested canvas
+  }
   const resize = ()=>{ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; };
   resize();
   wcFwResizeHandler = resize;
   window.addEventListener('resize', wcFwResizeHandler);
   wcFwCtx = canvas.getContext('2d');
   wcFwParticles = [];
+  wcFwActiveCanvasId = id;
   wcFwRAF = requestAnimationFrame(wcFwLoop);
 }
 
 function wcStopFireworks(){
   if(wcFwRAF){ cancelAnimationFrame(wcFwRAF); wcFwRAF=null; }
   if(wcFwResizeHandler){ window.removeEventListener('resize', wcFwResizeHandler); wcFwResizeHandler=null; }
-  wcFwCtx=null; wcFwParticles=[];
+  wcFwCtx=null; wcFwParticles=[]; wcFwActiveCanvasId=null;
 }
 
+// تشغيل/إيقاف الألعاب النارية الخاصة بتبويب "النهائي" حسب الفلتر المفعّل حاليًا،
+// بدون التأثير على الألعاب النارية الخاصة بشاشة الاحتفال بالبطل (تستخدم كانفاس مختلف).
+function wcSyncFinalTabFireworks(){
+  const finalCanvas = document.getElementById('wcFinalTabFireworks');
+  if(!finalCanvas) return;
+  const normalEl = document.getElementById('wcNormalContent');
+  const isVisible = !normalEl || normalEl.style.display !== 'none';
+  if(wcCurrentFilter === 'final' && isVisible){
+    finalCanvas.style.display = '';
+    wcStartFireworks('wcFinalTabFireworks');
+  } else {
+    finalCanvas.style.display = 'none';
+    if(wcFwActiveCanvasId === 'wcFinalTabFireworks') wcStopFireworks();
+  }
+}
+
+// ترتيب تبويبات الفلاتر: طبيعي = Upcoming, Results, Final, All.
+// بمجرد الوصول لموعد المباراة النهائية (آخر البطولة)، ينتقل تبويب "النهائي"
+// ليصبح أول تبويب: Final, Upcoming, Results, All — ويبقى كذلك بعدها.
+let wcFinalTabAtFront = false;
+function wcSyncFinalTabOrder(){
+  const final = wcGetFinalMatch();
+  const filtersEl = document.getElementById('wcFilters');
+  if(!final || !filtersEl) return;
+  const now = new Date();
+  const shouldBeFirst = now >= new Date(final.kickoff);
+  if(shouldBeFirst === wcFinalTabAtFront) return;
+  wcFinalTabAtFront = shouldBeFirst;
+  const finalBtn = filtersEl.querySelector('[data-filter="final"]');
+  if(!finalBtn) return;
+  if(shouldBeFirst){
+    filtersEl.insertBefore(finalBtn, filtersEl.firstChild);
+  } else {
+    const finishedBtn = filtersEl.querySelector('[data-filter="finished"]');
+    if(finishedBtn) finishedBtn.insertAdjacentElement('afterend', finalBtn);
+  }
+}
+
+// تحديث العدّاد التنازلي كل ثانية لكل المباريات القادمة المعروضة حاليًا،
+// بدون أي طلب شبكة — كله حساب محلي بناءً على وقت الجهاز.
 function wcTick(){
   const now = new Date();
   document.querySelectorAll('.wc-countdown[data-kickoff]').forEach(el=>{
     const kickoff = new Date(el.dataset.kickoff);
     const diff = kickoff - now;
-    if(!wcIsSameLocalDay(now, kickoff) || diff<=0){
-      wcRenderFixtures(); 
-      return;
-    }
     el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
   });
+  wcSyncFinalTabOrder();
 }
 
 function initWorldCupPage(){
   const stillActive = wcApplyLifecycle();
   if(!stillActive) return; 
   
+  wcSyncFinalTabOrder();
   wcRenderFixtures();
-  wcPollLive(); 
-  wcBackfillFinishedResults(); 
-  WC_MATCHES.filter(m=>m.status==='final' && !m.events).forEach(m=>wcFetchMatchDetails(m));
   
   if(!wcInitialized){
     const filtersEl = document.getElementById('wcFilters');
@@ -4009,14 +3728,6 @@ function initWorldCupPage(){
   
   if(wcTimerHandle) clearInterval(wcTimerHandle);
   wcTimerHandle = setInterval(wcTick, 1000);
-  
-  if(wcBackfillTimerHandle) clearInterval(wcBackfillTimerHandle);
-  wcBackfillTimerHandle = setInterval(wcBackfillFinishedResults, 2 * 60 * 1000);
-
-  // يتحقق كل 5 ثوانٍ هل حان وقت جلب تحديث جديد للمباريات المباشرة (حسب WC_LIVE_API.pollMs)
-  // ده اللي فعليًا بيخلي الأهداف والنتائج تتحدث أول بأول من غير ما تحتاج تعمل ريفريش للصفحة
-  if(wcLiveTimerHandle) clearInterval(wcLiveTimerHandle);
-  wcLiveTimerHandle = setInterval(wcPollLiveIfDue, 5000);
 }
 
 window.addEventListener('load', () => {
@@ -4024,7 +3735,7 @@ window.addEventListener('load', () => {
   initWorldCupPage();
 });
 
-setInterval(wcApplyLifecycle, 60 * 60 * 1000);
+setInterval(() => { if(wcApplyLifecycle()) wcSyncFinalTabFireworks(); }, 60 * 60 * 1000);
 
 // ── Clock ──
 function updateClock() {
