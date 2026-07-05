@@ -3626,7 +3626,8 @@ function wcApplyLifecycle(){
         if(homeBtn) homeBtn.click();
       }
     }
-    wcStopFireworks();
+    wcStopFireworks('wcFireworksCanvas');
+    wcStopFireworks('wcFinalTabFireworks');
     return false;
   }
 
@@ -3635,177 +3636,253 @@ function wcApplyLifecycle(){
     if(normalEl) normalEl.style.display='none';
     if(champEl) champEl.style.display='flex';
     wcRenderChampion(final);
-    wcStartFireworks();
+    wcStartFireworks('wcFireworksCanvas');
   } else {
     if(normalEl) normalEl.style.display='';
     if(champEl) champEl.style.display='none';
-    wcStopFireworks();
+    wcStopFireworks('wcFireworksCanvas');
   }
   return true;
 }
 
-let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwRockets=[], wcFwResizeHandler=null, wcFwActiveCanvasId=null, wcFwLastSpawn=0, wcFwDurationTimer=null, wcFwCanvasEl=null;
-const WC_FW_SHOW_DURATION_MS = 90 * 1000; // دقيقة ونص بالظبط
-
-const WC_FW_PALETTES = [
-  ['#ffd97a','#ff9d5c'],       // warm gold
-  ['#ff6b8b','#ffd3e0'],       // rose/pink
-  ['#7ee8fa','#e0fbff'],       // ice blue
-  ['#b98bff','#e9d8ff'],       // violet
-  ['#8bffb0','#e3fff0'],       // emerald
-  ['#ffffff','#dfe9ff'],       // silver/white
-  ['#ff8a5c','#ffe1c4']        // amber
+// مجموعة ألوان الألعاب النارية الحقيقية — كل فرقعة بتاخد كذا لون منها مع بعض
+const WC_FW_COLOR_POOL = [
+  '#ffd166', // gold
+  '#ff5c5c', // red
+  '#ff9d5c', // amber/orange
+  '#7ee8fa', // ice blue
+  '#5ce1e6', // cyan
+  '#b98bff', // violet
+  '#ff6b8b', // pink
+  '#8bffb0', // emerald green
+  '#ffffff', // white sparkle
+  '#ffe066'  // yellow
 ];
 
-function wcLaunchRocket(cw,ch){
-  const x = cw*(0.12+Math.random()*0.76);
-  const targetY = ch*(0.14+Math.random()*0.36);
-  wcFwRockets.push({
-    x, y: ch+6, targetY,
-    vx: (Math.random()-0.5)*0.35,
-    vy: -(6.6+Math.random()*2.2),
-    trail: [],
-    color: '#fff6da'
-  });
+function wcPickBurstColors(){
+  const pool = WC_FW_COLOR_POOL.slice();
+  const picks = [];
+  const n = 3 + Math.floor(Math.random()*2); // 3 أو 4 ألوان مختلفة في نفس الفرقعة
+  for(let i=0;i<n;i++){
+    const idx = Math.floor(Math.random()*pool.length);
+    picks.push(pool.splice(idx,1)[0]);
+  }
+  return picks;
 }
 
-function wcExplode(x,y,cw){
-  const palette = WC_FW_PALETTES[Math.floor(Math.random()*WC_FW_PALETTES.length)];
-  const [core, edge] = palette;
-  // scale burst size gently with canvas width so it feels right on mobile & desktop
-  const scale = Math.max(0.65, Math.min(1.15, cw/900));
-  const shapeRoll = Math.random();
-  const isRing = shapeRoll < 0.22;
-  const isWillow = !isRing && shapeRoll < 0.5;
-  const count = Math.floor((isRing ? 48 : 42) + Math.random()*22);
-
-  for(let i=0;i<count;i++){
-    const angle = (Math.PI*2*i)/count + Math.random()*0.12;
-    let speed = (isRing ? 3.1 : 2.1) + Math.random()*(isRing?0.6:2.6);
-    if(isWillow) speed *= 0.85;
-    const useEdgeColor = Math.random() < 0.35;
-    wcFwParticles.push({
-      x, y,
-      vx: Math.cos(angle)*speed*scale,
-      vy: Math.sin(angle)*speed*scale,
-      life: 1,
-      decay: isWillow ? (0.0068+Math.random()*0.004) : (0.011+Math.random()*0.008),
-      drag: isWillow ? 0.985 : 0.965,
-      gravity: isWillow ? 0.028 : 0.05,
-      color: useEdgeColor ? edge : core,
-      size: (isRing ? 1.3 : 1.5) + Math.random()*1.4,
-      willow: isWillow,
-      spark: Math.random() < 0.5
-    });
+// كل كانفاس بيشتغل بمحرك مستقل (جزيئات، حلقة رسم، متابعة الحجم) خاص بيه لوحده،
+// عشان تشغيل/إيقاف كانفاس معين ما يأثرش خالص على التاني ولا يحتاج ريفرش للصفحة.
+class WCFireworksEngine{
+  constructor(canvas){
+    this.canvas = canvas;
+    this.ctx = null;
+    this.particles = [];
+    this.raf = null;
+    this.running = false;
+    this.nextSpawnAt = 0;
+    this.ro = null;
+    this._onResize = this._onResize.bind(this);
+    this._loop = this._loop.bind(this);
   }
-  // soft central flash
-  wcFwParticles.push({x,y,vx:0,vy:0,life:1,decay:0.09,drag:1,gravity:0,color:'#ffffff',size:14*scale,flash:true});
-}
-
-function wcFwLoop(){
-  if(!wcFwCtx) return;
-  const canvas = wcFwCtx.canvas;
-  const cw = canvas.width, ch = canvas.height;
-
-  // fully transparent each frame — this canvas sits above real page content
-  wcFwCtx.globalCompositeOperation = 'source-over';
-  wcFwCtx.clearRect(0,0,cw,ch);
-
-  const now = performance.now();
-  if(now - wcFwLastSpawn > 420 + Math.random()*480){
-    wcFwLastSpawn = now;
-    wcLaunchRocket(cw,ch);
-    if(Math.random()<0.55) setTimeout(()=>{ if(wcFwCtx) wcLaunchRocket(canvas.width, canvas.height); }, 120+Math.random()*220);
-    if(Math.random()<0.3) setTimeout(()=>{ if(wcFwCtx) wcLaunchRocket(canvas.width, canvas.height); }, 260+Math.random()*300);
+  _onResize(){
+    if(!this.canvas) return;
+    const w = this.canvas.clientWidth || window.innerWidth;
+    const h = this.canvas.clientHeight || window.innerHeight;
+    if(this.canvas.width !== w) this.canvas.width = w;
+    if(this.canvas.height !== h) this.canvas.height = h;
   }
-
-  wcFwCtx.globalCompositeOperation = 'lighter';
-
-  // rockets ascending
-  wcFwRockets.forEach(r=>{
-    r.trail.push({x:r.x,y:r.y});
-    if(r.trail.length>6) r.trail.shift();
-    r.x += r.vx; r.y += r.vy; r.vy += 0.045;
-
-    r.trail.forEach((t,i)=>{
-      const a = (i/r.trail.length)*0.5;
-      wcFwCtx.globalAlpha = a;
-      wcFwCtx.fillStyle = r.color;
-      wcFwCtx.beginPath();
-      wcFwCtx.arc(t.x,t.y,1.4,0,Math.PI*2);
-      wcFwCtx.fill();
-    });
-    wcFwCtx.globalAlpha = 0.9;
-    wcFwCtx.beginPath();
-    wcFwCtx.arc(r.x,r.y,1.7,0,Math.PI*2);
-    wcFwCtx.fill();
-  });
-  wcFwRockets = wcFwRockets.filter(r=>{
-    if(r.y<=r.targetY || r.vy>=0.2){ wcExplode(r.x,r.y,cw); return false; }
-    return true;
-  });
-
-  // burst particles
-  wcFwParticles.forEach(p=>{
-    if(p.flash){
-      p.life -= p.decay;
-      wcFwCtx.globalAlpha = Math.max(p.life,0)*0.5;
-      wcFwCtx.fillStyle = p.color;
-      wcFwCtx.beginPath();
-      wcFwCtx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
-      wcFwCtx.fill();
-      return;
+  start(){
+    if(!this.canvas) return;
+    if(this.running) return; // already running — never let a second call reset live particles
+    this.running = true;
+    this.canvas.classList.add('wc-fw-fullscreen'); // fireworks fill the whole screen, not just their box
+    this.ctx = this.canvas.getContext('2d');
+    this._onResize();
+    window.addEventListener('resize', this._onResize);
+    if(window.ResizeObserver && !this.ro){
+      // catches layout/orientation/RTL-LTR changes too, not just window resize —
+      // so the canvas never gets stuck at a stale 0×0 size needing a page refresh
+      this.ro = new ResizeObserver(this._onResize);
+      this.ro.observe(this.canvas);
     }
-    p.vx *= p.drag; p.vy *= p.drag; p.vy += p.gravity;
-    p.x += p.vx; p.y += p.vy;
-    p.life -= p.decay;
-    const flicker = p.spark ? (0.6+Math.random()*0.4) : 1;
-    wcFwCtx.globalAlpha = Math.max(p.life,0)*flicker;
-    wcFwCtx.fillStyle = p.color;
-    wcFwCtx.beginPath();
-    wcFwCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
-    wcFwCtx.fill();
-  });
-  wcFwCtx.globalAlpha = 1;
-  wcFwCtx.globalCompositeOperation = 'source-over';
-  wcFwParticles = wcFwParticles.filter(p=>p.life>0);
-  wcFwRAF = requestAnimationFrame(wcFwLoop);
-}
-
-function wcStartFireworks(canvasId){
-  const id = canvasId || 'wcFireworksCanvas';
-  const canvas = document.getElementById(id);
-  if(!canvas) return;
-  if(wcFwRAF){
-    if(wcFwActiveCanvasId === id) return; // already running on this canvas
-    wcStopFireworks(); // switch engine to the newly requested canvas
+    this.particles = [];
+    this.nextSpawnAt = 0;
+    this.raf = requestAnimationFrame(this._loop);
   }
-  canvas.classList.add('wc-fw-fullscreen'); // fireworks fill the whole screen, not just their box
-  const resize = ()=>{ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; };
-  resize();
-  wcFwResizeHandler = resize;
-  window.addEventListener('resize', wcFwResizeHandler);
-  wcFwCtx = canvas.getContext('2d');
-  wcFwCanvasEl = canvas;
-  wcFwParticles = [];
-  wcFwRockets = [];
-  wcFwLastSpawn = 0;
-  wcFwActiveCanvasId = id;
-  wcFwRAF = requestAnimationFrame(wcFwLoop);
-  if(wcFwDurationTimer) clearTimeout(wcFwDurationTimer);
-  wcFwDurationTimer = setTimeout(()=>{ wcStopFireworks(); }, WC_FW_SHOW_DURATION_MS);
+  stop(){
+    this.running = false;
+    if(this.raf){ cancelAnimationFrame(this.raf); this.raf=null; }
+    window.removeEventListener('resize', this._onResize);
+    if(this.ro){ this.ro.disconnect(); this.ro=null; }
+    if(this.ctx && this.canvas) this.ctx.clearRect(0,0,this.canvas.width,this.canvas.height);
+    if(this.canvas) this.canvas.classList.remove('wc-fw-fullscreen');
+    this.particles = [];
+  }
+  spawnBurst(cw,ch,forcedX,forcedY){
+    const colors = wcPickBurstColors();
+    let x = forcedX!=null ? forcedX : cw*(0.1+Math.random()*0.8);
+    const y = forcedY!=null ? forcedY : ch*(0.1+Math.random()*0.5);
+    if(forcedX==null && this._lastX!=null){
+      // nudge away from wherever the last shell went up, so two bursts don't land on top of each other
+      let tries=0;
+      while(Math.abs(x-this._lastX) < cw*0.28 && tries<6){ x = cw*(0.1+Math.random()*0.8); tries++; }
+    }
+    this._lastX = x;
+    // scale burst size with canvas width so it reaches far and feels big and real on mobile & desktop alike
+    const scale = Math.max(1.0, Math.min(2.0, cw/760));
+    const shapeRoll = Math.random();
+    const isRing = shapeRoll < 0.22;
+    const isWillow = !isRing && shapeRoll < 0.5;
+    const isCrossette = !isRing && !isWillow && shapeRoll < 0.62;
+    const count = Math.floor((isRing ? 60 : isCrossette ? 52 : 68) + Math.random()*36);
+
+    for(let i=0;i<count;i++){
+      const angle = (Math.PI*2*i)/count + Math.random()*0.15;
+      let speed = (isRing ? 4.2 : 3.1) + Math.random()*(isRing?1.0:3.8);
+      if(isWillow) speed *= 0.8;
+      const color = colors[Math.floor(Math.random()*colors.length)];
+      this.particles.push({
+        x, y, px:x, py:y,
+        vx: Math.cos(angle)*speed*scale,
+        vy: Math.sin(angle)*speed*scale,
+        life: 1,
+        // ~1.8-2.6s for normal bursts, ~3-4.5s for willow trails — long enough to actually be seen
+        decay: isWillow ? (0.0037+Math.random()*0.0022) : (0.0064+Math.random()*0.0042),
+        drag: isWillow ? 0.992 : 0.978,
+        gravity: isWillow ? 0.017 : 0.03,
+        color,
+        size: (isRing ? 1.5 : 1.8) + Math.random()*1.7,
+        spark: Math.random() < 0.55,
+        crossette: isCrossette && i%4===0,
+        exploded: false
+      });
+    }
+    // brief soft flash, mixes the burst's own colors — a real spark of light, not a flat disc
+    this.particles.push({x,y,px:x,py:y,vx:0,vy:0,life:1,decay:0.09,drag:1,gravity:0,color:'#ffffff',size:15*scale,flash:true});
+  }
+  spawnCrossette(x,y,color,cw){
+    const scale = Math.max(0.6, Math.min(1.2, cw/1000));
+    const n = 4 + Math.floor(Math.random()*3);
+    for(let i=0;i<n;i++){
+      const angle = Math.random()*Math.PI*2;
+      const speed = 1.1+Math.random()*1.8;
+      this.particles.push({
+        x, y, px:x, py:y,
+        vx: Math.cos(angle)*speed*scale, vy: Math.sin(angle)*speed*scale,
+        life: 1, decay: 0.018+Math.random()*0.012, drag: 0.97, gravity: 0.028,
+        color, size: 1+Math.random(), spark:true, exploded:true
+      });
+    }
+  }
+  _loop(){
+    if(!this.running || !this.ctx){ return; }
+    try{
+      const ctx = this.ctx, canvas = this.canvas;
+      const cw = canvas.width, ch = canvas.height;
+
+      // fully transparent each frame — this canvas sits above real page content
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0,0,cw,ch);
+
+      if(cw > 0 && ch > 0){
+        const now = performance.now();
+        // mostly one shell at a time, occasionally two spaced well apart in time — a real show has gaps
+        if(now >= this.nextSpawnAt && this.particles.length < 700){
+          const shells = Math.random()<0.22 ? 2 : 1;
+          for(let i=0;i<shells;i++){
+            const delay = i*(420+Math.random()*380);
+            setTimeout(()=>{ if(this.running) this.spawnBurst(canvas.width, canvas.height); }, delay);
+          }
+          this.nextSpawnAt = now + 1100 + Math.random()*1100;
+        }
+
+        ctx.globalCompositeOperation = 'lighter';
+        ctx.lineCap = 'round';
+        const survivors = [];
+        for(const p of this.particles){
+          if(p.flash){
+            p.life -= p.decay;
+            if(p.life > 0){
+              const r = p.size*(1.3-p.life*0.3);
+              const grad = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,r);
+              grad.addColorStop(0, 'rgba(255,255,255,'+(p.life*0.85)+')');
+              grad.addColorStop(0.5, 'rgba(255,255,255,'+(p.life*0.28)+')');
+              grad.addColorStop(1, 'rgba(255,255,255,0)');
+              ctx.globalAlpha = 1;
+              ctx.fillStyle = grad;
+              ctx.beginPath();
+              ctx.arc(p.x,p.y,r,0,Math.PI*2);
+              ctx.fill();
+              survivors.push(p);
+            }
+            continue;
+          }
+          p.px = p.x; p.py = p.y;
+          p.vx *= p.drag; p.vy *= p.drag; p.vy += p.gravity;
+          p.x += p.vx; p.y += p.vy;
+          p.life -= p.decay;
+          if(p.crossette && !p.exploded && p.life < 0.5){
+            p.exploded = true;
+            this.spawnCrossette(p.x,p.y,p.color,cw);
+          }
+          if(p.life > 0){
+            const flicker = p.spark ? (0.55+Math.random()*0.45) : 1;
+            const alpha = Math.max(p.life,0)*flicker;
+            ctx.globalAlpha = alpha;
+            // short glowing streak in the direction of motion — reads as a real spark, not a flat dot
+            ctx.strokeStyle = p.color;
+            ctx.lineWidth = p.size*0.85;
+            ctx.beginPath();
+            ctx.moveTo(p.px,p.py);
+            ctx.lineTo(p.x,p.y);
+            ctx.stroke();
+            ctx.fillStyle = p.color;
+            ctx.beginPath();
+            ctx.arc(p.x,p.y,p.size*0.55,0,Math.PI*2);
+            ctx.fill();
+            survivors.push(p);
+          }
+        }
+        this.particles = survivors;
+        ctx.globalAlpha = 1;
+        ctx.globalCompositeOperation = 'source-over';
+      }
+    }catch(e){
+      // log only — never wipe live particles just because one frame hiccuped,
+      // otherwise bursts get cut off mid-animation instead of finishing naturally
+      console.error('fireworks frame error:', e);
+    }
+    if(this.running) this.raf = requestAnimationFrame(this._loop);
+  }
 }
 
-function wcStopFireworks(){
-  if(wcFwRAF){ cancelAnimationFrame(wcFwRAF); wcFwRAF=null; }
-  if(wcFwResizeHandler){ window.removeEventListener('resize', wcFwResizeHandler); wcFwResizeHandler=null; }
-  if(wcFwDurationTimer){ clearTimeout(wcFwDurationTimer); wcFwDurationTimer=null; }
-  if(wcFwCanvasEl) wcFwCanvasEl.classList.remove('wc-fw-fullscreen');
-  wcFwCtx=null; wcFwParticles=[]; wcFwRockets=[]; wcFwActiveCanvasId=null; wcFwCanvasEl=null;
+let wcChampionFwEngine = null, wcFinalTabFwEngine = null;
+function wcGetFwEngine(canvasId){
+  const id = canvasId || 'wcFireworksCanvas';
+  if(id === 'wcFinalTabFireworks'){
+    if(!wcFinalTabFwEngine){
+      const el = document.getElementById('wcFinalTabFireworks');
+      if(el) wcFinalTabFwEngine = new WCFireworksEngine(el);
+    }
+    return wcFinalTabFwEngine;
+  }
+  if(!wcChampionFwEngine){
+    const el = document.getElementById('wcFireworksCanvas');
+    if(el) wcChampionFwEngine = new WCFireworksEngine(el);
+  }
+  return wcChampionFwEngine;
+}
+function wcStartFireworks(canvasId){
+  const engine = wcGetFwEngine(canvasId);
+  if(engine) engine.start();
+}
+function wcStopFireworks(canvasId){
+  const engine = wcGetFwEngine(canvasId);
+  if(engine) engine.stop();
 }
 
 // تشغيل/إيقاف الألعاب النارية الخاصة بتبويب "النهائي" حسب الفلتر المفعّل حاليًا،
-// بدون التأثير على الألعاب النارية الخاصة بشاشة الاحتفال بالبطل (تستخدم كانفاس مختلف).
+// بدون التأثير على الألعاب النارية الخاصة بشاشة الاحتفال بالبطل (تستخدم كانفاس ومحرك مختلف تمامًا).
 function wcSyncFinalTabFireworks(){
   const finalCanvas = document.getElementById('wcFinalTabFireworks');
   if(!finalCanvas) return;
@@ -3816,9 +3893,22 @@ function wcSyncFinalTabFireworks(){
     wcStartFireworks('wcFinalTabFireworks');
   } else {
     finalCanvas.style.display = 'none';
-    if(wcFwActiveCanvasId === 'wcFinalTabFireworks') wcStopFireworks();
+    wcStopFireworks('wcFinalTabFireworks');
   }
 }
+
+// شبكة أمان إضافية: لو المستخدم رجع لتبويب المتصفح ده تاني (بعد ما كان في تبويب/تطبيق تاني)
+// أو رجع للصفحة من الكاش، بنعيد مزامنة الألعاب النارية فورًا من غير ما يحتاج يعمل ريفرش.
+document.addEventListener('visibilitychange', () => {
+  if(document.visibilityState === 'visible'){
+    wcApplyLifecycle();
+    wcSyncFinalTabFireworks();
+  }
+});
+window.addEventListener('pageshow', () => {
+  wcApplyLifecycle();
+  wcSyncFinalTabFireworks();
+});
 
 // ترتيب تبويبات الفلاتر: طبيعي = Upcoming, Results, Final, All.
 // بمجرد الوصول لموعد المباراة النهائية (آخر البطولة)، ينتقل تبويب "النهائي"
@@ -3852,6 +3942,7 @@ function wcTick(){
     el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
   });
   wcSyncFinalTabOrder();
+  wcSyncFinalTabFireworks(); // start()/stop() are no-ops when already in the right state
 }
 
 function initWorldCupPage(){
