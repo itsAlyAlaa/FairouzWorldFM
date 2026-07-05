@@ -481,7 +481,9 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
     transform:scale(1.08);
 }
 .vol-row{display:flex;align-items:center;gap:8px;min-width:150px;}
-.vol-label{font-size:15px;color:var(--muted);min-width:20px;text-align:center;}
+.vol-label{font-size:15px;color:var(--muted);min-width:20px;text-align:center;flex-shrink:0;}
+.vol-row input[type=range]{min-width:0;}
+.ctrl-btn svg,.btn-play svg,.mp-play-ic svg,.mp-vol-btn svg,.mp-mute-btn svg,.vol-label svg{display:block;}
 input[type=range]{
   -webkit-appearance:none;appearance:none;width:160px;height:6px;border-radius:99px;
   background:linear-gradient(to right,var(--purple) var(--val,100%),rgba(139,92,246,.15) var(--val,100%));
@@ -1855,8 +1857,8 @@ footer { margin-top: 10px; font-size: 12.5px; }
     gap: 12px;
   }
   .controls  { gap: 8px; }
-  .vol-row   { min-width: 0; flex: 1; max-width: 160px; }
-  input[type=range] { width: 100%; }
+  .vol-row   { min-width: 0; flex: 1; max-width: 200px; }
+  .vol-row input[type=range] { flex: 1 1 auto; min-width: 0; width: auto; }
   .wave-container {
     display: none;
   }
@@ -2425,12 +2427,12 @@ body.occasion-sham-elnessim .occ-tint{
         </div>
         <div class="player-center">
   <div class="controls">
-    <button class="ctrl-btn" id="btnMute">🔊</button>
-    <button class="ctrl-btn btn-play" id="btnPlay">▶</button>
+    <button class="ctrl-btn" id="btnMute" aria-label="Mute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></button>
+    <button class="ctrl-btn btn-play" id="btnPlay" aria-label="Play"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M8 5.14v13.72c0 .68.74 1.1 1.33.76l11.14-6.86a.87.87 0 000-1.52L9.33 4.38A.87.87 0 008 5.14z"/></svg></button>
   </div>
 
   <div class="vol-row">
-    <span class="vol-label">🔈</span>
+    <span class="vol-label"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/></svg></span>
     <input type="range" id="volSlider" min="0" max="100" value="100">
     <span class="vol-label" id="volValue">100%</span>
   </div>
@@ -2798,14 +2800,14 @@ body.occasion-sham-elnessim .occ-tint{
   <div class="mp-bar" id="miniPlayerBar">
     <button class="mp-play-btn" id="miniPlayerPlayBtn" aria-label="Play or pause radio">
       <span class="mp-pulse-ring"></span>
-      <span class="mp-play-ic" id="miniPlayerPlayIcon">▶</span>
+      <span class="mp-play-ic" id="miniPlayerPlayIcon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M8 5.14v13.72c0 .68.74 1.1 1.33.76l11.14-6.86a.87.87 0 000-1.52L9.33 4.38A.87.87 0 008 5.14z"/></svg></span>
     </button>
     <div class="mp-info">
       <div class="mp-onair"><span class="mp-dot"></span><span data-en="On Air" data-ar="يُبث الآن">On Air</span></div>
       <div class="mp-title" id="miniPlayerTitle" data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
     </div>
     <button class="mp-vol-btn" id="miniPlayerVolBtn" aria-label="Volume">
-      <span id="miniPlayerVolIcon">🔊</span>
+      <span id="miniPlayerVolIcon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></span>
     </button>
   </div>
   <div class="mp-vol-pop" id="miniPlayerVolPop">
@@ -2813,7 +2815,7 @@ body.occasion-sham-elnessim .occ-tint{
     <div class="mp-vol-slider-wrap">
       <input type="range" id="miniPlayerVol" min="0" max="100" value="100" step="1" aria-label="Volume level">
     </div>
-    <button class="mp-mute-btn" id="miniPlayerMuteBtn" aria-label="Mute">🔊</button>
+    <button class="mp-mute-btn" id="miniPlayerMuteBtn" aria-label="Mute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></button>
   </div>
 </div>
 
@@ -3989,6 +3991,11 @@ const audio=new Audio();
 audio.crossOrigin='anonymous'; // رجعناها هنا لأن الرابط المباشر يدعم الـ CORS بشكل صحيح
 audio.preload='none';
 
+const ICON_PLAY='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><path d="M8 5.14v13.72c0 .68.74 1.1 1.33.76l11.14-6.86a.87.87 0 000-1.52L9.33 4.38A.87.87 0 008 5.14z"/></svg>';
+const ICON_PAUSE='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>';
+const ICON_VOL_ON='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg>';
+const ICON_VOL_OFF='<svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><line x1="16" y1="9" x2="22" y2="15"/><line x1="22" y1="9" x2="16" y2="15"/></svg>';
+
 let isPlaying=false,isMuted=false,hasStarted=false,isStarting=false,retryCount=0; const MAX_RETRY=5;
 const btnPlay=document.getElementById('btnPlay');
 const btnMute=document.getElementById('btnMute');
@@ -4108,7 +4115,7 @@ function startRadio(){
     hasStarted=true;
     isPlaying=true;
     retryCount=0;
-    btnPlay.textContent='⏸';
+    btnPlay.innerHTML=ICON_PAUSE;
     document.querySelector('.player-bar').classList.add('playing');
     npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
@@ -4132,7 +4139,7 @@ function attemptRetry(){
     audio.src=PRIMARY_STREAM+'?t='+Date.now(); audio.load();
     audio.play().then(()=>{
       isPlaying=true;
-      btnPlay.textContent='⏸';
+      btnPlay.innerHTML=ICON_PAUSE;
       document.querySelector('.player-bar').classList.add('playing');
       loadingText.textContent='';
       setupAnalyser();cancelAnimationFrame(rafId);animateBars();
@@ -4153,14 +4160,14 @@ function togglePlay(){
   if(isPlaying){
     audio.pause();
     isPlaying=false;
-    btnPlay.textContent='▶';
+    btnPlay.innerHTML=ICON_PLAY;
     document.querySelector('.player-bar').classList.remove('playing');
     cancelAnimationFrame(rafId);
     disconnectMetadata();
   }else{
     audio.play().then(()=>{
       isPlaying=true;
-      btnPlay.textContent='⏸';
+      btnPlay.innerHTML=ICON_PAUSE;
       document.querySelector('.player-bar').classList.add('playing');
       cancelAnimationFrame(rafId);
       animateBars();
@@ -4171,7 +4178,7 @@ function togglePlay(){
 
 btnPlay.addEventListener('click',togglePlay);
 document.getElementById('btnGetStarted').addEventListener('click',()=>{if(!hasStarted)startRadio();});
-btnMute.addEventListener('click',()=>{isMuted=!isMuted;audio.muted=isMuted;btnMute.textContent=isMuted?'🔇':'🔊';});
+btnMute.addEventListener('click',()=>{isMuted=!isMuted;audio.muted=isMuted;btnMute.innerHTML=isMuted?ICON_VOL_OFF:ICON_VOL_ON;});
 volSlider.addEventListener('input',function(){audio.volume=this.value/100;this.style.setProperty('--val',this.value+'%');volValue.textContent=this.value+'%';});
 volSlider.style.setProperty('--val','100%');
 
@@ -4229,18 +4236,18 @@ function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
   mpMuteBtn.addEventListener('click', () => {
     isMuted = !isMuted;
     audio.muted = isMuted;
-    btnMute.textContent = isMuted ? '🔇' : '🔊';
+    btnMute.innerHTML = isMuted ? ICON_VOL_OFF : ICON_VOL_ON;
   });
 
   // Keep the mini player's UI in sync with the main player's state
   function syncMiniPlayer(){
     const playing = !!isPlaying;
     miniPlayer.classList.toggle('playing', playing);
-    mpPlayIcon.textContent = playing ? '⏸' : '▶';
+    mpPlayIcon.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
     if (npTitle && npTitle.textContent) mpTitle.textContent = npTitle.textContent;
-    const muteIcon = isMuted ? '🔇' : '🔊';
-    mpVolIcon.textContent = muteIcon;
-    mpMuteBtn.textContent = muteIcon;
+    const muteIcon = isMuted ? ICON_VOL_OFF : ICON_VOL_ON;
+    mpVolIcon.innerHTML = muteIcon;
+    mpMuteBtn.innerHTML = muteIcon;
     if (document.activeElement !== mpVol) {
       mpVol.value = volSlider.value;
       mpVolVal.textContent = volSlider.value + '%';
@@ -4327,7 +4334,7 @@ function triggerAthan(prayer){
     document.querySelector('.player-bar').classList.remove('playing');
 
     isPlaying=false;
-    btnPlay.textContent='▶';
+    btnPlay.innerHTML=ICON_PLAY;
     cancelAnimationFrame(rafId);
 }
   document.getElementById('athanBanner').style.display='flex';
@@ -4350,7 +4357,7 @@ function triggerAthan(prayer){
     if(wasPlayingBeforeAthan&&hasStarted){
         audio.play().then(()=>{
             isPlaying=true;
-            btnPlay.textContent='⏸';
+            btnPlay.innerHTML=ICON_PAUSE;
 
             document.querySelector('.player-bar').classList.add('playing');
 
