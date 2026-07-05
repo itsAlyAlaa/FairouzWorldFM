@@ -1484,6 +1484,7 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 /* ── World Cup: champion celebration screen ── */
 .wc-champion{position:relative;min-height:520px;border-radius:26px;overflow:hidden;background:radial-gradient(ellipse at 50% 30%,rgba(217,184,136,.16),var(--card) 70%);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;}
 .wc-fireworks-canvas{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;}
+.wc-fw-fullscreen{position:fixed!important;inset:0!important;left:0!important;top:0!important;width:100vw!important;height:100vh!important;z-index:9999;pointer-events:none;}
 .wc-champion-inner{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px;padding:40px 20px;text-align:center;}
 .wc-trophy-wrap{width:120px;filter:drop-shadow(0 0 22px rgba(217,184,136,.6));animation:wcTrophyFloat 3.2s ease-in-out infinite;}
 .wc-trophy-svg{width:100%;display:block;}
@@ -1858,10 +1859,43 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .mobile-footer {
     display: block;
   }
+
+  /* Current Time widget — smaller on mobile so nothing needs zoom-out */
+  .clock-card {
+    padding: 5px 10px;
+    min-width: 0;
+    border-radius: 12px;
+  }
+  .clock-card .cc-label {
+    font-size: 10px;
+    margin-bottom: 1px;
+    gap: 3px;
+  }
+  .clock-card .cc-time {
+    font-size: 16px;
+    letter-spacing: 0;
+  }
+  .clock-card .cc-time span {
+    font-size: 11px;
+    margin-inline-start: 2px;
+  }
+  .clock-card .cc-date {
+    font-size: 9.5px;
+    margin-top: 1px;
+  }
 }
 
 /* ── SMALL MOBILE ≤ 480px ── */
 @media (max-width: 480px) {
+  .clock-card {
+    padding: 4px 8px;
+  }
+  .clock-card .cc-time {
+    font-size: 14px;
+  }
+  .clock-card .cc-date {
+    font-size: 9px;
+  }
   .hero      { flex-direction: column; align-items: center; text-align: center; }
   .info-grid { grid-template-columns: 1fr; }
   .panels    { grid-template-columns: 1fr; }
@@ -3444,6 +3478,12 @@ function wcCountdownStr(ms, lang){
   return h+':'+mnt+':'+s;
 }
 
+function wcFinalDayIsOver(m, now){
+  const k = new Date(m.kickoff);
+  const dayEnd = new Date(k.getFullYear(), k.getMonth(), k.getDate()+1, 0, 0, 0, 0);
+  return now >= dayEnd;
+}
+
 // دالة الرندرة
 function wcRenderFixtures(){
   const wrap = document.getElementById('wcFixtures');
@@ -3453,16 +3493,22 @@ function wcRenderFixtures(){
   wrap.innerHTML = '';
   let cardIndex = 0;
   let lastDateKey = null;
-  const wcSortDesc = (wcCurrentFilter==='finished' || wcCurrentFilter==='all');
-  
-  WC_MATCHES.slice().sort((a,b)=> wcSortDesc
-    ? (new Date(b.kickoff) - new Date(a.kickoff))
-    : (new Date(a.kickoff) - new Date(b.kickoff))
+
+  WC_MATCHES.slice().sort((a,b)=> new Date(b.kickoff) - new Date(a.kickoff)
   ).forEach(m=>{
     const st = wcStatusOf(m, now);
     const isFinalMatch = (m.id === WC_FINAL_MATCH_ID);
-    if(wcCurrentFilter === 'final'){
-      if(!isFinalMatch) return;
+    if(isFinalMatch){
+      const dayOver = wcFinalDayIsOver(m, now);
+      if(wcCurrentFilter === 'final'){
+        // always visible in the Final tab, before and after the match
+      } else if(wcCurrentFilter === 'all' && dayOver){
+        // once its day has fully passed, it also counts as part of "All"
+      } else {
+        return;
+      }
+    } else if(wcCurrentFilter === 'final'){
+      return;
     } else if(wcCurrentFilter!=='all' && wcCurrentFilter!==st){
       return;
     }
@@ -3598,34 +3644,130 @@ function wcApplyLifecycle(){
   return true;
 }
 
-let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwResizeHandler=null, wcFwActiveCanvasId=null;
+let wcFwCtx=null, wcFwRAF=null, wcFwParticles=[], wcFwRockets=[], wcFwResizeHandler=null, wcFwActiveCanvasId=null, wcFwLastSpawn=0, wcFwDurationTimer=null, wcFwCanvasEl=null;
+const WC_FW_SHOW_DURATION_MS = 90 * 1000; // دقيقة ونص بالظبط
 
-function wcSpawnBurst(cw,ch){
-  const cx = cw*(0.2+Math.random()*0.6), cy = ch*(0.2+Math.random()*0.45);
-  const colors = ['#f4d06f','#e08aa6','#8b5cf6','#f3e8f6','#6ee7b7','#f97362'];
-  const color = colors[Math.floor(Math.random()*colors.length)];
-  const count = 26 + Math.floor(Math.random()*14);
+const WC_FW_PALETTES = [
+  ['#ffd97a','#ff9d5c'],       // warm gold
+  ['#ff6b8b','#ffd3e0'],       // rose/pink
+  ['#7ee8fa','#e0fbff'],       // ice blue
+  ['#b98bff','#e9d8ff'],       // violet
+  ['#8bffb0','#e3fff0'],       // emerald
+  ['#ffffff','#dfe9ff'],       // silver/white
+  ['#ff8a5c','#ffe1c4']        // amber
+];
+
+function wcLaunchRocket(cw,ch){
+  const x = cw*(0.12+Math.random()*0.76);
+  const targetY = ch*(0.14+Math.random()*0.36);
+  wcFwRockets.push({
+    x, y: ch+6, targetY,
+    vx: (Math.random()-0.5)*0.35,
+    vy: -(6.6+Math.random()*2.2),
+    trail: [],
+    color: '#fff6da'
+  });
+}
+
+function wcExplode(x,y,cw){
+  const palette = WC_FW_PALETTES[Math.floor(Math.random()*WC_FW_PALETTES.length)];
+  const [core, edge] = palette;
+  // scale burst size gently with canvas width so it feels right on mobile & desktop
+  const scale = Math.max(0.65, Math.min(1.15, cw/900));
+  const shapeRoll = Math.random();
+  const isRing = shapeRoll < 0.22;
+  const isWillow = !isRing && shapeRoll < 0.5;
+  const count = Math.floor((isRing ? 48 : 42) + Math.random()*22);
+
   for(let i=0;i<count;i++){
-    const angle = (Math.PI*2*i)/count + Math.random()*0.2;
-    const speed = 1.4 + Math.random()*2.4;
-    wcFwParticles.push({x:cx,y:cy,vx:Math.cos(angle)*speed,vy:Math.sin(angle)*speed,life:1,color,size:1.6+Math.random()*1.6});
+    const angle = (Math.PI*2*i)/count + Math.random()*0.12;
+    let speed = (isRing ? 3.1 : 2.1) + Math.random()*(isRing?0.6:2.6);
+    if(isWillow) speed *= 0.85;
+    const useEdgeColor = Math.random() < 0.35;
+    wcFwParticles.push({
+      x, y,
+      vx: Math.cos(angle)*speed*scale,
+      vy: Math.sin(angle)*speed*scale,
+      life: 1,
+      decay: isWillow ? (0.0068+Math.random()*0.004) : (0.011+Math.random()*0.008),
+      drag: isWillow ? 0.985 : 0.965,
+      gravity: isWillow ? 0.028 : 0.05,
+      color: useEdgeColor ? edge : core,
+      size: (isRing ? 1.3 : 1.5) + Math.random()*1.4,
+      willow: isWillow,
+      spark: Math.random() < 0.5
+    });
   }
+  // soft central flash
+  wcFwParticles.push({x,y,vx:0,vy:0,life:1,decay:0.09,drag:1,gravity:0,color:'#ffffff',size:14*scale,flash:true});
 }
 
 function wcFwLoop(){
   if(!wcFwCtx) return;
   const canvas = wcFwCtx.canvas;
-  wcFwCtx.clearRect(0,0,canvas.width,canvas.height);
-  if(Math.random()<0.045) wcSpawnBurst(canvas.width, canvas.height);
+  const cw = canvas.width, ch = canvas.height;
+
+  // fully transparent each frame — this canvas sits above real page content
+  wcFwCtx.globalCompositeOperation = 'source-over';
+  wcFwCtx.clearRect(0,0,cw,ch);
+
+  const now = performance.now();
+  if(now - wcFwLastSpawn > 420 + Math.random()*480){
+    wcFwLastSpawn = now;
+    wcLaunchRocket(cw,ch);
+    if(Math.random()<0.55) setTimeout(()=>{ if(wcFwCtx) wcLaunchRocket(canvas.width, canvas.height); }, 120+Math.random()*220);
+    if(Math.random()<0.3) setTimeout(()=>{ if(wcFwCtx) wcLaunchRocket(canvas.width, canvas.height); }, 260+Math.random()*300);
+  }
+
+  wcFwCtx.globalCompositeOperation = 'lighter';
+
+  // rockets ascending
+  wcFwRockets.forEach(r=>{
+    r.trail.push({x:r.x,y:r.y});
+    if(r.trail.length>6) r.trail.shift();
+    r.x += r.vx; r.y += r.vy; r.vy += 0.045;
+
+    r.trail.forEach((t,i)=>{
+      const a = (i/r.trail.length)*0.5;
+      wcFwCtx.globalAlpha = a;
+      wcFwCtx.fillStyle = r.color;
+      wcFwCtx.beginPath();
+      wcFwCtx.arc(t.x,t.y,1.4,0,Math.PI*2);
+      wcFwCtx.fill();
+    });
+    wcFwCtx.globalAlpha = 0.9;
+    wcFwCtx.beginPath();
+    wcFwCtx.arc(r.x,r.y,1.7,0,Math.PI*2);
+    wcFwCtx.fill();
+  });
+  wcFwRockets = wcFwRockets.filter(r=>{
+    if(r.y<=r.targetY || r.vy>=0.2){ wcExplode(r.x,r.y,cw); return false; }
+    return true;
+  });
+
+  // burst particles
   wcFwParticles.forEach(p=>{
-    p.vy += 0.035; p.x += p.vx; p.y += p.vy; p.life -= 0.014;
-    wcFwCtx.globalAlpha = Math.max(p.life,0);
+    if(p.flash){
+      p.life -= p.decay;
+      wcFwCtx.globalAlpha = Math.max(p.life,0)*0.5;
+      wcFwCtx.fillStyle = p.color;
+      wcFwCtx.beginPath();
+      wcFwCtx.arc(p.x,p.y,p.size*p.life,0,Math.PI*2);
+      wcFwCtx.fill();
+      return;
+    }
+    p.vx *= p.drag; p.vy *= p.drag; p.vy += p.gravity;
+    p.x += p.vx; p.y += p.vy;
+    p.life -= p.decay;
+    const flicker = p.spark ? (0.6+Math.random()*0.4) : 1;
+    wcFwCtx.globalAlpha = Math.max(p.life,0)*flicker;
     wcFwCtx.fillStyle = p.color;
     wcFwCtx.beginPath();
     wcFwCtx.arc(p.x,p.y,p.size,0,Math.PI*2);
     wcFwCtx.fill();
   });
   wcFwCtx.globalAlpha = 1;
+  wcFwCtx.globalCompositeOperation = 'source-over';
   wcFwParticles = wcFwParticles.filter(p=>p.life>0);
   wcFwRAF = requestAnimationFrame(wcFwLoop);
 }
@@ -3638,20 +3780,28 @@ function wcStartFireworks(canvasId){
     if(wcFwActiveCanvasId === id) return; // already running on this canvas
     wcStopFireworks(); // switch engine to the newly requested canvas
   }
+  canvas.classList.add('wc-fw-fullscreen'); // fireworks fill the whole screen, not just their box
   const resize = ()=>{ canvas.width = canvas.clientWidth; canvas.height = canvas.clientHeight; };
   resize();
   wcFwResizeHandler = resize;
   window.addEventListener('resize', wcFwResizeHandler);
   wcFwCtx = canvas.getContext('2d');
+  wcFwCanvasEl = canvas;
   wcFwParticles = [];
+  wcFwRockets = [];
+  wcFwLastSpawn = 0;
   wcFwActiveCanvasId = id;
   wcFwRAF = requestAnimationFrame(wcFwLoop);
+  if(wcFwDurationTimer) clearTimeout(wcFwDurationTimer);
+  wcFwDurationTimer = setTimeout(()=>{ wcStopFireworks(); }, WC_FW_SHOW_DURATION_MS);
 }
 
 function wcStopFireworks(){
   if(wcFwRAF){ cancelAnimationFrame(wcFwRAF); wcFwRAF=null; }
   if(wcFwResizeHandler){ window.removeEventListener('resize', wcFwResizeHandler); wcFwResizeHandler=null; }
-  wcFwCtx=null; wcFwParticles=[]; wcFwActiveCanvasId=null;
+  if(wcFwDurationTimer){ clearTimeout(wcFwDurationTimer); wcFwDurationTimer=null; }
+  if(wcFwCanvasEl) wcFwCanvasEl.classList.remove('wc-fw-fullscreen');
+  wcFwCtx=null; wcFwParticles=[]; wcFwRockets=[]; wcFwActiveCanvasId=null; wcFwCanvasEl=null;
 }
 
 // تشغيل/إيقاف الألعاب النارية الخاصة بتبويب "النهائي" حسب الفلتر المفعّل حاليًا،
