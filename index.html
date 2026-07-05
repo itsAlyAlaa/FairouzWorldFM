@@ -37,7 +37,7 @@ body{
   transition:background 2.2s ease, color 1.6s ease;
 }
 body, body *{transition:background-color 1.6s ease, border-color 1.6s ease, color 1.4s ease;}
-body.lang-ar{font-family:'Cairo',sans-serif; direction:ltr;}
+body.lang-ar{font-family:'Cairo',sans-serif;}
 #starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 2.2s ease;}
 .aurora{position:fixed;border-radius:50%;filter:blur(90px);opacity:.22;z-index:0;pointer-events:none;animation:drift 16s ease-in-out infinite alternate;transition:opacity 2.2s ease;}
 @keyframes drift{0%{transform:translate(0,0) scale(1);}100%{transform:translate(30px,-25px) scale(1.08);}}
@@ -180,7 +180,7 @@ body.lang-ar .nav-item{text-align:center;font-family:'Cairo',sans-serif;}
   font-size:15px;
   font-weight:600;
   width:100%;
-  text-align:left;
+  text-align:start;
   font-family:inherit;
   transition:background .2s,color .2s,border-color .2s;
   margin-bottom:10px;
@@ -324,7 +324,7 @@ body.lang-ar .lang-toggle{
 }
 .clock-card .cc-label{font-size:12.5px;color:var(--muted);display:flex;align-items:center;justify-content:center;gap:5px;margin-bottom:4px;}
 .clock-card .cc-time{font-size:27.5px;font-weight:800;color:var(--gold);letter-spacing:.5px;font-family:'Cinzel',serif;}
-.clock-card .cc-time span{font-size:15px;color:var(--muted);margin-left:3px;}
+.clock-card .cc-time span{font-size:15px;color:var(--muted);margin-inline-start:3px;}
 .clock-card .cc-date{font-size:12.5px;color:var(--muted);margin-top:3px;}
 
 /* ── Hero ── */
@@ -503,7 +503,7 @@ input[type=range]::-webkit-slider-thumb{
     height:56px;
 
     min-width:220px;
-    margin-left:auto;
+    margin-inline-start:auto;
     flex-shrink:0;
 }
 .wave-bar{
@@ -1390,6 +1390,7 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 @keyframes wcTopGlow{0%{background-position:0% 0;}100%{background-position:200% 0;}}
 @keyframes wcCardIn{to{opacity:1;transform:translateY(0) scale(1);}}
 /* prefers-reduced-motion override removed per request — animations always run */
+.wc-match-card{direction:ltr;}
 .wc-match-top{display:flex;justify-content:space-between;align-items:center;font-size:13px;color:var(--muted);}
 .wc-match-stage{text-transform:uppercase;letter-spacing:.05em;}
 .wc-badge{font-size:12px;font-weight:800;padding:3px 10px;border-radius:100px;letter-spacing:.03em;}
@@ -1749,7 +1750,7 @@ footer { margin-top: 10px; font-size: 12.5px; }
   /* Hero */
   .hero {
     flex-direction: row;
-    text-align: left;
+    text-align: start;
     padding: 10px 12px;
     gap: 10px;
   }
@@ -1802,33 +1803,6 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .mobile-footer {
     display: block;
   }
-}
-  /* Hero: row on tablet, compact */
-  .hero        { flex-direction: row; text-align: left; padding: 10px 12px; gap: 10px; }
-  .hero-text h1 { font-size: 23px; }
-
-  /* Mobile navigation bar — moved to the top, above the language/clock bar,
-     to match the desktop layout where the nav sits above everything else */
-  .mobile-nav {
-    display: flex !important;
-    position: fixed; top: 0; bottom: auto; left: 0; right: 0; z-index: 200;
-    background: rgba(13,6,16,.97);
-    border-top: none;
-    border-bottom: 1px solid var(--border);
-    backdrop-filter: blur(14px);
-    padding: calc(6px + env(safe-area-inset-top)) 0 6px;
-    justify-content: center;
-  }
-  .mobile-nav .nav-item {
-    flex: 1; flex-direction: column; gap: 2px;
-    padding: 5px 4px; font-size: 11.5px;
-    border-radius: 0; border: none; background: none;
-    max-width: 130px; text-align: center; justify-content: center;
-  }
-  .mobile-nav .nav-item .ic    { font-size: 25.5px; }
-  .mobile-nav .nav-item .ic svg{ width:24px; height:24px; }
-  .mobile-nav .nav-item.active { color: var(--gold); background: none; }
-  .mobile-footer { display: block; }
 }
 
 /* ── SMALL MOBILE ≤ 480px ── */
@@ -2830,24 +2804,33 @@ function applyLang() {
   const body = document.body;
   if (currentLang === 'ar') {
     body.classList.add('lang-ar');
-    body.setAttribute('dir','ltr'); body.setAttribute('lang','ar');
+    body.setAttribute('lang','ar');
     document.getElementById('langFlag').innerHTML =
   '<img src="https://flagcdn.com/24x18/gb.png" alt="English" width="20" height="15">';
     document.getElementById('langName').textContent = 'English';
   } else {
     body.classList.remove('lang-ar');
-    body.setAttribute('dir','ltr'); body.setAttribute('lang','en');
+    body.setAttribute('lang','en');
     document.getElementById('langFlag').innerHTML =
   '<img src="https://flagcdn.com/24x18/eg.png" alt="العربية" width="20" height="15">';
     document.getElementById('langName').textContent = 'العربية';
   }
+  // Note: the overall page layout stays LTR on purpose (nav, header, cards
+  // all keep the same left/right positions in both languages). We only let
+  // each individual text element flow in the correct direction for the
+  // language it currently displays, using dir="auto": the browser reads
+  // that specific piece of text and lays its words/punctuation out
+  // right-to-left when it's Arabic, without reordering or mirroring
+  // anything around it.
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang);
     if (val !== null) el.innerHTML = val;
+    el.setAttribute('dir','auto');
   });
   document.querySelectorAll('[data-en-ph]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang + '-ph');
     if (val !== null) el.setAttribute('placeholder', val);
+    el.setAttribute('dir','auto');
   });
   if (typeof isPlaying !== 'undefined' && isPlaying) {
     npTitle.textContent = lastRawTitle || (currentLang==='ar' ? 'عالم فيروز FM — بث مباشر' : 'Fairouz World FM — Live');
@@ -3208,8 +3191,8 @@ function renderNewsList() {
         '<span class="news-source-tag">' + item.source.icon + ' ' + sourceName + '</span>' +
         '<span class="news-time">' + newsRelativeTime(item.date, lang) + '</span>' +
       '</div>' +
-      '<div class="news-card-title">' + item.title + '</div>' +
-      (item.desc ? '<div class="news-card-desc">' + item.desc + '</div>' : '') +
+      '<div class="news-card-title" dir="auto">' + item.title + '</div>' +
+      (item.desc ? '<div class="news-card-desc" dir="auto">' + item.desc + '</div>' : '') +
       '<span class="news-card-link">' + (lang === 'ar' ? 'اقرأ المزيد ←' : 'Read more →') + '</span>' +
     '</a>';
   }).join('');
@@ -3352,32 +3335,37 @@ let wcLiveTimerHandle = null;
 let wcCurrentFilter = 'upcoming';
 let wcInitialized = false;
 
+// مهم: مفتاح الـ API اتشال من هنا خالص. المتصفح مبقاش بينادي على api-sports.io مباشرة
+// (كان ده سبب "Failed to fetch" لأن الـ API ده مصمم يتنادى من سيرفر مش من متصفح).
+// دلوقتي كل الطلبات بتعدي على البروكسي (Cloudflare Worker) اللي بيحتفظ بالمفتاح بشكل سري.
+// غيّر القيمة دي برابط الـ Worker بتاعك بعد النشر (شوف ملف worker.js المرفق والتعليمات).
+const WC_PROXY_URL = 'https://wc-proxy.itsalyalaa.workers.dev';
+
 const WC_LIVE_API = {
   enabled: true,
-  key: 'f146f692495d9e87b8c9dd2a638670c2',
   league: 1, 
   season: 2026,
-  basePollMs: 20000,
-  pollMs: 20000,
-  maxPollMs: 120000
+  basePollMs: 90000,   // كل 90 ثانية (بدل 20) عشان الخطة المجانية 100 طلب/يوم بس متكفيش مع بولينج سريع جدًا
+  pollMs: 90000,
+  maxPollMs: 300000
 };
 let wcLastLivePoll = 0;
 let wcLiveApiLastError = null;
 
 // دالة جلب أحداث المباراة (أهداف/بطاقات) ونجم المباراة
 async function wcFetchMatchDetails(m) {
-  if (!WC_LIVE_API.enabled || !WC_LIVE_API.key) return;
+  if (!WC_LIVE_API.enabled) return;
   if (m.events) return;
   try {
-    const url = `https://v3.football.api-sports.io/fixtures/events?fixture=${m.id}`;
-    const res = await fetch(url, { headers: { 'x-apisports-key': WC_LIVE_API.key } });
+    const url = `${WC_PROXY_URL}?endpoint=fixtures/events&fixture=${m.id}`;
+    const res = await fetch(url);
     const data = await res.json();
     m.events = (data && data.response) || [];
 
     // نجم المباراة: تقدير بأعلى تقييم لاعب (API-Football لا توفر حقل "Man of the Match" مباشر)
     try {
-      const purl = `https://v3.football.api-sports.io/fixtures/players?fixture=${m.id}`;
-      const pres = await fetch(purl, { headers: { 'x-apisports-key': WC_LIVE_API.key } });
+      const purl = `${WC_PROXY_URL}?endpoint=fixtures/players&fixture=${m.id}`;
+      const pres = await fetch(purl);
       const pdata = await pres.json();
       let best = null;
       (pdata.response || []).forEach(teamBlock => {
@@ -3477,10 +3465,10 @@ function wcBuildAutoNote(m, fx){
 }
 
 async function wcPollLive(){
-  if(!WC_LIVE_API.enabled || !WC_LIVE_API.key) return;
+  if(!WC_LIVE_API.enabled) return;
   try{
-    const url = 'https://v3.football.api-sports.io/fixtures?league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&live=all';
-    const res = await fetch(url, { headers:{ 'x-apisports-key': WC_LIVE_API.key } });
+    const url = WC_PROXY_URL+'?endpoint=fixtures&league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&live=all';
+    const res = await fetch(url);
     const data = await res.json();
     if(!res.ok || (data && data.errors && Object.keys(data.errors).length)){ wcLogApiError('live poll', data, res); wcLiveApiBackoff(); return; }
     wcLiveApiRecover();
@@ -3539,7 +3527,7 @@ const wcBackfilledDates = new Set();
 let wcBackfillRunning = false;
 
 async function wcBackfillFinishedResults(){
-  if(!WC_LIVE_API.enabled || !WC_LIVE_API.key) return;
+  if(!WC_LIVE_API.enabled) return;
   if(wcBackfillRunning) return;
   wcBackfillRunning = true;
   try{
@@ -3556,8 +3544,8 @@ async function wcBackfillFinishedResults(){
     let changed = false;
     for(const date of dates){
       try{
-        const url = 'https://v3.football.api-sports.io/fixtures?league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&date='+date;
-        const res = await fetch(url, { headers:{ 'x-apisports-key': WC_LIVE_API.key } });
+        const url = WC_PROXY_URL+'?endpoint=fixtures&league='+WC_LIVE_API.league+'&season='+WC_LIVE_API.season+'&date='+date;
+        const res = await fetch(url);
         const data = await res.json();
         if(!res.ok || (data && data.errors && Object.keys(data.errors).length)){ wcLogApiError('backfill '+date, data, res); wcLiveApiBackoff(); continue; }
         wcBackfilledDates.add(date); 
@@ -3748,7 +3736,7 @@ function wcRenderFixtures(){
       : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
 
     const noteHtml = (m.note && (st==='finished' || st==='live'))
-      ? '<div class="wc-note">'+(lang==='ar'?m.note.ar:m.note.en)+'</div>' : '';
+      ? '<div class="wc-note" dir="auto">'+(lang==='ar'?m.note.ar:m.note.en)+'</div>' : '';
 
     let channelText = (m.channels && m.channels.length) ? m.channels.join(' + ') : (m.free ? (lang==='ar' ? 'beIN SPORTS المفتوحة + beIN SPORTS MAX' : 'beIN SPORTS (free) + beIN SPORTS MAX') : 'beIN SPORTS MAX');
 
@@ -4535,7 +4523,7 @@ function countryFlagEmoji(cc){
 }
 function renderWeatherText(cur, wData, city, flag){
   const flagPart = flag !== undefined ? flag : lastWeatherFlag;
-  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc" dir="auto">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice" dir="auto">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
   for(let i=1;i<=3;i++){
