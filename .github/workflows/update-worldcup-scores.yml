@@ -2,8 +2,8 @@ name: Update World Cup Scores
 
 on:
   schedule:
-    # كل 15 دقيقة، على مدار الساعة، كل يوم
-    - cron: '*/15 * * * *'
+    # كل 20 دقيقة، على مدار الساعة، كل يوم
+    - cron: '*/20 * * * *'
   workflow_dispatch: {}   # ده بيديك زرار تشغّل بيه السكريبت يدويًا للتجربة
 
 permissions:
