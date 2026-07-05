@@ -3348,6 +3348,7 @@ const WC_MATCHES = [
 const WC_FINAL_MATCH_ID = 'wcFinal2026';
 let wcTimerHandle = null;
 let wcBackfillTimerHandle = null;
+let wcLiveTimerHandle = null;
 let wcCurrentFilter = 'upcoming';
 let wcInitialized = false;
 
@@ -3356,9 +3357,9 @@ const WC_LIVE_API = {
   key: 'f146f692495d9e87b8c9dd2a638670c2',
   league: 1, 
   season: 2026,
-  basePollMs: 60000,
-  pollMs: 60000,
-  maxPollMs: 300000
+  basePollMs: 20000,
+  pollMs: 20000,
+  maxPollMs: 120000
 };
 let wcLastLivePoll = 0;
 let wcLiveApiLastError = null;
@@ -3755,7 +3756,7 @@ function wcRenderFixtures(){
     if(st==='upcoming' && wcIsSameLocalDay(now, kickoff)){
       countdownHtml = '<div class="wc-countdown" data-kickoff="'+m.kickoff+'">⏱ '+wcCountdownStr(kickoff-now, lang)+'</div>';
     } else if(st==='live'){
-      countdownHtml = '<div class="wc-countdown wc-countdown-live" data-live-start="'+m.kickoff+'" data-match-id="'+m.id+'"><span class="wc-live-dot"></span><span class="wc-live-text">'+wcLiveNowStr(kickoff, now, lang, m)+'</span></div>';
+      countdownHtml = '<div class="wc-countdown wc-countdown-live"><span class="wc-live-dot"></span><span class="wc-live-text">'+(lang==='ar'?'مباشر':'Live')+'</span></div>';
     }
 
     const homeFlag = home.iso ? '<img class="wc-flag-img" src="https://flagcdn.com/40x30/'+home.iso+'.png" alt="'+(lang==='ar'?home.ar:home.en)+'" loading="lazy">' : '<span class="wc-flag-placeholder">?</span>';
@@ -3913,17 +3914,6 @@ function wcTick(){
     }
     el.textContent = '⏱ ' + wcCountdownStr(diff, currentLang);
   });
-  document.querySelectorAll('.wc-countdown[data-live-start]').forEach(el=>{
-    const start = new Date(el.dataset.liveStart);
-    const end = new Date(start.getTime() + 180*60000);
-    if(now>=end){
-      wcRenderFixtures();
-      return;
-    }
-    const textEl = el.querySelector('.wc-live-text');
-    const m = WC_MATCHES.find(x=>x.id===el.dataset.matchId);
-    if(textEl) textEl.textContent = wcLiveNowStr(start, now, currentLang, m);
-  });
 }
 
 function initWorldCupPage(){
@@ -3955,6 +3945,11 @@ function initWorldCupPage(){
   
   if(wcBackfillTimerHandle) clearInterval(wcBackfillTimerHandle);
   wcBackfillTimerHandle = setInterval(wcBackfillFinishedResults, 2 * 60 * 1000);
+
+  // يتحقق كل 5 ثوانٍ هل حان وقت جلب تحديث جديد للمباريات المباشرة (حسب WC_LIVE_API.pollMs)
+  // ده اللي فعليًا بيخلي الأهداف والنتائج تتحدث أول بأول من غير ما تحتاج تعمل ريفريش للصفحة
+  if(wcLiveTimerHandle) clearInterval(wcLiveTimerHandle);
+  wcLiveTimerHandle = setInterval(wcPollLiveIfDue, 5000);
 }
 
 window.addEventListener('load', () => {
