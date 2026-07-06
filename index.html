@@ -48,6 +48,10 @@
   --glow-g:rgba(217,184,136,.35); --glow-p:rgba(139,92,246,.3);
   --sun-c:#ffb648; --moon-c:#c9a3e8; --cloud-c:#8d84a6; --cloud-c2:#b5add0;
   --rain-c:#7ec3f2; --snow-c:#f4f7ff; --storm-c:#f4e04d; --fog-c:#a29cb8;
+  --sea-c:#3fb9d6; --sea-c2:#7fd8e6; --sand-c:#e8c98a;
+  --winter-sun-c:#dce8f7; --winter-moon-c:#a9c6ea;
+  --snowhill-c:#eaf3ff; --snowhill-c2:#cfe0f2; --snowcap:#f6faff;
+  --pine-c:#4a7a63; --pine-c2:#3a6350;
 }
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{min-height:100%;}
@@ -404,28 +408,31 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
   flex-shrink:0;
 }
 .topbar-palestine-glow{
-  position:absolute;inset:-22% -14%;
-  background:radial-gradient(circle at 50% 45%,rgba(255,255,255,.35),transparent 62%);
-  filter:blur(16px);
+  position:absolute;inset:-16% -9%;
+  background:radial-gradient(circle at 45% 42%, rgba(217,184,136,.30), rgba(224,138,166,.16) 45%, transparent 70%);
+  filter:blur(18px);
   z-index:-1;
   animation:tpGlowPulse 5.5s ease-in-out infinite;
 }
 .topbar-palestine-img{
   width:100%;height:auto;display:block;
   filter:drop-shadow(0 8px 18px rgba(0,0,0,.32));
-  animation:tpFloat 5.5s ease-in-out infinite;
-  transform-origin:20% 40%;
+  animation:tpWave 4.8s ease-in-out infinite;
+  transform-origin:22% 45%;
   will-change:transform;
 }
-@keyframes tpFloat{
-  0%,100%{ transform:translateY(0) rotate(0deg); }
-  25%    { transform:translateY(-4px) rotate(-.6deg); }
-  50%    { transform:translateY(-7px) rotate(0deg); }
-  75%    { transform:translateY(-3px) rotate(.6deg); }
+/* Gentle rotateY "ripple" (the same trick used for the World Cup champion
+   flag) layered with a light float — reads as cloth fluttering in the wind
+   rather than the whole icon just bobbing up and down. */
+@keyframes tpWave{
+  0%,100%{ transform:perspective(420px) rotateY(0deg) rotateZ(0deg) translateY(0); }
+  25%    { transform:perspective(420px) rotateY(-5deg) rotateZ(-.6deg) translateY(-3px); }
+  50%    { transform:perspective(420px) rotateY(4deg)  rotateZ(.5deg)  translateY(-6px); }
+  75%    { transform:perspective(420px) rotateY(-3deg) rotateZ(-.4deg) translateY(-2px); }
 }
 @keyframes tpGlowPulse{
-  0%,100%{ opacity:.3; }
-  50%    { opacity:.6; }
+  0%,100%{ opacity:.28; transform:scale(1); }
+  50%    { opacity:.5;  transform:scale(1.05); }
 }
 @media(prefers-reduced-motion: reduce){
   .topbar-palestine-img,.topbar-palestine-glow{animation:none;}
@@ -549,6 +556,9 @@ input[type=range]{
   -webkit-appearance:none;appearance:none;width:160px;height:6px;border-radius:99px;
   background:linear-gradient(to right,var(--purple) var(--val,100%),rgba(139,92,246,.15) var(--val,100%));
   outline:none;cursor:pointer;
+  /* Volume is a magnitude, not text — keep it left-to-right always so the thumb
+     position always matches the fill, even when the page itself is RTL (Arabic). */
+  direction:ltr;
 }
 input[type=range]::-webkit-slider-thumb{
   -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
@@ -740,6 +750,40 @@ input[type=range]::-webkit-slider-thumb{
   color:var(--text);
 }
 
+/* ── Prayer panel: ambient FX layer (mosque silhouette, crescent, stars — mirrors weather panel) ── */
+.panel-prayer{position:relative;overflow:hidden;}
+.prayer-fx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:24px;}
+.panel-prayer .panel-title,
+.panel-prayer .prayer-main,
+.panel-prayer .prayer-stats,
+.panel-prayer .prayer-grid{position:relative;z-index:1;}
+
+.fx-islamic-motif{
+  position:absolute; left:50%; top:52%; width:62%; max-width:300px; aspect-ratio:1/1;
+  transform:translate(-50%,-50%); pointer-events:none; opacity:.08;
+  animation:fxMotifSpin 140s linear infinite; transition:color 1.2s ease, opacity 1.2s ease;
+}
+.fx-islamic-motif svg{display:block;width:100%;height:100%;}
+@keyframes fxMotifSpin{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+
+.fx-prayer-crescent{position:absolute;pointer-events:none;filter:drop-shadow(0 0 8px rgba(201,163,232,.45));animation:fxPrayerGlowPulse 6s ease-in-out infinite;}
+.fx-prayer-crescent svg{display:block;width:100%;height:100%;}
+@keyframes fxPrayerGlowPulse{0%,100%{opacity:.75;}50%{opacity:1;}}
+
+.fx-prayer-glow{position:absolute;border-radius:50%;pointer-events:none;animation:fxSunPulse 6s ease-in-out infinite;}
+
+.fx-prayer-star{position:absolute;pointer-events:none;animation:fxPrayerStarTwinkle 3s ease-in-out infinite;}
+.fx-prayer-star svg{display:block;width:100%;height:100%;}
+@keyframes fxPrayerStarTwinkle{0%,100%{opacity:.3;}50%{opacity:.85;}}
+
+/* A soft halo breathing behind the next-prayer icon, plus the same gentle float the weather icon gets */
+.prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
+.prayer-icon-big::before{
+  content:'';position:absolute;inset:-12px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle,rgba(139,92,246,.28),transparent 70%);
+  animation:fxSunPulse 4.2s ease-in-out infinite;
+}
+
 /* ── Prayer panel: "next prayer" hero + extra stats (mirrors weather panel) ── */
 .prayer-main{
   display:flex;
@@ -821,10 +865,102 @@ input[type=range]::-webkit-slider-thumb{
   .p-stat{min-width:78px;padding:10px 6px;}
   .p-stat-val{font-size:15px;}
   .p-stat-label{font-size:10.5px;}
-  .prayer-icon-big{font-size:38px;}
+  .prayer-icon-big{width:38px;height:38px;}
   .prayer-next-name{font-size:18px;}
   .pc-time{font-size:20px;}
 }
+
+/* ══════════════════════════════════════════════════════════════
+   Prayer panel — redesign pass:
+   • per-prayer accent colors + animated SVG icons (Fajr/Dhuhr/Asr/Maghrib/Isha)
+   • nicer "next prayer" hero + grid highlight animation
+   • crescent moved off the Hijri chip into free space
+   ══════════════════════════════════════════════════════════════ */
+
+/* Overall panel surface: a touch more depth so it reads as its own card */
+.panel-prayer{
+  background:linear-gradient(165deg,rgba(139,92,246,.05),rgba(20,10,28,.35) 55%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.03), 0 18px 40px -28px rgba(0,0,0,.65);
+}
+
+/* Icon containers now hold SVG, not emoji */
+.prayer-item .p-icon{
+  width:42px;height:42px;margin:0 auto 10px;
+  display:flex;align-items:center;justify-content:center;
+}
+.prayer-item .p-icon svg,
+.prayer-icon-big svg{width:100%;height:100%;display:block;overflow:visible;}
+.prayer-icon-big{
+  width:46px;height:46px;
+  display:flex;align-items:center;justify-content:center;
+}
+@media(max-width:480px){ .prayer-item .p-icon{width:34px;height:34px;} }
+
+/* Subtle per-prayer accent tint on each grid card + a soft top accent line */
+.prayer-item{
+  position:relative;
+  overflow:visible;
+  background:rgba(var(--pr-rgb,139,92,246),.055);
+  border-color:rgba(var(--pr-rgb,139,92,246),.28);
+}
+.prayer-item::before{
+  content:'';position:absolute;top:-1px;left:18%;right:18%;height:2px;border-radius:2px;
+  background:var(--pr-c,var(--gold2));opacity:.45;
+}
+
+/* Redesigned "next" highlight — a calm breathing glow + a small floating label,
+   colored to match that specific prayer's own accent (fajr=dawn amber, isha=night violet, etc.) */
+.prayer-item.next{
+  border-color:var(--pr-c,var(--gold2));
+  background:rgba(var(--pr-rgb,201,163,106),.14);
+  animation:prNextBreathe 2.8s ease-in-out infinite;
+}
+@keyframes prNextBreathe{
+  0%,100%{box-shadow:0 0 0 1px var(--pr-c,var(--gold2)) inset, 0 10px 22px -16px rgba(var(--pr-rgb,201,163,106),.55);}
+  50%{box-shadow:0 0 0 1.5px var(--pr-c,var(--gold2)) inset, 0 16px 30px -12px rgba(var(--pr-rgb,201,163,106),.8);}
+}
+.prayer-item.next::after{
+  content:attr(data-next-label);
+  position:absolute;top:-10px;left:50%;transform:translateX(-50%);
+  font-size:9.5px;font-weight:800;letter-spacing:.03em;white-space:nowrap;
+  background:var(--pr-c,var(--gold2));color:#1c0f24;
+  padding:2.5px 9px;border-radius:999px;
+  box-shadow:0 3px 10px -2px rgba(0,0,0,.5);
+}
+
+/* Hero (next-prayer) icon: one calm, contained glow matching the actual next
+   prayer's accent color — sized to stay within the icon's own space so it
+   never crowds into the "Next Prayer" text beside it. */
+.prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
+.prayer-icon-big::before{
+  content:'';position:absolute;inset:-8px;border-radius:50%;z-index:-1;
+  background:radial-gradient(circle, rgba(var(--pr-rgb,139,92,246),.34), transparent 72%);
+  animation:prHeroGlow 3.4s ease-in-out infinite;
+}
+@keyframes prHeroGlow{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.1);}}
+
+/* Per-prayer SVG animations */
+.pr-svg{overflow:visible;}
+.pr-fajr-glow{animation:prFajrBob 3.2s ease-in-out infinite;transform-origin:32px 40px;}
+@keyframes prFajrBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-2px);}}
+.pr-fajr-rays,.pr-asr-rays,.pr-maghrib-rays{animation:prRayPulse 2.4s ease-in-out infinite;}
+@keyframes prRayPulse{0%,100%{opacity:.45;}50%{opacity:1;}}
+
+.pr-dhuhr-spin{transform-origin:32px 32px;animation:prSpin 16s linear infinite;}
+@keyframes prSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.pr-dhuhr-core{animation:prPulseScale 2.6s ease-in-out infinite;transform-origin:32px 32px;}
+@keyframes prPulseScale{0%,100%{transform:scale(1);}50%{transform:scale(1.08);}}
+
+.pr-asr-cloud{animation:prDrift 5s ease-in-out infinite;}
+@keyframes prDrift{0%,100%{transform:translateX(0);}50%{transform:translateX(3px);}}
+.pr-asr-sun{animation:prPulseScale 3s ease-in-out infinite;transform-origin:40px 22px;}
+
+.pr-maghrib-sun{animation:prMaghribSink 4.5s ease-in-out infinite;transform-origin:32px 36px;}
+@keyframes prMaghribSink{0%,100%{transform:translateY(0);}50%{transform:translateY(2.5px);}}
+
+.pr-isha-moon{animation:prIshaGlow 4s ease-in-out infinite;filter:drop-shadow(0 0 5px rgba(166,139,224,.55));}
+@keyframes prIshaGlow{0%,100%{opacity:.85;}50%{opacity:1;}}
+.pr-twinkle-sm{animation:fxPrayerStarTwinkle 2.4s ease-in-out infinite;}
 
 .weather-loading{
   font-size:16px;
@@ -885,6 +1021,24 @@ input[type=range]::-webkit-slider-thumb{
   color:var(--gold);
   line-height:1;
 }
+
+.weather-rain-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  vertical-align:middle;
+  margin-inline-start:8px;
+  font-size:14px;
+  font-weight:700;
+  color:var(--rain-c);
+  background:rgba(126,195,242,.12);
+  border:1px solid rgba(126,195,242,.28);
+  border-radius:999px;
+  padding:4px 10px 4px 7px;
+  transform:translateY(-4px);
+}
+.weather-rain-chip-ic{width:16px;height:16px;flex-shrink:0;display:flex;}
+.weather-rain-chip-ic svg{width:100%;height:100%;overflow:visible;}
 
 .weather-desc{
   font-size:18.5px;
@@ -1014,12 +1168,6 @@ input[type=range]::-webkit-slider-thumb{
   color:var(--text);
 }
 
-.forecast-item .f-rain{
-  font-size:12.5px;
-  color:var(--rain-c);
-  margin-top:4px;
-}
-
 /* ── Weather panel: ambient FX layer + mood text ── */
 .panel-weather{position:relative;overflow:hidden;}
 .weather-fx{position:absolute;inset:0;z-index:0;pointer-events:none;overflow:hidden;border-radius:24px;}
@@ -1143,6 +1291,70 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 }
 @keyframes fxTwinkle{0%,100%{opacity:.12;}50%{opacity:.95;}}
 
+/* ── Summer beach ambience — sun, sea waves, seagulls, parasol ── */
+.fx-beach-sun{
+  position:absolute;border-radius:50%;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,182,72,.55),rgba(255,182,72,.16) 55%,transparent 74%);
+  animation:fxSunPulse 5s ease-in-out infinite;
+}
+.fx-beach-sun svg{position:absolute;inset:0;width:100%;height:100%;filter:drop-shadow(0 0 6px rgba(255,182,72,.6));}
+.fx-beach-moon{
+  position:absolute;pointer-events:none;
+  filter:drop-shadow(0 0 8px rgba(201,163,232,.45));
+}
+.fx-beach-moon svg{display:block;width:100%;height:100%;}
+
+.fx-sea{position:absolute;left:-12%;width:124%;pointer-events:none;will-change:transform;}
+.fx-sea svg{display:block;width:100%;height:100%;}
+.fx-sea.sea-l1{animation:fxSeaSway1 8s ease-in-out infinite;}
+.fx-sea.sea-l2{animation:fxSeaSway2 11s ease-in-out infinite;}
+.fx-sea.sea-l3{animation:fxSeaSway1 6.5s ease-in-out infinite reverse;}
+@keyframes fxSeaSway1{0%,100%{transform:translateX(0);}50%{transform:translateX(-2.5%);}}
+@keyframes fxSeaSway2{0%,100%{transform:translateX(0);}50%{transform:translateX(2.5%);}}
+
+.fx-sparkle-sea{position:absolute;border-radius:50%;background:#fff;pointer-events:none;animation:fxSeaSparkle 2.2s ease-in-out infinite;}
+@keyframes fxSeaSparkle{0%,100%{opacity:0;transform:scale(.6);}50%{opacity:.85;transform:scale(1);}}
+
+.fx-gull{position:absolute;pointer-events:none;will-change:left,transform;
+  animation-name:fxGullFly;animation-timing-function:linear;animation-iteration-count:infinite;}
+.fx-gull svg{display:block;width:100%;height:100%;}
+@keyframes fxGullFly{
+  0%{left:-10%;transform:translateY(0);}
+  100%{left:110%;transform:translateY(-16px);}
+}
+.fx-gull-wing{animation:fxGullFlap .55s ease-in-out infinite alternate;transform-origin:12px 12px;}
+@keyframes fxGullFlap{0%{transform:scaleY(1);}100%{transform:scaleY(.45);}}
+
+.fx-parasol{position:absolute;bottom:-2%;pointer-events:none;opacity:.9;
+  animation:fxParasolSway 4.5s ease-in-out infinite;transform-origin:bottom center;}
+.fx-parasol svg{display:block;width:100%;height:100%;}
+@keyframes fxParasolSway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
+
+/* ── Winter ambience — pale sky, snow flurries, snow-hills, icy sparkle, snowy pine ── */
+.fx-snowhill{position:absolute;left:-12%;width:124%;pointer-events:none;will-change:transform;}
+.fx-snowhill svg{display:block;width:100%;height:100%;}
+.fx-snowhill.hill-l1{animation:fxSeaSway1 12s ease-in-out infinite;}
+.fx-snowhill.hill-l2{animation:fxSeaSway2 16s ease-in-out infinite;}
+.fx-snowhill.hill-l3{animation:fxSeaSway1 10s ease-in-out infinite reverse;}
+
+.fx-sparkle-ice{position:absolute;border-radius:50%;background:#fff;pointer-events:none;animation:fxSeaSparkle 2.4s ease-in-out infinite;}
+
+.fx-pinetree{position:absolute;bottom:-2%;pointer-events:none;opacity:.92;
+  animation:fxPineSway 5s ease-in-out infinite;transform-origin:bottom center;}
+.fx-pinetree svg{display:block;width:100%;height:100%;}
+@keyframes fxPineSway{0%,100%{transform:rotate(-1deg);}50%{transform:rotate(1deg);}}
+
+/* ── Small randomized season badge, sits inline in the panel title (never overlaps the location chip) ── */
+.weather-season-badge{margin-inline-start:auto;width:26px;height:26px;flex-shrink:0;display:flex;align-items:center;justify-content:center;opacity:.92;}
+.weather-season-badge svg{width:100%;height:100%;display:block;}
+.weather-season-badge.sb-sun svg{animation:fxSunPulse 5s ease-in-out infinite;filter:drop-shadow(0 0 5px rgba(255,182,72,.5));}
+.weather-season-badge.sb-moon svg{filter:drop-shadow(0 0 5px rgba(201,163,232,.5));}
+.weather-season-badge.sb-cloud svg{animation:wCloudBob 3.4s ease-in-out infinite;}
+.weather-season-badge.sb-wave svg{animation:sbGentleSway 4s ease-in-out infinite;}
+.weather-season-badge.sb-snow svg{animation:sbSnowSpin 7s linear infinite;}
+@keyframes sbGentleSway{0%,100%{transform:translateX(0);}50%{transform:translateX(1.5px);}}
+@keyframes sbSnowSpin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
 /* Weather icons get a slow, alive bob */
 .weather-icon{animation:iconFloatBob 4.6s ease-in-out infinite;}
 @keyframes iconFloatBob{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
@@ -1219,10 +1431,11 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
   align-items:center; 
   gap:12px;
   background:linear-gradient(160deg,var(--surface),var(--card));
+  backdrop-filter:blur(14px);
   border:1px solid var(--border); 
   border-radius:100px;
   padding: 8px 18px 8px 8px; 
-  box-shadow: 0 14px 34px -10px rgba(0,0,0,.55), 0 0 0 1px rgba(217,184,136,.06);
+  box-shadow: 0 16px 38px -12px rgba(0,0,0,.6), 0 0 0 1px rgba(217,184,136,.06);
   cursor:default; 
   max-width:280px;
   transition:box-shadow .3s ease, border-color .3s ease, transform .3s ease;
@@ -1262,25 +1475,40 @@ body.lang-ar .wc-block-title{font-family:'Cairo',sans-serif;}
 .mp-vol-btn{
   flex-shrink:0; width:34px; height:34px; border-radius:50%; border:1px solid var(--border); background:transparent;
   color:var(--gold2); cursor:pointer; font-size:15px; display:flex; align-items:center; justify-content:center;
-  transition:background .2s ease, color .2s ease, border-color .2s ease;
+  transition:background .2s ease, color .2s ease, border-color .2s ease, transform .18s ease;
 }
 .mp-vol-btn:hover, .mp-vol-btn.active{background:linear-gradient(135deg,rgba(217,184,136,.18),rgba(110,38,64,.22)); color:var(--gold); border-color:rgba(217,184,136,.3);}
+.mp-vol-btn.active{transform:scale(1.06);}
+
+/* Wrapper ties the button and its popup together so the popup is always
+   anchored exactly above the button — not the whole (variable-width) bar */
+.mp-vol-wrap{position:relative; flex-shrink:0;}
 
 /* Volume pop-out panel — distinct vertical style from the main player's horizontal slider */
 .mp-vol-pop{
-  position:absolute; bottom:calc(100% + 12px); right:0;
+  position:absolute; bottom:calc(100% + 14px); right:50%;
   background:linear-gradient(160deg,var(--surface),var(--card));
+  backdrop-filter:blur(14px);
   border:1px solid var(--border); border-radius:20px;
   padding:14px 10px 16px; display:flex; flex-direction:column; align-items:center; gap:10px;
-  box-shadow:0 14px 30px -10px rgba(0,0,0,.55);
-  opacity:0; visibility:hidden; transform:translateY(10px) scale(.92); transform-origin:bottom right;
-  transition:opacity .22s ease, transform .22s ease, visibility .22s;
-  overflow:hidden; /* keep the rotated volume slider clipped inside the panel */
+  box-shadow:0 16px 34px -10px rgba(0,0,0,.6);
+  opacity:0; visibility:hidden; transform:translateX(50%) translateY(10px) scale(.9); transform-origin:bottom center;
+  transition:opacity .2s ease, transform .2s ease, visibility .2s;
 }
-
-.mp-vol-pop.open{opacity:1; visibility:visible; transform:translateY(0) scale(1);}
+.mp-vol-pop.open{opacity:1; visibility:visible; animation:mpVolPopIn .38s cubic-bezier(.34,1.56,.64,1) forwards;}
+@keyframes mpVolPopIn{
+  0%{opacity:0; transform:translateX(50%) translateY(10px) scale(.88);}
+  60%{opacity:1; transform:translateX(50%) translateY(-3px) scale(1.03);}
+  100%{opacity:1; transform:translateX(50%) translateY(0) scale(1);}
+}
+/* Little triangle so the popup visually "belongs" to the volume button below it */
+.mp-vol-arrow{
+  position:absolute; bottom:-6px; left:50%; transform:translateX(-50%) rotate(45deg);
+  width:12px; height:12px; border-radius:2px;
+  background:var(--card); border-right:1px solid var(--border); border-bottom:1px solid var(--border);
+}
 .mp-vol-val{font-size:12px; color:var(--muted); font-weight:700;}
-.mp-vol-slider-wrap{height:96px; width:28px; display:flex; align-items:center; justify-content:center;}
+.mp-vol-slider-wrap{height:96px; width:28px; display:flex; align-items:center; justify-content:center; overflow:hidden;}
 .mp-vol-slider-wrap input[type=range]{
   width:90px; height:4px; margin:0; transform:rotate(-90deg); accent-color:var(--purple); cursor:pointer;
 }
@@ -1913,17 +2141,19 @@ html, body { height: 100%; overflow: hidden; }
 .panel-title { font-size: 17px; margin-bottom: 12px; }
 .prayer-grid  { gap: 8px; }
 .prayer-item  { padding: 14px 6px; border-radius: 14px; }
-.prayer-item .p-icon { font-size: 23px; margin-bottom: 6px; }
+.prayer-item .p-icon { width: 34px; height: 34px; margin-bottom: 6px; }
 .prayer-item .p-name { font-size: 14px; }
 .prayer-item .p-time { font-size: 17px; }
 .prayer-main  { gap: 14px; margin-bottom: 16px; }
-.prayer-icon-big { font-size: 38px; }
+.prayer-icon-big { width: 38px; height: 38px; }
 .prayer-next-name { font-size: 17px; }
 .prayer-next-label { font-size: 12px; }
 .pc-time { font-size: 20px; }
 .prayer-hijri { font-size: 12px; padding: 5px 12px; }
 .weather-icon { width: 68px; height: 68px; }
 .weather-temp { font-size: 39px; }
+.weather-rain-chip { font-size: 12px; padding: 3px 8px 3px 6px; transform: translateY(-2px); margin-inline-start: 6px; }
+.weather-rain-chip-ic { width: 13px; height: 13px; }
 .weather-desc { font-size: 15px; }
 .weather-main { gap: 14px; margin-bottom: 16px; }
 .weather-left { gap: 14px; }
@@ -2693,7 +2923,7 @@ body.occasion-sham-elnessim .occ-tint{
       <section class="panels">
         <div class="panel panel-weather">
           <div class="weather-fx" id="weatherFx" aria-hidden="true"></div>
-          <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span></div>
+          <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span><span class="weather-season-badge" id="weatherSeasonBadge" aria-hidden="true"></span></div>
           <div id="weatherSection" style="display:none;">
             <div class="weather-main" id="weatherMain"></div>
             <div class="weather-stats" id="weatherStats"></div>
@@ -2703,7 +2933,8 @@ body.occasion-sham-elnessim .occ-tint{
             <button type="button" id="weatherStatus" class="weather-status-btn">📍 Detecting your location...</button>
           </div>
         </div>
-        <div class="panel">
+        <div class="panel panel-prayer">
+          <div class="prayer-fx" id="prayerFx" aria-hidden="true"></div>
           <div class="panel-title">🕌 <span data-en="Prayer Times — " data-ar="مواقيت الصلاة — ">Prayer Times — </span><span id="prayerCityLabel">...</span></div>
           <div class="prayer-main" id="prayerMain"></div>
           <div class="prayer-stats" id="prayerStats"></div>
@@ -3052,16 +3283,19 @@ body.occasion-sham-elnessim .occ-tint{
       <div class="mp-onair"><span class="mp-dot"></span><span data-en="On Air" data-ar="يُبث الآن">On Air</span></div>
       <div class="mp-title" id="miniPlayerTitle" data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
     </div>
-    <button class="mp-vol-btn" id="miniPlayerVolBtn" aria-label="Volume">
-      <span id="miniPlayerVolIcon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></span>
-    </button>
-  </div>
-  <div class="mp-vol-pop" id="miniPlayerVolPop">
-    <span class="mp-vol-val" id="miniPlayerVolVal">100%</span>
-    <div class="mp-vol-slider-wrap">
-      <input type="range" id="miniPlayerVol" min="0" max="100" value="100" step="1" aria-label="Volume level">
+    <div class="mp-vol-wrap">
+      <button class="mp-vol-btn" id="miniPlayerVolBtn" aria-label="Volume">
+        <span id="miniPlayerVolIcon"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></span>
+      </button>
+      <div class="mp-vol-pop" id="miniPlayerVolPop">
+        <span class="mp-vol-arrow" aria-hidden="true"></span>
+        <span class="mp-vol-val" id="miniPlayerVolVal">100%</span>
+        <div class="mp-vol-slider-wrap">
+          <input type="range" id="miniPlayerVol" min="0" max="100" value="100" step="1" aria-label="Volume level">
+        </div>
+        <button class="mp-mute-btn" id="miniPlayerMuteBtn" aria-label="Mute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></button>
+      </div>
     </div>
-    <button class="mp-mute-btn" id="miniPlayerMuteBtn" aria-label="Mute"><svg viewBox="0 0 24 24" width="1em" height="1em" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4V5z" fill="currentColor" stroke="none"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M18.5 6a9 9 0 0 1 0 12"/></svg></button>
   </div>
 </div>
 
@@ -4234,6 +4468,18 @@ function hideAiTitle(){ if(npAi){npAi.style.display='none'; npAiText.textContent
 // عدّل الاسم ده لو اسم الملف المجمّع عندك مختلف
 const COMPILATION_MARKERS = ['فيروزيات المساء'];
 
+// اسم لطيف يتعرض للمشاهدين بدل اسم الملف الخام، سواء لسه محددتش الأغاني
+// وتوقيتاتها ولا في لحظة نادرة الوقت وصل بعد آخر أغنية معرّفة في القايمة —
+// المهم إن اسم الملف الداخلي ("فيروزيات المساء") محدش يشوفه أبداً في الواجهة.
+const COMPILATION_DISPLAY_NAMES = {
+  'فيروزيات المساء': { ar:'منوعات فيروز 🎶', en:'Fairouz Mix 🎶' }
+};
+function compilationFallbackTitle(key){
+  const disp=COMPILATION_DISPLAY_NAMES[key];
+  if(disp) return currentLang==='ar'?disp.ar:disp.en;
+  return currentLang==='ar'?'منوعات فيروز 🎶':'Fairouz Mix 🎶';
+}
+
 // ── هنا بس اللي محتاج تعدّله ──
 // كل عنصر: اسم الأغنية، وثانية بدايتها بالظبط جوه الملف (من أول الملف = صفر)
 // رتّبهم من الأول للآخر حسب ترتيبهم الفعلي في الملف
@@ -4270,14 +4516,16 @@ function tickCompilation(){
   const elapsed=(Date.now()-compilationStartTs)/1000;
   const chapters=COMPILATION_CHAPTERS[activeCompilationKey]||[];
   if(!chapters.length){
-    // لسه محددتش الأغاني وتوقيتاتها في COMPILATION_CHAPTERS
-    npTitle.textContent = activeCompilationKey;
-    if(npAi){npAi.style.display='flex'; npAiText.textContent=currentLang==='ar'?'ضيف أسماء وتوقيتات الأغاني في COMPILATION_CHAPTERS':'Add song names & timings in COMPILATION_CHAPTERS';}
+    // لسه محددتش الأغاني وتوقيتاتها في COMPILATION_CHAPTERS — بما إنك مش هتعرف
+    // توقيتات كل أغنية جوه ملف زينو المجمّع، منعرضش أي بادچ "لسه ناقص" للمشاهدين
+    // (ده كان نوت داخلي ليك انت بس، مكانوش المفروض يوصل للواجهة). بنكتفي باسم لطيف عام.
+    npTitle.textContent = compilationFallbackTitle(activeCompilationKey);
+    hideAiTitle();
     return;
   }
   const chapter=currentChapterFor(activeCompilationKey, elapsed);
   hideAiTitle();
-  npTitle.textContent = chapter? chapter.title : activeCompilationKey;
+  npTitle.textContent = chapter? chapter.title : compilationFallbackTitle(activeCompilationKey);
 }
 
 function startCompilationClock(rawTitle){
@@ -4478,18 +4726,26 @@ function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
   // Play / pause — reuses the exact same audio logic as the main player
   mpPlayBtn.addEventListener('click', () => { togglePlay(); });
 
-  // Volume pop-out toggle
+  // Volume pop-out toggle — exactly one popup can be open at a time
+  function closeMpVolPop(){
+    mpVolPop.classList.remove('open');
+    mpVolBtn.classList.remove('active');
+  }
   mpVolBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    mpVolPop.classList.toggle('open');
-    mpVolBtn.classList.toggle('active', mpVolPop.classList.contains('open'));
+    const willOpen = !mpVolPop.classList.contains('open');
+    closeMpVolPop();
+    if (willOpen) {
+      mpVolPop.classList.add('open');
+      mpVolBtn.classList.add('active');
+    }
   });
   document.addEventListener('click', (e) => {
     if (mpVolPop.classList.contains('open') && !mpVolPop.contains(e.target) && e.target !== mpVolBtn && !mpVolBtn.contains(e.target)) {
-      mpVolPop.classList.remove('open');
-      mpVolBtn.classList.remove('active');
+      closeMpVolPop();
     }
   });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeMpVolPop(); });
 
   // Volume slider — mirrors and drives the same audio element / main slider
   mpVol.addEventListener('input', function(){
@@ -4528,11 +4784,11 @@ function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
 
 // ── Prayer Times ──
 let prayers=[
-  {nameEn:'Fajr',   nameAr:'الفجر',  time:'04:30',icon:'🌄'},
-  {nameEn:'Dhuhr',  nameAr:'الظهر',  time:'12:00',icon:'☀️'},
-  {nameEn:'Asr',    nameAr:'العصر',  time:'15:30',icon:'🌤️'},
-  {nameEn:'Maghrib',nameAr:'المغرب', time:'18:15',icon:'🌅'},
-  {nameEn:'Isha',   nameAr:'العشاء', time:'19:45',icon:'🌙'},
+  {nameEn:'Fajr',   nameAr:'الفجر',  time:'04:30',key:'fajr'},
+  {nameEn:'Dhuhr',  nameAr:'الظهر',  time:'12:00',key:'dhuhr'},
+  {nameEn:'Asr',    nameAr:'العصر',  time:'15:30',key:'asr'},
+  {nameEn:'Maghrib',nameAr:'المغرب', time:'18:15',key:'maghrib'},
+  {nameEn:'Isha',   nameAr:'العشاء', time:'19:45',key:'isha'},
 ];
 let lastAthanKey=null,wasPlayingBeforeAthan=false,currentAthanName=null,athanCountdownInterval=null;
 // Extra prayer info: sunrise/imsak (from Aladhan), Hijri date, and coords for Qibla calc
@@ -4557,11 +4813,11 @@ async function fetchPrayerTimes(lat,lon){
     const data=await res.json(); const t=data.data.timings;
     const clean=v=>v.split(' ')[0];
     prayers=[
-      {nameEn:'Fajr',   nameAr:'الفجر',  time:clean(t.Fajr),   icon:'🌄'},
-      {nameEn:'Dhuhr',  nameAr:'الظهر',  time:clean(t.Dhuhr),  icon:'☀️'},
-      {nameEn:'Asr',    nameAr:'العصر',  time:clean(t.Asr),    icon:'🌤️'},
-      {nameEn:'Maghrib',nameAr:'المغرب', time:clean(t.Maghrib),icon:'🌅'},
-      {nameEn:'Isha',   nameAr:'العشاء', time:clean(t.Isha),   icon:'🌙'},
+      {nameEn:'Fajr',   nameAr:'الفجر',  time:clean(t.Fajr),   key:'fajr'},
+      {nameEn:'Dhuhr',  nameAr:'الظهر',  time:clean(t.Dhuhr),  key:'dhuhr'},
+      {nameEn:'Asr',    nameAr:'العصر',  time:clean(t.Asr),    key:'asr'},
+      {nameEn:'Maghrib',nameAr:'المغرب', time:clean(t.Maghrib),key:'maghrib'},
+      {nameEn:'Isha',   nameAr:'العشاء', time:clean(t.Isha),   key:'isha'},
     ];
     prayerExtra.sunrise = t.Sunrise ? clean(t.Sunrise) : null;
     prayerExtra.imsak   = t.Imsak   ? clean(t.Imsak)   : null;
@@ -4594,16 +4850,200 @@ function to12h(t){
   const ap=h>=12?'PM':'AM'; h=h%12===0?12:h%12;
   return h+':'+mS+' '+ap;
 }
+// ── Prayer panel ambient FX: a mosque silhouette that's always there, plus a
+// crescent + stars at night, warm glows at dawn/dusk/day — mirrors the weather panel's approach.
+let lastPrayerPhase=null;
+function getPrayerPhase(now){
+  if(!prayers||!prayers.length) return 'day';
+  const toMin=t=>{const[h,m]=t.split(':').map(Number);return h*60+m;};
+  const nowMin=now.getHours()*60+now.getMinutes();
+  const fajr=toMin(prayers[0].time);
+  const sunrise=prayerExtra.sunrise?toMin(prayerExtra.sunrise):fajr+90;
+  const maghrib=toMin(prayers[3].time);
+  const isha=toMin(prayers[4].time);
+  if(nowMin>=isha || nowMin<fajr) return 'night';
+  if(nowMin>=fajr && nowMin<sunrise) return 'dawn';
+  if(nowMin>=sunrise && nowMin<maghrib) return 'day';
+  return 'dusk';
+}
+function ambientIslamicMotifSVG(){
+  return `<svg viewBox="0 0 200 200"><g fill="none" stroke="currentColor" stroke-width="1.3">
+    <circle cx="100" cy="100" r="90"/>
+    <circle cx="100" cy="100" r="66"/>
+    <rect x="42" y="42" width="116" height="116"/>
+    <rect x="42" y="42" width="116" height="116" transform="rotate(45 100 100)"/>
+  </g></svg>`;
+}
+function islamicStarSVG(fill){
+  return `<svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 12 L26 20 L36 28 L24 26 L20 38 L16 26 L4 28 L14 20 L4 12 L16 14 Z" fill="${fill}"/></svg>`;
+}
+// ── Per-prayer accent colors (used for the "next" glow + hero halo) ──
+const PR_ACCENT={
+  fajr:   {c:'#e6a15c', rgb:'230,161,92'},
+  dhuhr:  {c:'#ffcf4d', rgb:'255,207,77'},
+  asr:    {c:'#8fc7e8', rgb:'143,199,232'},
+  maghrib:{c:'#ef8b5a', rgb:'239,139,90'},
+  isha:   {c:'#a68be0', rgb:'166,139,224'}
+};
+// ── Small, expressive animated icon for each prayer — a mini scene rather
+// than a flat emoji: Fajr breaks over the horizon, Dhuhr spins a full bright
+// sun, Asr's sun drifts behind a cloud, Maghrib sinks below the line, and
+// Isha is a glowing crescent with twinkling stars. Colors/animations come
+// from CSS (.pr-*) so every copy on the page (grid + hero) animates in sync.
+function prayerIconSVG(key,uid){
+  uid=uid||Math.random().toString(36).slice(2,8);
+  const acc=(PR_ACCENT[key]||PR_ACCENT.dhuhr).c;
+  if(key==='fajr'){
+    return `<svg viewBox="0 0 64 64" class="pr-svg pr-fajr">
+      <defs><linearGradient id="fajrSky-${uid}" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0%" stop-color="#3a2a55"/><stop offset="100%" stop-color="${acc}"/>
+      </linearGradient></defs>
+      <rect x="5" y="10" width="54" height="32" rx="8" fill="url(#fajrSky-${uid})" opacity=".5"/>
+      <g class="pr-fajr-glow">
+        <circle cx="32" cy="40" r="12" fill="${acc}"/>
+        <g class="pr-fajr-rays" stroke="${acc}" stroke-width="2.2" stroke-linecap="round">
+          <line x1="32" y1="20" x2="32" y2="26"/>
+          <line x1="13" y1="32" x2="19" y2="34"/>
+          <line x1="51" y1="32" x2="45" y2="34"/>
+          <line x1="18" y1="20" x2="22" y2="25"/>
+          <line x1="46" y1="20" x2="42" y2="25"/>
+        </g>
+      </g>
+      <line x1="6" y1="44" x2="58" y2="44" stroke="${acc}" stroke-width="2" opacity=".5"/>
+      <circle class="pr-twinkle-sm" cx="12" cy="15" r="1.3" fill="#fff"/>
+      <circle class="pr-twinkle-sm" style="animation-delay:.7s" cx="50" cy="13" r="1" fill="#fff"/>
+    </svg>`;
+  }
+  if(key==='dhuhr'){
+    return `<svg viewBox="0 0 64 64" class="pr-svg pr-dhuhr">
+      <g class="pr-dhuhr-spin" stroke="${acc}" stroke-width="3" stroke-linecap="round">
+        <line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/>
+        <line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/>
+        <line x1="12" y1="12" x2="18" y2="18"/><line x1="46" y1="46" x2="52" y2="52"/>
+        <line x1="52" y1="12" x2="46" y2="18"/><line x1="18" y1="46" x2="12" y2="52"/>
+      </g>
+      <circle class="pr-dhuhr-core" cx="32" cy="32" r="13" fill="${acc}"/>
+    </svg>`;
+  }
+  if(key==='asr'){
+    return `<svg viewBox="0 0 64 64" class="pr-svg pr-asr">
+      <circle class="pr-asr-sun" cx="40" cy="22" r="10" fill="${acc}"/>
+      <g class="pr-asr-rays" stroke="${acc}" stroke-width="2" stroke-linecap="round" opacity=".8">
+        <line x1="40" y1="6" x2="40" y2="10"/><line x1="55" y1="12" x2="52" y2="15"/><line x1="59" y1="22" x2="54" y2="22"/>
+      </g>
+      <g class="pr-asr-cloud">
+        <ellipse cx="26" cy="42" rx="15" ry="10" fill="var(--cloud-c,#8d84a6)"/>
+        <circle cx="36" cy="30" r="12" fill="var(--cloud-c2,#b5add0)"/>
+        <rect x="14" y="36" width="38" height="14" rx="7" fill="var(--cloud-c,#8d84a6)"/>
+      </g>
+    </svg>`;
+  }
+  if(key==='maghrib'){
+    return `<svg viewBox="0 0 64 64" class="pr-svg pr-maghrib">
+      <defs><clipPath id="maghribClip-${uid}"><rect x="4" y="4" width="56" height="34"/></clipPath></defs>
+      <g clip-path="url(#maghribClip-${uid})">
+        <circle class="pr-maghrib-sun" cx="32" cy="36" r="13" fill="${acc}"/>
+      </g>
+      <line x1="4" y1="38" x2="60" y2="38" stroke="${acc}" stroke-width="2" opacity=".6"/>
+      <g class="pr-maghrib-rays" stroke="${acc}" stroke-width="2" stroke-linecap="round" opacity=".5">
+        <line x1="14" y1="46" x2="18" y2="46"/><line x1="46" y1="46" x2="50" y2="46"/>
+      </g>
+    </svg>`;
+  }
+  // isha
+  return `<svg viewBox="0 0 64 64" class="pr-svg pr-isha">
+    <path class="pr-isha-moon" d="M40 8 a20 20 0 1 0 0 48 a25 25 0 1 1 0 -48" fill="${acc}"/>
+    <circle class="pr-twinkle-sm" cx="14" cy="16" r="1.4" fill="#fff"/>
+    <circle class="pr-twinkle-sm" style="animation-delay:.5s" cx="10" cy="34" r="1.1" fill="#fff"/>
+    <circle class="pr-twinkle-sm" style="animation-delay:1s" cx="20" cy="46" r="1" fill="#fff"/>
+  </svg>`;
+}
+function renderPrayerFx(phase){
+  const fx=document.getElementById('prayerFx');
+  if(!fx) return;
+  fx.innerHTML='';
+
+  // A faint, centered Islamic geometric motif sits behind the whole panel,
+  // softly re-tinted to match the time of day — simple and elegant, and its
+  // low opacity + line-only style means it never competes with the times.
+  const motif=document.createElement('div');
+  motif.className='fx-islamic-motif';
+  motif.innerHTML=ambientIslamicMotifSVG();
+  fx.appendChild(motif);
+
+  if(phase==='night'){
+    motif.style.color='var(--moon-c)';
+    // Sits high in the panel's top corner — clear of both the title text and
+    // the Hijri date chip lower down, instead of floating right behind it.
+    const cres=document.createElement('div');
+    cres.className='fx-prayer-crescent';
+    cres.style.width='34px'; cres.style.height='34px';
+    cres.style.top='3%'; cres.style.insetInlineEnd='3%';
+    cres.innerHTML=ambientBeachMoonSVG();
+    fx.appendChild(cres);
+    for(let i=0;i<10;i++){
+      const t=document.createElement('div');
+      t.className='fx-twinkle';
+      const s=1+Math.random()*1.6;
+      t.style.width=s+'px'; t.style.height=s+'px';
+      t.style.left=(Math.random()*96)+'%';
+      t.style.top=(Math.random()*40)+'%';
+      t.style.animationDuration=(1.8+Math.random()*2.2)+'s';
+      t.style.animationDelay=(-Math.random()*3)+'s';
+      fx.appendChild(t);
+    }
+  } else if(phase==='dawn' || phase==='dusk'){
+    motif.style.color=phase==='dawn' ? 'var(--gold2)' : 'var(--rose)';
+    const glow=document.createElement('div');
+    glow.className='fx-prayer-glow';
+    glow.style.width='140px'; glow.style.height='140px';
+    glow.style.top='-8%'; glow.style.insetInlineEnd='4%';
+    glow.style.background = phase==='dawn'
+      ? 'radial-gradient(circle, rgba(217,184,136,.35), transparent 70%)'
+      : 'radial-gradient(circle, rgba(224,138,166,.35), transparent 70%)';
+    fx.appendChild(glow);
+  } else {
+    motif.style.color='var(--purple2)';
+    const glow=document.createElement('div');
+    glow.className='fx-prayer-glow';
+    glow.style.width='120px'; glow.style.height='120px';
+    glow.style.top='-8%'; glow.style.insetInlineEnd='6%';
+    glow.style.background='radial-gradient(circle, rgba(255,182,72,.26), transparent 72%)';
+    fx.appendChild(glow);
+  }
+
+  // A couple of gently twinkling geometric (Islamic-star) ornaments, present in every phase
+  const starCount = phase==='night' ? 2 : 3;
+  for(let i=0;i<starCount;i++){
+    const st=document.createElement('div');
+    st.className='fx-prayer-star';
+    const s=13+Math.random()*9;
+    st.style.width=s+'px'; st.style.height=s+'px';
+    st.style.left=(10+Math.random()*80)+'%';
+    st.style.top=(10+Math.random()*35)+'%';
+    st.style.transform='rotate('+(Math.random()*40-20)+'deg)';
+    st.style.animationDuration=(2.4+Math.random()*1.6)+'s';
+    st.style.animationDelay=(-Math.random()*3)+'s';
+    st.innerHTML=islamicStarSVG('var(--gold2)');
+    fx.appendChild(st);
+  }
+}
 function renderPrayers(){
   const now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
   let nextIdx=prayers.findIndex(p=>{const[h,m]=p.time.split(':').map(Number);return(h*60+m)>nowMin;});
   if(nextIdx===-1)nextIdx=0;
-  document.getElementById('prayerGrid').innerHTML=prayers.map((p,i)=>`
-    <div class="prayer-item ${i===nextIdx?'next':''}">
-      <div class="p-icon">${p.icon}</div>
+  const nextBadge=currentLang==='ar'?'التالية':'Next';
+  document.getElementById('prayerGrid').innerHTML=prayers.map((p,i)=>{
+    const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
+    return `
+    <div class="prayer-item ${i===nextIdx?'next':''}" data-next-label="${nextBadge}" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">
+      <div class="p-icon">${prayerIconSVG(p.key,'g'+i)}</div>
       <div class="p-name">${currentLang==='ar'?p.nameAr:p.nameEn}</div>
       <div class="p-time">${to12h(p.time)}</div>
-    </div>`).join('');
+    </div>`;
+  }).join('');
+  const phase=getPrayerPhase(now);
+  if(phase!==lastPrayerPhase){ lastPrayerPhase=phase; renderPrayerFx(phase); }
   renderPrayerMain(nextIdx,now);
   renderPrayerStats();
 }
@@ -4625,9 +5065,10 @@ function renderPrayerMain(nextIdx,now){
     const hijriTxt=isAr? (hj.day+' '+hj.monthAr+' '+hj.year+' هـ') : (hj.day+' '+hj.monthEn+' '+hj.year+' AH');
     hijriHtml=`<div class="prayer-hijri">📅 ${hijriTxt}</div>`;
   }
+  const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
   el.innerHTML=`
     <div class="prayer-left">
-      <div class="prayer-icon-big">${p.icon}</div>
+      <div class="prayer-icon-big" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">${prayerIconSVG(p.key,'hero')}</div>
       <div class="prayer-primary">
         <div class="prayer-next-label">${nextLabel}</div>
         <div class="prayer-next-name">${isAr?p.nameAr:p.nameEn} — ${to12h(p.time)}</div>
@@ -4771,6 +5212,210 @@ function ambientCloudSVG(){
     <rect x="18" y="34" width="70" height="22" rx="11" fill="var(--cloud-c)"/>
   </svg>`;
 }
+// ── Summer beach ambience: sun/moon, sea waves, seagulls, parasol ──
+function isSummerNow(){
+  const d=new Date(); const md=(d.getMonth()+1)*100+d.getDate();
+  return md>=621 && md<=922;
+}
+function ambientSunSVG(){
+  return `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="14" fill="var(--sun-c)"/><g stroke="var(--sun-c)" stroke-width="3" stroke-linecap="round" opacity=".85"><line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/><line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/><line x1="12" y1="12" x2="18" y2="18"/><line x1="46" y1="46" x2="52" y2="52"/><line x1="52" y1="12" x2="46" y2="18"/><line x1="18" y1="46" x2="12" y2="52"/></g></svg>`;
+}
+function ambientBeachMoonSVG(){
+  return `<svg viewBox="0 0 64 64"><path d="M40 8 a20 20 0 1 0 0 48 a25 25 0 1 1 0 -48" fill="var(--moon-c)"/></svg>`;
+}
+function ambientWaveSVG(fill,opacity){
+  return `<svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 22 Q20 8 40 22 T80 22 T120 22 T160 22 T200 22 T240 22 V40 H0 Z" fill="${fill}" opacity="${opacity}"/></svg>`;
+}
+function ambientGullSVG(){
+  return `<svg viewBox="0 0 24 24"><path class="fx-gull-wing" d="M2 14 Q7 6 12 13 Q17 6 22 14" stroke="var(--text)" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/></svg>`;
+}
+function ambientParasolSVG(){
+  return `<svg viewBox="0 0 60 60"><path d="M30 6 C14 6 4 20 4 26 H56 C56 20 46 6 30 6 Z" fill="var(--rose)"/><path d="M30 6 C22 6 15 15 12 22 H30 Z" fill="var(--gold2)" opacity=".85"/><path d="M30 6 C38 6 45 15 48 22 H30 Z" fill="var(--gold2)" opacity=".55"/><line x1="30" y1="26" x2="30" y2="54" stroke="var(--gold2)" stroke-width="2.5"/></svg>`;
+}
+function renderBeachFx(fx, dayTime){
+  // Note: the big sun/moon icon used to live here, floating in the panel's
+  // top-right corner — right where the location chip sits. It's now the small
+  // randomized season badge inline in the panel title instead, so this scene
+  // only adds ambience that has an empty spot to live in: stars, gulls, sea, parasol.
+  if(!dayTime){
+    for(let i=0;i<8;i++){
+      const t=document.createElement('div');
+      t.className='fx-twinkle';
+      const s=1+Math.random()*1.6;
+      t.style.width=s+'px'; t.style.height=s+'px';
+      t.style.left=(Math.random()*96)+'%';
+      t.style.top=(Math.random()*30)+'%';
+      t.style.animationDuration=(1.8+Math.random()*2.2)+'s';
+      t.style.animationDelay=(-Math.random()*3)+'s';
+      fx.appendChild(t);
+    }
+  }
+  // Seagulls gliding across the sky (day only)
+  if(dayTime){
+    for(let i=0;i<2;i++){
+      const g=document.createElement('div');
+      g.className='fx-gull';
+      g.style.width='16px'; g.style.height='16px';
+      g.style.top=(16+i*10+Math.random()*6)+'%';
+      const dur=10+i*4+Math.random()*4;
+      g.style.animationDuration=dur+'s';
+      g.style.animationDelay=(-Math.random()*dur)+'s';
+      g.innerHTML=ambientGullSVG();
+      fx.appendChild(g);
+    }
+  }
+  // Layered sea horizon at the bottom of the panel
+  const seaLayers=[
+    {cls:'sea-l1', bottom:'-4%', h:34, fill:'var(--sea-c)', op:.30},
+    {cls:'sea-l2', bottom:'-8%', h:40, fill:'var(--sea-c2)', op:.22},
+    {cls:'sea-l3', bottom:'-12%', h:46, fill:'var(--sea-c)', op:.16}
+  ];
+  seaLayers.forEach(l=>{
+    const s=document.createElement('div');
+    s.className='fx-sea '+l.cls;
+    s.style.bottom=l.bottom; s.style.height=l.h+'px';
+    s.innerHTML=ambientWaveSVG(l.fill,l.op);
+    fx.appendChild(s);
+  });
+  // A couple of sparkles on the water, catching the light
+  for(let i=0;i<3;i++){
+    const sp=document.createElement('div');
+    sp.className='fx-sparkle-sea';
+    sp.style.width='3px'; sp.style.height='3px';
+    sp.style.left=(15+Math.random()*70)+'%';
+    sp.style.bottom=(2+Math.random()*10)+'%';
+    sp.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+    sp.style.animationDelay=(-Math.random()*2)+'s';
+    fx.appendChild(sp);
+  }
+  // A small parasol tucked in the corner for that "مصيف" feel
+  const par=document.createElement('div');
+  par.className='fx-parasol';
+  par.style.width='38px'; par.style.height='38px';
+  par.style.left='6%';
+  par.innerHTML=ambientParasolSVG();
+  fx.appendChild(par);
+}
+// ── Winter ambience: snow-covered hills, a light flurry, icy sparkle, snowy pine ──
+function isWinterNow(){
+  const d=new Date(); const md=(d.getMonth()+1)*100+d.getDate();
+  return md>=1221 || md<=320;
+}
+function ambientSnowHillSVG(fill,opacity){
+  return `<svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 30 L20 14 L40 26 L60 10 L80 24 L100 12 L120 26 L140 14 L160 28 L180 12 L200 24 L220 14 L240 26 V40 H0 Z" fill="${fill}" opacity="${opacity}"/></svg>`;
+}
+function ambientPineTreeSVG(){
+  return `<svg viewBox="0 0 60 60"><polygon points="30,6 42,26 18,26" fill="var(--pine-c)"/><polygon points="30,16 46,34 14,34" fill="var(--pine-c)"/><polygon points="30,26 50,48 10,48" fill="var(--pine-c2)"/><rect x="27" y="48" width="6" height="8" fill="#5b4636"/><path d="M18 26 L30 16 L42 26" fill="none" stroke="var(--snowcap)" stroke-width="2" opacity=".85"/><path d="M14 34 L30 22 L46 34" fill="none" stroke="var(--snowcap)" stroke-width="2" opacity=".75"/></svg>`;
+}
+function renderWinterFx(fx, dayTime){
+  // Mirrors renderBeachFx's shape, just dressed for the cold: stars at night,
+  // a light ever-present flurry, snow-covered hills at the base, and a snowy pine in the corner.
+  if(!dayTime){
+    for(let i=0;i<7;i++){
+      const t=document.createElement('div');
+      t.className='fx-twinkle';
+      const s=1+Math.random()*1.6;
+      t.style.width=s+'px'; t.style.height=s+'px';
+      t.style.left=(Math.random()*96)+'%';
+      t.style.top=(Math.random()*28)+'%';
+      t.style.animationDuration=(1.8+Math.random()*2.2)+'s';
+      t.style.animationDelay=(-Math.random()*3)+'s';
+      fx.appendChild(t);
+    }
+  }
+  // A light, ever-present flurry drifting through the sky (day or night)
+  for(let i=0;i<7;i++){
+    const s=document.createElement('div');
+    s.className='fx-flake';
+    s.textContent='❄';
+    s.style.left=(Math.random()*98)+'%';
+    s.style.setProperty('--sx',(Math.random()*30-15)+'px');
+    s.style.fontSize=(7+Math.random()*6)+'px';
+    s.style.opacity='.5';
+    const dur=9+Math.random()*6;
+    s.style.animationDuration=dur+'s';
+    s.style.animationDelay=(-Math.random()*dur)+'s';
+    fx.appendChild(s);
+  }
+  // Layered snow-covered hills along the bottom of the panel
+  const hillLayers=[
+    {cls:'hill-l1', bottom:'-6%', h:34, fill:'var(--snowhill-c)', op:.32},
+    {cls:'hill-l2', bottom:'-10%', h:40, fill:'var(--snowhill-c2)', op:.24},
+    {cls:'hill-l3', bottom:'-14%', h:46, fill:'var(--snowhill-c)', op:.16}
+  ];
+  hillLayers.forEach(l=>{
+    const h=document.createElement('div');
+    h.className='fx-snowhill '+l.cls;
+    h.style.bottom=l.bottom; h.style.height=l.h+'px';
+    h.innerHTML=ambientSnowHillSVG(l.fill,l.op);
+    fx.appendChild(h);
+  });
+  // A couple of icy sparkles catching the light on the snow
+  for(let i=0;i<3;i++){
+    const sp=document.createElement('div');
+    sp.className='fx-sparkle-ice';
+    sp.style.width='3px'; sp.style.height='3px';
+    sp.style.left=(15+Math.random()*70)+'%';
+    sp.style.bottom=(2+Math.random()*10)+'%';
+    sp.style.animationDuration=(1.6+Math.random()*1.4)+'s';
+    sp.style.animationDelay=(-Math.random()*2)+'s';
+    fx.appendChild(sp);
+  }
+  // A small snow-capped pine tucked in the corner for that "شتوية" feel
+  const pine=document.createElement('div');
+  pine.className='fx-pinetree';
+  pine.style.width='36px'; pine.style.height='36px';
+  pine.style.right='6%';
+  pine.innerHTML=ambientPineTreeSVG();
+  fx.appendChild(pine);
+}
+// ── Small randomized season badge, shown inline in the panel title — picks one look
+// per page load (crescent / sun / cloud / sea for summer, crescent / sun / cloud / snow for winter) ──
+const SEASON_BADGE_PICK = Math.random();
+function badgeCrescentSVG(fill){
+  return `<svg viewBox="0 0 26 26"><path d="M16 3 a10 10 0 1 0 0 20 a12.5 12.5 0 1 1 0 -20" fill="${fill}"/></svg>`;
+}
+function badgeSunSVG(fill){
+  return `<svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="6" fill="${fill}"/><g stroke="${fill}" stroke-width="1.6" stroke-linecap="round"><line x1="13" y1="1" x2="13" y2="4"/><line x1="13" y1="22" x2="13" y2="25"/><line x1="1" y1="13" x2="4" y2="13"/><line x1="22" y1="13" x2="25" y2="13"/><line x1="4.5" y1="4.5" x2="6.8" y2="6.8"/><line x1="19.2" y1="19.2" x2="21.5" y2="21.5"/><line x1="21.5" y1="4.5" x2="19.2" y2="6.8"/><line x1="6.8" y1="19.2" x2="4.5" y2="21.5"/></g></svg>`;
+}
+function badgeCloudSVG(fill){
+  return `<svg viewBox="0 0 26 26"><ellipse cx="9" cy="18" rx="6" ry="4" fill="${fill}"/><circle cx="14" cy="10" r="6.5" fill="${fill}"/><circle cx="8" cy="10.5" r="5" fill="${fill}"/><rect x="4" y="14" width="17" height="6" rx="3" fill="${fill}"/></svg>`;
+}
+function badgeWaveSVG(fill){
+  return `<svg viewBox="0 0 26 26"><path d="M2 16 Q6 11 10 16 T18 16 T26 16 V22 H2 Z" fill="${fill}"/><path d="M2 20 Q6 16 10 20 T18 20 T26 20 V24 H2 Z" fill="${fill}" opacity=".6"/></svg>`;
+}
+function badgeSnowflakeSVG(fill){
+  return `<svg viewBox="0 0 26 26"><g stroke="${fill}" stroke-width="1.6" stroke-linecap="round"><line x1="13" y1="2" x2="13" y2="24"/><line x1="2" y1="13" x2="24" y2="13"/><line x1="5" y1="5" x2="21" y2="21"/><line x1="21" y1="5" x2="5" y2="21"/></g><g stroke="${fill}" stroke-width="1.3" stroke-linecap="round"><line x1="13" y1="5" x2="10" y2="8"/><line x1="13" y1="5" x2="16" y2="8"/><line x1="13" y1="21" x2="10" y2="18"/><line x1="13" y1="21" x2="16" y2="18"/></g></svg>`;
+}
+function renderSeasonBadge(season){
+  const el=document.getElementById('weatherSeasonBadge');
+  if(!el) return;
+  let icons;
+  if(season==='summer'){
+    icons=[
+      {svg:badgeCrescentSVG('var(--moon-c)'), cls:'sb-moon'},
+      {svg:badgeSunSVG('var(--sun-c)'), cls:'sb-sun'},
+      {svg:badgeCloudSVG('var(--cloud-c)'), cls:'sb-cloud'},
+      {svg:badgeWaveSVG('var(--sea-c)'), cls:'sb-wave'}
+    ];
+  } else if(season==='winter'){
+    icons=[
+      {svg:badgeCrescentSVG('var(--winter-moon-c)'), cls:'sb-moon'},
+      {svg:badgeSunSVG('var(--winter-sun-c)'), cls:'sb-sun'},
+      {svg:badgeCloudSVG('var(--cloud-c)'), cls:'sb-cloud'},
+      {svg:badgeSnowflakeSVG('#eaf3ff'), cls:'sb-snow'}
+    ];
+  } else {
+    el.style.display='none';
+    el.innerHTML='';
+    return;
+  }
+  let idx=Math.floor(SEASON_BADGE_PICK*icons.length);
+  if(idx>=icons.length) idx=icons.length-1;
+  el.style.display='';
+  el.className='weather-season-badge '+icons[idx].cls;
+  el.innerHTML=icons[idx].svg;
+}
 // ── Ambient weather FX inside the panel: drifting clouds, sun/stars, rain, snow, heat shimmer, fog ──
 function renderWeatherFx(code, temp, isDay){
   const fx=document.getElementById('weatherFx');
@@ -4782,7 +5427,20 @@ function renderWeatherFx(code, temp, isDay){
   const isClear=code===0;
   const isCloudy=[1,2,3].includes(code) || isRain || isStorm || isSnow;
   const dayTime = isDay===undefined ? !document.body.classList.contains('night-theme') : !!isDay;
+  const isSummer = isSummerNow();
+  const isWinter = isWinterNow();
 
+  // The small season badge in the panel title gets a fresh (page-load-random) look each visit.
+  renderSeasonBadge(isSummer ? 'summer' : (isWinter ? 'winter' : 'other'));
+
+  // In summer, swap the generic drifting clouds for a beach/seaside scene; in winter,
+  // swap them for a snowy hillside scene — both skipped for rain/storm/snow/fog,
+  // which get their own dedicated effects below.
+  if(isSummer && !isRain && !isStorm && !isSnow && !isFog){
+    renderBeachFx(fx, dayTime);
+  } else if(isWinter && !isRain && !isStorm && !isSnow && !isFog){
+    renderWinterFx(fx, dayTime);
+  } else
   // Layered drifting clouds — always present when the sky isn't clear, softer touch when clear
   if(isCloudy || isFog){
     const layers=isStorm?4:(isSnow||isRain?3:2);
@@ -4858,14 +5516,18 @@ function renderWeatherFx(code, temp, isDay){
     const heat=document.createElement('div');
     heat.className='fx-heat';
     fx.appendChild(heat);
-    for(let i=0;i<4;i++){
-      const w=document.createElement('div');
-      w.className='fx-wave';
-      w.style.left=(8+i*23+Math.random()*10)+'%';
-      const dur=3+Math.random()*2;
-      w.style.animationDuration=dur+'s';
-      w.style.animationDelay=(-Math.random()*dur)+'s';
-      fx.appendChild(w);
+    // The rising heat-shimmer arcs are skipped in summer — the sea waves from
+    // renderBeachFx already read as "hot beach air" without the visual clash.
+    if(!isSummer){
+      for(let i=0;i<4;i++){
+        const w=document.createElement('div');
+        w.className='fx-wave';
+        w.style.left=(8+i*23+Math.random()*10)+'%';
+        const dur=3+Math.random()*2;
+        w.style.animationDuration=dur+'s';
+        w.style.animationDelay=(-Math.random()*dur)+'s';
+        fx.appendChild(w);
+      }
     }
   } else if(isFog){
     for(let i=0;i<3;i++){
@@ -4926,35 +5588,33 @@ function wVisibilityIconSVG(){
     '<g class="w-vis-eye-lid"><circle cx="12" cy="12" r="3.4" fill="var(--gold)"/><circle cx="12" cy="12" r="1.3" fill="var(--bg)"/></g>'+
     '</svg>';
 }
-function weatherStatsHtml(precipProb, humidity, visibilityM, lang){
-  const rainStr = (precipProb!=null && !isNaN(precipProb)) ? Math.round(precipProb)+'%' : '—';
+function weatherStatsHtml(humidity, visibilityM, lang){
   const humStr = (humidity!=null && !isNaN(humidity)) ? Math.round(humidity)+'%' : '—';
   let visStr = '—';
   if(visibilityM!=null && !isNaN(visibilityM)){
     const km = visibilityM/1000;
     visStr = km>=10 ? (lang==='ar'?'+10 كم':'10+ km') : km.toFixed(1)+' '+(lang==='ar'?'كم':'km');
   }
-  return '<div class="w-stat"><span class="w-stat-ic">'+wRainChanceIconSVG(precipProb)+'</span><span class="w-stat-val">'+rainStr+'</span><span class="w-stat-label">'+(lang==='ar'?'احتمال المطر':'Rain chance')+'</span></div>'+
-    '<div class="w-stat"><span class="w-stat-ic">'+wHumidityIconSVG(humidity)+'</span><span class="w-stat-val">'+humStr+'</span><span class="w-stat-label">'+(lang==='ar'?'الرطوبة':'Humidity')+'</span></div>'+
+  return '<div class="w-stat"><span class="w-stat-ic">'+wHumidityIconSVG(humidity)+'</span><span class="w-stat-val">'+humStr+'</span><span class="w-stat-label">'+(lang==='ar'?'الرطوبة':'Humidity')+'</span></div>'+
     '<div class="w-stat"><span class="w-stat-ic">'+wVisibilityIconSVG()+'</span><span class="w-stat-val">'+visStr+'</span><span class="w-stat-label">'+(lang==='ar'?'مدى الرؤية':'Visibility')+'</span></div>';
 }
 function renderWeatherText(cur, wData, city, flag){
   const flagPart = flag !== undefined ? flag : lastWeatherFlag;
-  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc" dir="auto">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice" dir="auto">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
-
   const hourlyIdx = wcHourlyNowIndex(wData.hourly && wData.hourly.time);
   const precipProb = (wData.hourly && wData.hourly.precipitation_probability && hourlyIdx>=0) ? wData.hourly.precipitation_probability[hourlyIdx] : (wData.daily && wData.daily.precipitation_probability_max ? wData.daily.precipitation_probability_max[0] : null);
+  const rainChip = (precipProb!=null && !isNaN(precipProb)) ? `<span class="weather-rain-chip"><span class="weather-rain-chip-ic">${wRainChanceIconSVG(precipProb)}</span>${Math.round(precipProb)}%</span>` : '';
+  document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°${rainChip}</div><div class="weather-desc" dir="auto">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice" dir="auto">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+
   const visibilityM = (wData.hourly && wData.hourly.visibility && hourlyIdx>=0) ? wData.hourly.visibility[hourlyIdx] : null;
   const humidity = cur.relative_humidity_2m!=null ? cur.relative_humidity_2m : null;
   const statsEl = document.getElementById('weatherStats');
-  if(statsEl) statsEl.innerHTML = weatherStatsHtml(precipProb, humidity, visibilityM, currentLang);
+  if(statsEl) statsEl.innerHTML = weatherStatsHtml(humidity, visibilityM, currentLang);
 
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
   for(let i=1;i<=3;i++){
     const d=new Date(wData.daily.time[i]);
-    const dayRain = (wData.daily.precipitation_probability_max && wData.daily.precipitation_probability_max[i]!=null) ? '<div class="f-rain">💧 '+Math.round(wData.daily.precipitation_probability_max[i])+'%</div>' : '';
-    fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div>${dayRain}</div>`;
+    fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div></div>`;
   }
   document.getElementById('forecastGrid').innerHTML=fc;
   const cityLabel=document.getElementById('prayerCityLabel');
