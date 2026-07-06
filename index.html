@@ -840,6 +840,34 @@ input[type=range]::-webkit-slider-thumb{
   flex-shrink:0;
 }
 
+.weather-stats{
+  display:flex;
+  gap:10px;
+  margin-bottom:20px;
+  flex-wrap:wrap;
+}
+.w-stat{
+  flex:1 1 0;
+  min-width:88px;
+  background:rgba(139,92,246,.07);
+  border:1px solid var(--border);
+  border-radius:16px;
+  padding:12px 8px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:3px;
+  text-align:center;
+}
+.w-stat-ic{font-size:19px;line-height:1;}
+.w-stat-val{font-size:16.5px;font-weight:700;color:var(--text);line-height:1.2;}
+.w-stat-label{font-size:11px;color:var(--muted);white-space:nowrap;}
+@media(max-width:480px){
+  .w-stat{min-width:78px;padding:10px 6px;}
+  .w-stat-val{font-size:15px;}
+  .w-stat-label{font-size:10.5px;}
+}
+
 .forecast-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -870,6 +898,12 @@ input[type=range]::-webkit-slider-thumb{
   font-size:18.5px;
   font-weight:700;
   color:var(--text);
+}
+
+.forecast-item .f-rain{
+  font-size:12.5px;
+  color:var(--rain-c);
+  margin-top:4px;
 }
 
 /* ── Weather panel: ambient FX layer + mood text ── */
@@ -2542,6 +2576,7 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span></div>
           <div id="weatherSection" style="display:none;">
             <div class="weather-main" id="weatherMain"></div>
+            <div class="weather-stats" id="weatherStats"></div>
             <div class="forecast-grid" id="forecastGrid"></div>
           </div>
           <div id="weatherLoading" class="weather-loading">
@@ -3435,8 +3470,8 @@ const WC_MATCHES = [
   {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'final',score:{home:1,away:0},free:true,channels:['beIN SPORTS MAX 1 + beIN SPORTS MAX 3 (free)']},
   {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'final',score:{home:0,away:3},free:false},
   {id:'53452509',stage:{en:'Round of 16',ar:'دور الـ16'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'final',score:{home:0,away:1},free:false},
-  {id:'53452517',stage:{en:'Round of 16',ar:'دور الـ16'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'scheduled',free:false},
-  {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'scheduled',free:false},
+  {id:'53452517',stage:{en:'Round of 16',ar:'دور الـ16'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'final',score:{home:1,away:2},free:false},
+  {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'final',score:{home:2,away:3},free:false},
   {id:'53452513',stage:{en:'Round of 16',ar:'دور الـ16'},home:'POR',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'scheduled',free:false},
   {id:'53452515',stage:{en:'Round of 16',ar:'دور الـ16'},home:'USA',away:'BEL',kickoff:'2026-07-07T00:00:00Z',status:'scheduled',free:false},
   {id:'53452521',stage:{en:'Round of 16',ar:'دور الـ16'},home:'ARG',away:'EGY',kickoff:'2026-07-07T16:00:00Z',status:'scheduled',free:false},
@@ -3496,7 +3531,9 @@ function wcRenderFixtures(){
   let cardIndex = 0;
   let lastDateKey = null;
 
-  WC_MATCHES.slice().sort((a,b)=> new Date(b.kickoff) - new Date(a.kickoff)
+  WC_MATCHES.slice().sort((a,b)=> wcCurrentFilter==='upcoming'
+    ? new Date(a.kickoff) - new Date(b.kickoff)
+    : new Date(b.kickoff) - new Date(a.kickoff)
   ).forEach(m=>{
     const st = wcStatusOf(m, now);
     const isFinalMatch = (m.id === WC_FINAL_MATCH_ID);
@@ -4554,14 +4591,47 @@ function countryFlagEmoji(cc){
   const code = cc.toLowerCase();
   return `<img src="https://flagcdn.com/24x18/${code}.png" alt="${cc.toUpperCase()}" class="weather-flag-img">`;
 }
+// Finds the index of the current hour inside an Open-Meteo hourly.time[] array,
+// so we can read "right now" values (rain probability, visibility) out of the hourly data —
+// Open-Meteo doesn't expose those two fields on the `current` block directly.
+function wcHourlyNowIndex(times){
+  if(!times || !times.length) return -1;
+  const now=new Date();
+  let idx=0;
+  for(let i=0;i<times.length;i++){
+    if(new Date(times[i])<=now) idx=i; else break;
+  }
+  return idx;
+}
+function weatherStatsHtml(precipProb, humidity, visibilityM, lang){
+  const rainStr = (precipProb!=null && !isNaN(precipProb)) ? Math.round(precipProb)+'%' : '—';
+  const humStr = (humidity!=null && !isNaN(humidity)) ? Math.round(humidity)+'%' : '—';
+  let visStr = '—';
+  if(visibilityM!=null && !isNaN(visibilityM)){
+    const km = visibilityM/1000;
+    visStr = km>=10 ? (lang==='ar'?'+10 كم':'10+ km') : km.toFixed(1)+' '+(lang==='ar'?'كم':'km');
+  }
+  return '<div class="w-stat"><span class="w-stat-ic">💧</span><span class="w-stat-val">'+rainStr+'</span><span class="w-stat-label">'+(lang==='ar'?'احتمال المطر':'Rain chance')+'</span></div>'+
+    '<div class="w-stat"><span class="w-stat-ic">💦</span><span class="w-stat-val">'+humStr+'</span><span class="w-stat-label">'+(lang==='ar'?'الرطوبة':'Humidity')+'</span></div>'+
+    '<div class="w-stat"><span class="w-stat-ic">🌫️</span><span class="w-stat-val">'+visStr+'</span><span class="w-stat-label">'+(lang==='ar'?'مدى الرؤية':'Visibility')+'</span></div>';
+}
 function renderWeatherText(cur, wData, city, flag){
   const flagPart = flag !== undefined ? flag : lastWeatherFlag;
   document.getElementById('weatherMain').innerHTML=`<div class="weather-left"><div class="weather-icon">${weatherIconSVG(cur.weather_code,cur.is_day)}</div><div class="weather-primary"><div class="weather-temp">${Math.round(cur.temperature_2m)}°</div><div class="weather-desc" dir="auto">${weatherDesc(cur.weather_code,currentLang)}</div></div></div><div class="weather-right"><div class="weather-city">${flagPart?flagPart+' ':'📍 '}${city}</div><div class="weather-advice" id="weatherAdvice" dir="auto">${weatherAdvice(cur.temperature_2m,cur.weather_code,currentLang)}</div></div>`;
+
+  const hourlyIdx = wcHourlyNowIndex(wData.hourly && wData.hourly.time);
+  const precipProb = (wData.hourly && wData.hourly.precipitation_probability && hourlyIdx>=0) ? wData.hourly.precipitation_probability[hourlyIdx] : (wData.daily && wData.daily.precipitation_probability_max ? wData.daily.precipitation_probability_max[0] : null);
+  const visibilityM = (wData.hourly && wData.hourly.visibility && hourlyIdx>=0) ? wData.hourly.visibility[hourlyIdx] : null;
+  const humidity = cur.relative_humidity_2m!=null ? cur.relative_humidity_2m : null;
+  const statsEl = document.getElementById('weatherStats');
+  if(statsEl) statsEl.innerHTML = weatherStatsHtml(precipProb, humidity, visibilityM, currentLang);
+
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
   for(let i=1;i<=3;i++){
     const d=new Date(wData.daily.time[i]);
-    fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div></div>`;
+    const dayRain = (wData.daily.precipitation_probability_max && wData.daily.precipitation_probability_max[i]!=null) ? '<div class="f-rain">💧 '+Math.round(wData.daily.precipitation_probability_max[i])+'%</div>' : '';
+    fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div>${dayRain}</div>`;
   }
   document.getElementById('forecastGrid').innerHTML=fc;
   const cityLabel=document.getElementById('prayerCityLabel');
@@ -4654,7 +4724,7 @@ lastWeatherFlag = countryFlagEmoji(countryCode);
 
 const cityLabel = document.getElementById('prayerCityLabel');
 if (cityLabel) cityLabel.textContent = locationName;
-    const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset&timezone=auto');
+    const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day,relative_humidity_2m&hourly=precipitation_probability,visibility&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
     renderWeatherText(cur, wData, locationName, lastWeatherFlag);
