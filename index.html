@@ -758,13 +758,12 @@ input[type=range]::-webkit-slider-thumb{
 .panel-prayer .prayer-stats,
 .panel-prayer .prayer-grid{position:relative;z-index:1;}
 
-.fx-islamic-motif{
-  position:absolute; left:50%; top:52%; width:62%; max-width:300px; aspect-ratio:1/1;
-  transform:translate(-50%,-50%); pointer-events:none; opacity:.08;
-  animation:fxMotifSpin 140s linear infinite; transition:color 1.2s ease, opacity 1.2s ease;
+.fx-prayer-mosque{
+  position:absolute; left:0; right:0; bottom:0; height:24%; min-height:44px;
+  opacity:.16; pointer-events:none;
+  transition:opacity 1.2s ease, color 1.2s ease;
 }
-.fx-islamic-motif svg{display:block;width:100%;height:100%;}
-@keyframes fxMotifSpin{from{transform:translate(-50%,-50%) rotate(0deg);}to{transform:translate(-50%,-50%) rotate(360deg);}}
+.fx-prayer-mosque svg{display:block;width:100%;height:100%;}
 
 .fx-prayer-crescent{position:absolute;pointer-events:none;filter:drop-shadow(0 0 8px rgba(201,163,232,.45));animation:fxPrayerGlowPulse 6s ease-in-out infinite;}
 .fx-prayer-crescent svg{display:block;width:100%;height:100%;}
@@ -854,6 +853,7 @@ input[type=range]::-webkit-slider-thumb{
   text-align:center;
 }
 .p-stat-ic{font-size:19px;line-height:1;}
+.p-stat-ic-anim{display:inline-block;animation:iconFloatBob 4.6s ease-in-out infinite;}
 .p-stat-val{font-size:16.5px;font-weight:700;color:var(--text);line-height:1.2;}
 .p-stat-label{font-size:11px;color:var(--muted);white-space:nowrap;}
 @media(max-width:560px){
@@ -1175,6 +1175,13 @@ input[type=range]::-webkit-slider-thumb{
 .panel-weather .weather-main,
 .panel-weather .forecast-grid,
 .panel-weather .weather-loading{position:relative;z-index:1;}
+
+.fx-weather-skyline{
+  position:absolute; left:0; right:0; bottom:0; height:24%; min-height:44px;
+  opacity:.16; pointer-events:none;
+  transition:opacity 1.2s ease, color 1.2s ease;
+}
+.fx-weather-skyline svg{display:block;width:100%;height:100%;}
 
 .weather-advice{
   font-size:20.5px;
@@ -4726,19 +4733,33 @@ function tryStartFromGesture(){ if(!hasStarted && !isStarting) startRadio(); }
   // Play / pause — reuses the exact same audio logic as the main player
   mpPlayBtn.addEventListener('click', () => { togglePlay(); });
 
-  // Volume pop-out toggle — exactly one popup can be open at a time
+  // Volume pop-out — opens instantly on hover (mouse), and also on tap/click for touch devices
+  const mpVolWrap = mpVolBtn.closest('.mp-vol-wrap') || mpVolBtn.parentElement;
+  let mpVolCloseTimer = null;
+  function clearMpVolCloseTimer(){ if (mpVolCloseTimer) { clearTimeout(mpVolCloseTimer); mpVolCloseTimer = null; } }
+  function openMpVolPop(){
+    clearMpVolCloseTimer();
+    mpVolPop.classList.add('open');
+    mpVolBtn.classList.add('active');
+  }
   function closeMpVolPop(){
     mpVolPop.classList.remove('open');
     mpVolBtn.classList.remove('active');
   }
+  function scheduleMpVolClose(){
+    clearMpVolCloseTimer();
+    mpVolCloseTimer = setTimeout(closeMpVolPop, 260);
+  }
+  // Hover: open immediately as the cursor enters the button or the popup itself
+  if (mpVolWrap) {
+    mpVolWrap.addEventListener('mouseenter', openMpVolPop);
+    mpVolWrap.addEventListener('mouseleave', scheduleMpVolClose);
+  }
+  // Tap / click: still works for touch devices (no hover) — toggles the popup
   mpVolBtn.addEventListener('click', (e) => {
     e.stopPropagation();
-    const willOpen = !mpVolPop.classList.contains('open');
-    closeMpVolPop();
-    if (willOpen) {
-      mpVolPop.classList.add('open');
-      mpVolBtn.classList.add('active');
-    }
+    if (mpVolPop.classList.contains('open')) { closeMpVolPop(); }
+    else { openMpVolPop(); }
   });
   document.addEventListener('click', (e) => {
     if (mpVolPop.classList.contains('open') && !mpVolPop.contains(e.target) && e.target !== mpVolBtn && !mpVolBtn.contains(e.target)) {
@@ -4958,21 +4979,35 @@ function prayerIconSVG(key,uid){
     <circle class="pr-twinkle-sm" style="animation-delay:1s" cx="20" cy="46" r="1" fill="#fff"/>
   </svg>`;
 }
+function mosqueSkylineSVG(){
+  return '<svg viewBox="0 0 900 100" preserveAspectRatio="xMidYMax slice"><g fill="currentColor">'+
+    '<path d="M0 100V78h900v22z"/>'+
+    '<path d="M60 78V52h26v26zM814 78V52h26v26z"/>'+
+    '<path d="M73 52c0-14 9-24 13-24s13 10 13 24z"/>'+
+    '<path d="M827 52c0-14 9-24 13-24s13 10 13 24z"/>'+
+    '<path d="M330 78V40c0-40 30-56 70-56s70 16 70 56v38z"/>'+
+    '<circle cx="400" cy="8" r="4"/><rect x="397" y="0" width="6" height="10"/>'+
+    '<path d="M180 78V60c0-10 8-18 18-18s18 8 18 18v18zM684 78V60c0-10 8-18 18-18s18 8 18 18v18z"/>'+
+    '<rect x="150" y="20" width="10" height="58"/><rect x="740" y="20" width="10" height="58"/>'+
+    '<path d="M155 20a10 12 0 0 1 0-24 10 12 0 0 1 0 24z"/><path d="M745 20a10 12 0 0 1 0-24 10 12 0 0 1 0 24z"/>'+
+    '</g></svg>';
+}
 function renderPrayerFx(phase){
   const fx=document.getElementById('prayerFx');
   if(!fx) return;
   fx.innerHTML='';
 
-  // A faint, centered Islamic geometric motif sits behind the whole panel,
-  // softly re-tinted to match the time of day — simple and elegant, and its
-  // low opacity + line-only style means it never competes with the times.
-  const motif=document.createElement('div');
-  motif.className='fx-islamic-motif';
-  motif.innerHTML=ambientIslamicMotifSVG();
-  fx.appendChild(motif);
+  // A faint mosque skyline always sits along the bottom of the panel, tinted
+  // to match the time of day. It stays low-opacity and clipped to the panel's
+  // own bottom edge so it never sits behind (or obscures) the prayer times,
+  // Hijri date, or countdown text above it.
+  const mosque=document.createElement('div');
+  mosque.className='fx-prayer-mosque';
+  mosque.style.color = phase==='night' ? 'var(--purple2)' : (phase==='dawn' ? 'var(--gold2)' : phase==='dusk' ? 'var(--rose)' : 'var(--purple2)');
+  mosque.innerHTML=mosqueSkylineSVG();
+  fx.appendChild(mosque);
 
   if(phase==='night'){
-    motif.style.color='var(--moon-c)';
     // Sits high in the panel's top corner — clear of both the title text and
     // the Hijri date chip lower down, instead of floating right behind it.
     const cres=document.createElement('div');
@@ -4993,7 +5028,6 @@ function renderPrayerFx(phase){
       fx.appendChild(t);
     }
   } else if(phase==='dawn' || phase==='dusk'){
-    motif.style.color=phase==='dawn' ? 'var(--gold2)' : 'var(--rose)';
     const glow=document.createElement('div');
     glow.className='fx-prayer-glow';
     glow.style.width='140px'; glow.style.height='140px';
@@ -5003,7 +5037,6 @@ function renderPrayerFx(phase){
       : 'radial-gradient(circle, rgba(224,138,166,.35), transparent 70%)';
     fx.appendChild(glow);
   } else {
-    motif.style.color='var(--purple2)';
     const glow=document.createElement('div');
     glow.className='fx-prayer-glow';
     glow.style.width='120px'; glow.style.height='120px';
@@ -5028,20 +5061,30 @@ function renderPrayerFx(phase){
     fx.appendChild(st);
   }
 }
+let lastPrayerGridKey=null, lastPrayerMainKey=null, lastPrayerStatsKey=null;
 function renderPrayers(){
   const now=new Date(),nowMin=now.getHours()*60+now.getMinutes();
   let nextIdx=prayers.findIndex(p=>{const[h,m]=p.time.split(':').map(Number);return(h*60+m)>nowMin;});
   if(nextIdx===-1)nextIdx=0;
-  const nextBadge=currentLang==='ar'?'التالية':'Next';
-  document.getElementById('prayerGrid').innerHTML=prayers.map((p,i)=>{
-    const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
-    return `
-    <div class="prayer-item ${i===nextIdx?'next':''}" data-next-label="${nextBadge}" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">
-      <div class="p-icon">${prayerIconSVG(p.key,'g'+i)}</div>
-      <div class="p-name">${currentLang==='ar'?p.nameAr:p.nameEn}</div>
-      <div class="p-time">${to12h(p.time)}</div>
-    </div>`;
-  }).join('');
+
+  // Only rebuild the grid's HTML when the highlighted "next" card or the
+  // language actually changes — rebuilding it every second (as before) tore
+  // down and recreated every icon/card element, which restarted their CSS
+  // animations from frame zero each time instead of letting them run continuously.
+  const gridKey=nextIdx+'|'+currentLang;
+  if(gridKey!==lastPrayerGridKey){
+    lastPrayerGridKey=gridKey;
+    const nextBadge=currentLang==='ar'?'التالية':'Next';
+    document.getElementById('prayerGrid').innerHTML=prayers.map((p,i)=>{
+      const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
+      return `
+      <div class="prayer-item ${i===nextIdx?'next':''}" data-next-label="${nextBadge}" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">
+        <div class="p-icon">${prayerIconSVG(p.key,'g'+i)}</div>
+        <div class="p-name">${currentLang==='ar'?p.nameAr:p.nameEn}</div>
+        <div class="p-time">${to12h(p.time)}</div>
+      </div>`;
+    }).join('');
+  }
   const phase=getPrayerPhase(now);
   if(phase!==lastPrayerPhase){ lastPrayerPhase=phase; renderPrayerFx(phase); }
   renderPrayerMain(nextIdx,now);
@@ -5057,27 +5100,38 @@ function renderPrayerMain(nextIdx,now){
   if(target<=now) target.setDate(target.getDate()+1);
   const remaining=target-now;
   const isAr=currentLang==='ar';
-  const nextLabel=isAr?'الصلاة القادمة':'Next Prayer';
-  const remLabel=isAr?'الوقت المتبقي':'Time remaining';
-  let hijriHtml='';
+  let hijriTxt='';
   if(prayerExtra.hijri){
     const hj=prayerExtra.hijri;
-    const hijriTxt=isAr? (hj.day+' '+hj.monthAr+' '+hj.year+' هـ') : (hj.day+' '+hj.monthEn+' '+hj.year+' AH');
-    hijriHtml=`<div class="prayer-hijri">📅 ${hijriTxt}</div>`;
+    hijriTxt=isAr? (hj.day+' '+hj.monthAr+' '+hj.year+' هـ') : (hj.day+' '+hj.monthEn+' '+hj.year+' AH');
   }
-  const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
-  el.innerHTML=`
-    <div class="prayer-left">
-      <div class="prayer-icon-big" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">${prayerIconSVG(p.key,'hero')}</div>
-      <div class="prayer-primary">
-        <div class="prayer-next-label">${nextLabel}</div>
-        <div class="prayer-next-name">${isAr?p.nameAr:p.nameEn} — ${to12h(p.time)}</div>
+  // Rebuild the hero block (icon + labels + Hijri chip) only when the next
+  // prayer, language, or Hijri date actually changes; every other tick just
+  // updates the countdown text in place, so the icon's float/glow animation
+  // (and everything else in this block) never gets reset mid-cycle.
+  const mainKey=nextIdx+'|'+currentLang+'|'+hijriTxt;
+  if(mainKey!==lastPrayerMainKey){
+    lastPrayerMainKey=mainKey;
+    const nextLabel=isAr?'الصلاة القادمة':'Next Prayer';
+    const remLabel=isAr?'الوقت المتبقي':'Time remaining';
+    const hijriHtml=hijriTxt?`<div class="prayer-hijri">📅 ${hijriTxt}</div>`:'';
+    const acc=PR_ACCENT[p.key]||PR_ACCENT.dhuhr;
+    el.innerHTML=`
+      <div class="prayer-left">
+        <div class="prayer-icon-big" style="--pr-c:${acc.c};--pr-rgb:${acc.rgb};">${prayerIconSVG(p.key,'hero')}</div>
+        <div class="prayer-primary">
+          <div class="prayer-next-label">${nextLabel}</div>
+          <div class="prayer-next-name">${isAr?p.nameAr:p.nameEn} — ${to12h(p.time)}</div>
+        </div>
       </div>
-    </div>
-    <div class="prayer-right">
-      ${hijriHtml}
-      <div class="prayer-countdown"><span class="pc-label">${remLabel}</span><span class="pc-time">${formatCountdown(remaining)}</span></div>
-    </div>`;
+      <div class="prayer-right">
+        ${hijriHtml}
+        <div class="prayer-countdown"><span class="pc-label">${remLabel}</span><span class="pc-time" id="prayerCountdownTime">${formatCountdown(remaining)}</span></div>
+      </div>`;
+  } else {
+    const pcTime=document.getElementById('prayerCountdownTime');
+    if(pcTime) pcTime.textContent=formatCountdown(remaining);
+  }
 }
 function renderPrayerStats(){
   const el=document.getElementById('prayerStats');
@@ -5089,10 +5143,17 @@ function renderPrayerStats(){
   if(lastPrayerLat!=null&&lastPrayerLon!=null){
     qiblaStr=Math.round(qiblaDirection(lastPrayerLat,lastPrayerLon))+'°';
   }
+  // These values are effectively static for the whole day, so only touch the
+  // DOM (and therefore only (re)start the icons' float animation) when one of
+  // them actually changes, instead of re-rendering — and re-triggering the
+  // animation — every single second.
+  const statsKey=sunrise+'|'+imsak+'|'+qiblaStr+'|'+currentLang;
+  if(statsKey===lastPrayerStatsKey) return;
+  lastPrayerStatsKey=statsKey;
   el.innerHTML=
-    `<div class="p-stat"><span class="p-stat-ic">🌅</span><span class="p-stat-val">${sunrise}</span><span class="p-stat-label">${isAr?'الشروق':'Sunrise'}</span></div>`+
-    `<div class="p-stat"><span class="p-stat-ic">🌘</span><span class="p-stat-val">${imsak}</span><span class="p-stat-label">${isAr?'الإمساك':'Imsak'}</span></div>`+
-    `<div class="p-stat"><span class="p-stat-ic">🧭</span><span class="p-stat-val">${qiblaStr}</span><span class="p-stat-label">${isAr?'اتجاه القبلة':'Qibla dir.'}</span></div>`;
+    `<div class="p-stat"><span class="p-stat-ic p-stat-ic-anim">🌅</span><span class="p-stat-val">${sunrise}</span><span class="p-stat-label">${isAr?'الشروق':'Sunrise'}</span></div>`+
+    `<div class="p-stat"><span class="p-stat-ic p-stat-ic-anim" style="animation-delay:-1.5s">🌘</span><span class="p-stat-val">${imsak}</span><span class="p-stat-label">${isAr?'الإمساك':'Imsak'}</span></div>`+
+    `<div class="p-stat"><span class="p-stat-ic p-stat-ic-anim" style="animation-delay:-3s">🧭</span><span class="p-stat-val">${qiblaStr}</span><span class="p-stat-label">${isAr?'اتجاه القبلة':'Qibla dir.'}</span></div>`;
 }
 renderPrayers();
 setInterval(renderPrayers,1000);
@@ -5373,7 +5434,7 @@ function renderWinterFx(fx, dayTime){
 // per page load (crescent / sun / cloud / sea for summer, crescent / sun / cloud / snow for winter) ──
 const SEASON_BADGE_PICK = Math.random();
 function badgeCrescentSVG(fill){
-  return `<svg viewBox="0 0 26 26"><path d="M16 3 a10 10 0 1 0 0 20 a12.5 12.5 0 1 1 0 -20" fill="${fill}"/></svg>`;
+  return `<svg viewBox="0 0 24 24"><path d="M20.5 14.2A8.5 8.5 0 1 1 9.8 3.5a6.7 6.7 0 0 0 10.7 10.7z" fill="${fill}"/></svg>`;
 }
 function badgeSunSVG(fill){
   return `<svg viewBox="0 0 26 26"><circle cx="13" cy="13" r="6" fill="${fill}"/><g stroke="${fill}" stroke-width="1.6" stroke-linecap="round"><line x1="13" y1="1" x2="13" y2="4"/><line x1="13" y1="22" x2="13" y2="25"/><line x1="1" y1="13" x2="4" y2="13"/><line x1="22" y1="13" x2="25" y2="13"/><line x1="4.5" y1="4.5" x2="6.8" y2="6.8"/><line x1="19.2" y1="19.2" x2="21.5" y2="21.5"/><line x1="21.5" y1="4.5" x2="19.2" y2="6.8"/><line x1="6.8" y1="19.2" x2="4.5" y2="21.5"/></g></svg>`;
@@ -5417,6 +5478,15 @@ function renderSeasonBadge(season){
   el.innerHTML=icons[idx].svg;
 }
 // ── Ambient weather FX inside the panel: drifting clouds, sun/stars, rain, snow, heat shimmer, fog ──
+function weatherSkylineSVG(){
+  return '<svg viewBox="0 0 900 100" preserveAspectRatio="xMidYMax slice"><g fill="currentColor">'+
+    '<path d="M0 100V82h900v18z"/>'+
+    '<path d="M40 82V46h34v36z"/><path d="M84 82V30h26v52z"/><path d="M120 82V58h18v24z"/>'+
+    '<path d="M760 82V54h20v28z"/><path d="M790 82V24h30v58z"/><path d="M830 82V64h16v18z"/>'+
+    '<path d="M300 82c0-26 18-46 40-46s40 20 40 46z"/><path d="M480 82c0-20 14-36 32-36s32 16 32 36z"/>'+
+    '<path d="M560 82c0-14 10-24 22-24s22 10 22 24z"/>'+
+    '</g></svg>';
+}
 function renderWeatherFx(code, temp, isDay){
   const fx=document.getElementById('weatherFx');
   if(!fx) return;
@@ -5432,6 +5502,26 @@ function renderWeatherFx(code, temp, isDay){
 
   // The small season badge in the panel title gets a fresh (page-load-random) look each visit.
   renderSeasonBadge(isSummer ? 'summer' : (isWinter ? 'winter' : 'other'));
+
+  // A faint skyline always sits along the bottom of the panel, tinted to
+  // match the current weather / time of day — mirrors the mosque skyline
+  // behind the prayer panel so both panels feel consistent. It stays
+  // low-opacity and clipped to the panel's own bottom edge, so it never
+  // covers the temperature, forecast, or any other weather data above it.
+  const skyline=document.createElement('div');
+  skyline.className='fx-weather-skyline';
+  skyline.style.color = !dayTime ? 'var(--moon-c)'
+    : isStorm ? 'var(--storm-c)'
+    : isRain ? 'var(--rain-c)'
+    : isSnow ? 'var(--snow-c)'
+    : isFog ? 'var(--fog-c)'
+    : isHot ? 'var(--sand-c)'
+    : isSummer ? 'var(--sea-c)'
+    : isWinter ? 'var(--winter-sun-c)'
+    : isClear ? 'var(--sun-c)'
+    : 'var(--cloud-c)';
+  skyline.innerHTML=weatherSkylineSVG();
+  fx.appendChild(skyline);
 
   // In summer, swap the generic drifting clouds for a beach/seaside scene; in winter,
   // swap them for a snowy hillside scene — both skipped for rain/storm/snow/fog,
