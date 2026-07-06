@@ -3574,31 +3574,38 @@ const WC_TEAMS = {
 };
 
 const WC_MATCHES = [
-  {id:'53452539',stage:{en:'Round of 32',ar:'دور الـ32'},home:'RSA',away:'CAN',kickoff:'2026-06-28T19:00:00Z',status:'final',score:{home:0,away:1},free:false},
-  {id:'53452545',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BRA',away:'JPN',kickoff:'2026-06-29T17:00:00Z',status:'final',score:{home:2,away:1},free:false},
-  {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},note:{en:'PAR won 4-3 on penalties',ar:'باراغواي فازت 4-3 بركلات الترجيح'},free:false},
-  {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},note:{en:'MAR won on penalties',ar:'المغرب فاز بركلات الترجيح'},free:false},
-  {id:'53452561',stage:{en:'Round of 32',ar:'دور الـ32'},home:'CIV',away:'NOR',kickoff:'2026-06-30T17:00:00Z',status:'final',score:{home:1,away:2},free:false},
-  {id:'53452543',stage:{en:'Round of 32',ar:'دور الـ32'},home:'FRA',away:'SWE',kickoff:'2026-06-30T21:00:00Z',status:'final',score:{home:3,away:0},free:false},
-  {id:'53452563',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ECU',kickoff:'2026-07-01T02:00:00Z',status:'final',score:{home:2,away:0},free:true},
-  {id:'53452565',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ENG',away:'COD',kickoff:'2026-07-01T16:00:00Z',status:'final',score:{home:2,away:1},free:false},
-  {id:'53452555',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BEL',away:'SEN',kickoff:'2026-07-01T20:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Decided in extra time (1-1 after 90 mins)',ar:'حُسمت في الوقت الإضافي (بعد 1-1 في الـ90 دقيقة)'},free:false},
-  {id:'53452553',stage:{en:'Round of 32',ar:'دور الـ32'},home:'USA',away:'BIH',kickoff:'2026-07-02T00:00:00Z',status:'final',score:{home:2,away:0},free:true},
-  {id:'53452551',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ESP',away:'AUT',kickoff:'2026-07-02T19:00:00Z',status:'final',score:{home:3,away:0},free:false},
-  {id:'53452549',stage:{en:'Round of 32',ar:'دور الـ32'},home:'POR',away:'CRO',kickoff:'2026-07-02T23:00:00Z',status:'final',score:{home:2,away:1},free:false},
-  {id:'53452505',stage:{en:'Round of 32',ar:'دور الـ32'},home:'SUI',away:'DZA',kickoff:'2026-07-03T03:00:00Z',status:'final',score:{home:2,away:0},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
-  {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'final',score:{home:1,away:1},note:{en:'EGY won on penalties',ar:'مصر فازت بركلات الترجيح'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
-  {id:'53452569',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ARG',away:'CPV',kickoff:'2026-07-03T22:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Decided in extra time (1-1 after 90 mins)',ar:'حُسمت في الوقت الإضافي (بعد 1-1 في الـ90 دقيقة)'},free:false,channels:['beIN SPORTS MAX 2 + beIN SPORTS MAX 4']},
-  {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'final',score:{home:1,away:0},free:true,channels:['beIN SPORTS MAX 1 + beIN SPORTS MAX 3 (free)']},
-  {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'final',score:{home:0,away:3},free:false},
-  {id:'53452509',stage:{en:'Round of 16',ar:'دور الـ16'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'final',score:{home:0,away:1},free:false},
-  {id:'53452517',stage:{en:'Round of 16',ar:'دور الـ16'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'final',score:{home:1,away:2},free:false},
-  {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'final',score:{home:2,away:3},free:false},
-  {id:'53452513',stage:{en:'Round of 16',ar:'دور الـ16'},home:'POR',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'scheduled',free:false},
+  {id:'53452539',stage:{en:'Round of 32',ar:'دور الـ32'},home:'RSA',away:'CAN',kickoff:'2026-06-28T19:00:00Z',status:'final',score:{home:0,away:1},note:{en:'Eustáquio scored the only goal (90+2)',ar:'يوستاكيو سجل الهدف الوحيد في الدقيقة (90+2)'},free:false},
+  {id:'53452545',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BRA',away:'JPN',kickoff:'2026-06-29T17:00:00Z',status:'final',score:{home:2,away:1},note:{en:'Sano (29) for Japan; Casemiro (56) and Martinelli (90+6) for Brazil',ar:'سانو (29) لليابان، وكاسيميرو (56) ومارتينيلي (90+6) للبرازيل'},free:false},
+  {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},note:{en:'Enciso (42) for Paraguay, Havertz (54) for Germany; PAR won 4-3 on penalties',ar:'إنسيسو (42) لباراغواي، وهافرتز (54) لألمانيا؛ باراغواي فازت 4-3 بركلات الترجيح'},free:false},
+  {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},note:{en:'Gakpo (72) for Netherlands, Diop (90+1) for Morocco; MAR won 3-2 on penalties',ar:'غاكبو (72) لهولندا، وديوب (90+1) للمغرب؛ المغرب فاز 3-2 بركلات الترجيح'},free:false},
+  {id:'53452561',stage:{en:'Round of 32',ar:'دور الـ32'},home:'CIV',away:'NOR',kickoff:'2026-06-30T17:00:00Z',status:'final',score:{home:1,away:2},note:{en:'Nusa (39) and Haaland (86) for Norway; Diallo (74) for Ivory Coast',ar:'نوسا (39) وهالاند (86) للنرويج، وديالو (74) لساحل العاج'},free:false},
+  {id:'53452543',stage:{en:'Round of 32',ar:'دور الـ32'},home:'FRA',away:'SWE',kickoff:'2026-06-30T21:00:00Z',status:'final',score:{home:3,away:0},note:{en:'Mbappé (45, 74) and Barcola (53) scored for France',ar:'مبابي (45، 74) وباركولا (53) سجلوا لفرنسا'},free:false},
+  {id:'53452563',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ECU',kickoff:'2026-07-01T02:00:00Z',status:'final',score:{home:2,away:0},note:{en:'Quiñones (22) and Jiménez (31) scored for Mexico',ar:'كينيونيس (22) وخيمينيز (31) سجلا للمكسيك'},free:true},
+  {id:'53452565',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ENG',away:'COD',kickoff:'2026-07-01T16:00:00Z',status:'final',score:{home:2,away:1},note:{en:'Cipenga (7) for Congo DR; Kane (75, 86) scored twice for England',ar:'سيبينغا (7) للكونغو الديمقراطية؛ كين (75، 86) سجل مرتين لإنجلترا'},free:false},
+  {id:'53452555',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BEL',away:'SEN',kickoff:'2026-07-01T20:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Diarra (25) and Sarr (51) put Senegal 2-0 up; Lukaku (86) and Tielemans (89, then a 120+5 penalty) completed Belgium\'s extra-time comeback',ar:'ديارا (25) وسار (51) قدّما السنغال بهدفين؛ ثم لوكاكو (86) وتيليمانس (89، وركلة جزاء في الدقيقة 120+5) أكملا عودة بلجيكا في الوقت الإضافي'},free:false},
+  {id:'53452553',stage:{en:'Round of 32',ar:'دور الـ32'},home:'USA',away:'BIH',kickoff:'2026-07-02T00:00:00Z',status:'final',score:{home:2,away:0},note:{en:'Balogun (45) and Tillman (82) scored for the USA',ar:'بالوغون (45) وتيلمان (82) سجلا لأمريكا'},free:true},
+  {id:'53452551',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ESP',away:'AUT',kickoff:'2026-07-02T19:00:00Z',status:'final',score:{home:3,away:0},note:{en:'Oyarzabal (36, 89) and Porro (66) scored for Spain',ar:'أويارثابال (36، 89) وبورو (66) سجلا لإسبانيا'},free:false},
+  {id:'53452549',stage:{en:'Round of 32',ar:'دور الـ32'},home:'POR',away:'CRO',kickoff:'2026-07-02T23:00:00Z',status:'final',score:{home:2,away:1},note:{en:'Perisic (53) for Croatia; Ronaldo penalty (68) and Ramos (90+4) won it for Portugal',ar:'بيريسيتش (53) لكرواتيا؛ ثم ركلة جزاء رونالدو (68) وهدف راموش (90+4) منحا الفوز للبرتغال'},free:false},
+  {id:'53452505',stage:{en:'Round of 32',ar:'دور الـ32'},home:'SUI',away:'DZA',kickoff:'2026-07-03T03:00:00Z',status:'final',score:{home:2,away:0},note:{en:'Embolo (10) and Ndoye (46) scored for Switzerland',ar:'إمبولو (10) وندوي (46) سجلا لسويسرا'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
+  {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'final',score:{home:1,away:1},note:{en:'Ashour (13) for Egypt, Hany own goal (55) for Australia; EGY won 4-2 on penalties',ar:'عاشور (13) لمصر، وهدف حاني في مرماه (55) لأستراليا؛ مصر فازت 4-2 بركلات الترجيح'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
+  {id:'53452569',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ARG',away:'CPV',kickoff:'2026-07-03T22:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Messi (29) and Duarte (59) traded goals, then extra time saw L. Martínez (92) and Lopes Cabral (103) level again before a Borges own goal (111) won it for Argentina',ar:'تبادل ميسي (29) ودوارتي (59) الأهداف، وفي الوقت الإضافي تعادل الفريقان مجددًا عبر ل. مارتينيز (92) ولوبيز كابرال (103)، قبل أن يمنح هدف بورغيس في مرماه (111) الفوز للأرجنتين'},free:false,channels:['beIN SPORTS MAX 2 + beIN SPORTS MAX 4']},
+  {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'final',score:{home:1,away:0},note:{en:'Arias (14) scored the only goal for Colombia',ar:'أرياس (14) سجل الهدف الوحيد لكولومبيا'},free:true,channels:['beIN SPORTS MAX 1 + beIN SPORTS MAX 3 (free)']},
+  {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'final',score:{home:0,away:3},note:{en:'Ounahi (50, 82) and Rahimi (90+8) scored for Morocco',ar:'أوناحي (50، 82) وراحيمي (90+8) سجلوا للمغرب'},free:false},
+  {id:'53452509',stage:{en:'Round of 16',ar:'دور الـ16'},home:'PAR',away:'FRA',kickoff:'2026-07-04T21:00:00Z',status:'final',score:{home:0,away:1},note:{en:'Mbappé converted a penalty (70) for France\'s winner',ar:'مبابي سجل من ركلة جزاء (70) هدف فوز فرنسا'},free:false},
+  {id:'53452517',stage:{en:'Round of 16',ar:'دور الـ16'},home:'BRA',away:'NOR',kickoff:'2026-07-05T20:00:00Z',status:'final',score:{home:1,away:2},note:{en:'Haaland (79, 90) put Norway through; Neymar penalty (90+10) was Brazil\'s late consolation',ar:'هالاند (79، 90) قاد النرويج للتأهل، وسجل نيمار ركلة جزاء (90+10) هدف تقليص متأخر للبرازيل'},free:false},
+  {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'final',score:{home:2,away:3},note:{en:'Bellingham (36, 38) and a Kane penalty (60) for England; Quiñones (42) and a Jiménez penalty for Mexico',ar:'بيلينغهام (36، 38) وركلة جزاء كين (60) لإنجلترا، وكينيونيس (42) وركلة جزاء خيمينيز للمكسيك'},free:false},
+  {id:'53452513',stage:{en:'Round of 16',ar:'دور الـ16'},home:'POR',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'final',score:{home:0,away:1},note:{en:'Merino scored the winner in stoppage time',ar:'ميرينو سجل هدف الفوز في الوقت بدل الضائع'},free:false},
   {id:'53452515',stage:{en:'Round of 16',ar:'دور الـ16'},home:'USA',away:'BEL',kickoff:'2026-07-07T00:00:00Z',status:'scheduled',free:false},
   {id:'53452521',stage:{en:'Round of 16',ar:'دور الـ16'},home:'ARG',away:'EGY',kickoff:'2026-07-07T16:00:00Z',status:'scheduled',free:false},
   {id:'53452523',stage:{en:'Round of 16',ar:'دور الـ16'},home:'SUI',away:'COL',kickoff:'2026-07-07T20:00:00Z',status:'scheduled',free:false},
-  {id:'wcFinal2026',stage:{en:'Final',ar:'النهائي'},home:'W83',away:'W83',kickoff:'2026-07-19T18:00:00Z',status:'scheduled',free:true,winner:null}
+  {id:'wcQF1',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'MAR',away:'FRA',kickoff:'2026-07-09T20:00:00Z',status:'scheduled',free:false},
+  {id:'wcQF2',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'W83',away:'ESP',kickoff:'2026-07-10T19:00:00Z',status:'scheduled',free:false,note:{en:'Faces the winner of USA vs Belgium',ar:'يواجه الفائز من مباراة أمريكا وبلجيكا'}},
+  {id:'wcQF3',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'NOR',away:'ENG',kickoff:'2026-07-11T21:00:00Z',status:'scheduled',free:false},
+  {id:'wcQF4',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'W83',away:'W83',kickoff:'2026-07-12T01:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Argentina vs Egypt takes on the winner of Switzerland vs Colombia',ar:'الفائز من مباراة الأرجنتين ومصر يواجه الفائز من مباراة سويسرا وكولومبيا'}},
+  {id:'wcSF1',stage:{en:'Semifinal',ar:'نصف النهائي'},home:'W83',away:'W83',kickoff:'2026-07-14T19:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Morocco vs France takes on the winner of the Spain quarterfinal (vs USA/Belgium)',ar:'الفائز من مباراة المغرب وفرنسا يواجه الفائز من مباراة إسبانيا (ضد أمريكا/بلجيكا)'}},
+  {id:'wcSF2',stage:{en:'Semifinal',ar:'نصف النهائي'},home:'W83',away:'W83',kickoff:'2026-07-15T19:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Norway vs England takes on the winner of the Argentina/Egypt vs Switzerland/Colombia quarterfinal',ar:'الفائز من مباراة النرويج وإنجلترا يواجه الفائز من ربع نهائي الأرجنتين/مصر ضد سويسرا/كولومبيا'}},
+  {id:'wcThird2026',stage:{en:'Third place',ar:'مباراة تحديد المركز الثالث'},home:'W83',away:'W83',kickoff:'2026-07-18T21:00:00Z',status:'scheduled',free:true,note:{en:'Contested by the two semifinal losers',ar:'تجمع بين خاسرَي مباراتَي نصف النهائي'}},
+  {id:'wcFinal2026',stage:{en:'Final',ar:'النهائي'},home:'W83',away:'W83',kickoff:'2026-07-19T19:00:00Z',status:'scheduled',free:true,winner:null}
 ];
 const WC_FINAL_MATCH_ID = 'wcFinal2026';
 let wcTimerHandle = null;
@@ -3653,7 +3660,7 @@ function wcRenderFixtures(){
   let cardIndex = 0;
   let lastDateKey = null;
 
-  WC_MATCHES.slice().sort((a,b)=> wcCurrentFilter==='upcoming'
+  WC_MATCHES.slice().sort((a,b)=> (wcCurrentFilter==='upcoming' || wcCurrentFilter==='all')
     ? new Date(a.kickoff) - new Date(b.kickoff)
     : new Date(b.kickoff) - new Date(a.kickoff)
   ).forEach(m=>{
@@ -3702,7 +3709,7 @@ function wcRenderFixtures(){
       ? '<div class="wc-score">'+(m.score.home+' — '+m.score.away)+'</div>'
       : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
 
-    const noteHtml = (m.note && st==='finished')
+    const noteHtml = m.note
       ? '<div class="wc-note" dir="auto">'+(lang==='ar'?m.note.ar:m.note.en)+'</div>' : '';
 
     let channelText = (m.channels && m.channels.length) ? m.channels.join(' + ') : (m.free ? (lang==='ar' ? 'beIN SPORTS المفتوحة + beIN SPORTS MAX' : 'beIN SPORTS (free) + beIN SPORTS MAX') : 'beIN SPORTS MAX');
@@ -4219,6 +4226,85 @@ function animateBars(){
 function isArabicText(str){ return /[\u0600-\u06FF]/.test(str); }
 function hideAiTitle(){ if(npAi){npAi.style.display='none'; npAiText.textContent='';} }
 
+// ── AI: التعرف على اسم الأغنية داخل الملفات المجمّعة (زي "فيروزيات المساء") ──
+// النظام ده مجاني 100% ومن غير أي API خارجي: بيعتمد على إنك تحدد اسم كل أغنية
+// جوه الملف المجمّع وثانية بدايتها، وبعدين الكود بيعد بالوقت من لحظة بداية
+// تشغيل الملف ويبدّل الاسم المعروض تلقائي لما يوصل لثانية بداية الأغنية اللي بعدها.
+
+// عدّل الاسم ده لو اسم الملف المجمّع عندك مختلف
+const COMPILATION_MARKERS = ['فيروزيات المساء'];
+
+// ── هنا بس اللي محتاج تعدّله ──
+// كل عنصر: اسم الأغنية، وثانية بدايتها بالظبط جوه الملف (من أول الملف = صفر)
+// رتّبهم من الأول للآخر حسب ترتيبهم الفعلي في الملف
+const COMPILATION_CHAPTERS = {
+  'فيروزيات المساء': [
+    // { title:'اسم الأغنية الأولى', start:0 },
+    // { title:'اسم الأغنية الثانية', start:245 }, // يعني تبدأ عند الدقيقة 4:05
+    // { title:'اسم الأغنية الثالثة', start:512 },
+    // ضيف باقي الأغاني بنفس الشكل...
+  ]
+};
+
+let compilationStartTs=0, compilationTimer=null, activeCompilationKey='';
+
+function isCompilationFile(title){
+  return COMPILATION_MARKERS.some(m=>title.includes(m));
+}
+
+function getCompilationKey(title){
+  return COMPILATION_MARKERS.find(m=>title.includes(m))||'';
+}
+
+function currentChapterFor(key, elapsedSec){
+  const chapters=COMPILATION_CHAPTERS[key]||[];
+  if(!chapters.length) return null;
+  let current=chapters[0];
+  for(const ch of chapters){
+    if(elapsedSec>=ch.start) current=ch; else break;
+  }
+  return current;
+}
+
+function tickCompilation(){
+  const elapsed=(Date.now()-compilationStartTs)/1000;
+  const chapters=COMPILATION_CHAPTERS[activeCompilationKey]||[];
+  if(!chapters.length){
+    // لسه محددتش الأغاني وتوقيتاتها في COMPILATION_CHAPTERS
+    npTitle.textContent = activeCompilationKey;
+    if(npAi){npAi.style.display='flex'; npAiText.textContent=currentLang==='ar'?'ضيف أسماء وتوقيتات الأغاني في COMPILATION_CHAPTERS':'Add song names & timings in COMPILATION_CHAPTERS';}
+    return;
+  }
+  const chapter=currentChapterFor(activeCompilationKey, elapsed);
+  hideAiTitle();
+  npTitle.textContent = chapter? chapter.title : activeCompilationKey;
+}
+
+function startCompilationClock(rawTitle){
+  const key=getCompilationKey(rawTitle);
+  stopCompilationClock();
+  activeCompilationKey=key;
+  compilationStartTs=Date.now();
+  tickCompilation();
+  compilationTimer=setInterval(tickCompilation, 1000);
+}
+function stopCompilationClock(){
+  if(compilationTimer){ clearInterval(compilationTimer); compilationTimer=null; }
+  activeCompilationKey='';
+}
+
+// ── أداة مساعدة مجانية لاستخراج التوقيتات وانت بتسمع الملف على الموقع مباشرة ──
+// افتح الموقع، شغّل الراديو، ولما تسمع أول ثانية في أغنية جديدة دوس Shift + T
+// هيطلعلك في الـ Console (F12) الثانية بالظبط + شكل السطر جاهز تنسخه في COMPILATION_CHAPTERS
+window.addEventListener('keydown', (e)=>{
+  if(!e.shiftKey || e.key!=='T' && e.key!=='t') return;
+  if(!activeCompilationKey || !compilationStartTs) return;
+  const sec=Math.round((Date.now()-compilationStartTs)/1000);
+  const mm=String(Math.floor(sec/60)).padStart(2,'0');
+  const ss=String(sec%60).padStart(2,'0');
+  console.log('⏱️ '+mm+':'+ss+'  →  { title:\'اسم الأغنية هنا\', start:'+sec+' },');
+});
+
 async function translateToArabic(text){
   if(!text) return '';
   if(arTranslationCache.has(text)) return arTranslationCache.get(text);
@@ -4240,7 +4326,14 @@ async function handleStreamTitle(rawTitle){
   // تنظيف اسم الأغنية من أي دمج وتنسيقه بشكل مريح للعين
   let cleanTitle = rawTitle.replace(/[-_]/g, ' - ').replace(/\s+/g, ' ');
   npTitle.textContent = cleanTitle;
-  
+
+  // لو الملف الجاي من السيرفر هو ملف مجمّع (فيه كذا أغنية)، نستخدم ساعة التوقيتات المجانية
+  if(isCompilationFile(cleanTitle)){
+    startCompilationClock(rawTitle);
+    return;
+  }
+  stopCompilationClock();
+
   if(isArabicText(cleanTitle)){ hideAiTitle(); return; }
   if(npAi){
     npAi.style.display='flex';
@@ -4278,6 +4371,7 @@ function disconnectMetadata(){
   if(metaRetryTimer){clearTimeout(metaRetryTimer);metaRetryTimer=null;}
   lastRawTitle='';
   hideAiTitle();
+  stopCompilationClock();
 }
 
 function startRadio(){
