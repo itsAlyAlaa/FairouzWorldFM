@@ -2683,6 +2683,20 @@ body.occasion-sham-elnessim .occ-tint{
   body.occasion-christmas .occ-tree, body.occasion-newyear .occ-tree{width:56px;height:76px;}
 }
 
+/* Pages that aren't currently active are hidden with visibility (not display:none).
+   display:none fully stops CSS animations and resets them to frame zero, so every
+   panel animation (prayer times, weather, etc.) would visibly "cut and restart"
+   each time the person left and came back to a page. visibility:hidden keeps the
+   animations running in the background — invisible and non-interactive — so they
+   pick up exactly where they left off instead of replaying from the start. */
+.page-hidden{
+  visibility:hidden;
+  height:0;
+  margin:0;
+  padding:0;
+  overflow:hidden;
+  pointer-events:none;
+}
 </style>
 <script type="application/ld+json">
 {
@@ -3355,7 +3369,7 @@ function applyLang() {
   updateClock(); renderPrayers();
   if (currentAthanName) updateAthanBanner(currentAthanName);
   if (typeof refreshWeatherLang === 'function') refreshWeatherLang();
-  if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && document.getElementById('page-worldcup').style.display !== 'none') {
+  if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && !document.getElementById('page-worldcup').classList.contains('page-hidden')) {
     const wcState = wcLifecyclePhase(new Date());
     if (wcState.phase === 'champion') { wcRenderChampion(wcState.final); }
     else if (wcState.phase === 'ongoing') { wcRenderFixtures(); }
@@ -3369,12 +3383,16 @@ document.querySelectorAll('.nav-item').forEach(btn => {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     btn.classList.add('active');
     const page = btn.dataset.page;
-    document.getElementById('page-home').style.display = page === 'home' ? 'block' : 'none';
-    document.getElementById('page-about').style.display = page === 'about' ? 'block' : 'none';
-    document.getElementById('page-news').style.display = page === 'news' ? 'block' : 'none';
-    document.getElementById('page-worldcup').style.display = page === 'worldcup' ? 'block' : 'none';
-    document.getElementById('page-support').style.display = page === 'support' ? 'block' : 'none';
-    document.getElementById('page-contact').style.display = page === 'contact' ? 'block' : 'none';
+    ['home','about','news','worldcup','support','contact'].forEach(name => {
+      const el = document.getElementById('page-'+name);
+      if (!el) return;
+      // Always keep display:block (this overrides each page's own default
+      // display:none rule); page-hidden alone controls whether it's actually
+      // shown, via visibility — not display — so animations inside inactive
+      // pages keep running instead of freezing and restarting on return.
+      el.style.display = 'block';
+      el.classList.toggle('page-hidden', page !== name);
+    });
     if (page === 'about') revealAboutPage();
     if (page === 'news') fetchNews(false);
     if (page === 'worldcup') initWorldCupPage();
@@ -3766,7 +3784,7 @@ async function fetchNews(force) {
 if (!newsAutoTimer) {
   newsAutoTimer = setInterval(() => {
     const pageEl = document.getElementById('page-news');
-    if (pageEl && pageEl.style.display !== 'none') fetchNews(false);
+    if (pageEl && !pageEl.classList.contains('page-hidden')) fetchNews(false);
   }, NEWS_MAX_AGE_MS);
 }
 
