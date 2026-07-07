@@ -990,7 +990,7 @@ input[type=range]::-webkit-slider-thumb{
 
 .weather-main{
   display:flex;
-  align-items:center;
+  align-items:flex-start;
   justify-content:space-between;
   gap:20px;
   margin-bottom:24px;
@@ -1051,8 +1051,8 @@ input[type=range]::-webkit-slider-thumb{
   display:flex;
   flex-direction:column;
   align-items:flex-end;
-  justify-content:center;
-  gap:12px;
+  justify-content:flex-start;
+  gap:8px;
   text-align:end;
   padding-inline-start:0;
   border-inline-start: none;
@@ -1724,6 +1724,7 @@ body.lang-ar .ct-title{font-family:'Cairo',sans-serif;}
 .ct-card-head h3{font-family:'Cinzel',serif;font-size:21px;color:var(--text);margin-bottom:4px;}
 body.lang-ar .ct-card-head h3{font-family:'Cairo',sans-serif;}
 .ct-card-head span{font-size:13.5px;color:var(--muted);}
+.ct-card-head > div{text-align:left;}
 
 .ct-form{display:flex;flex-direction:column;gap:16px;}
 .ct-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -1734,7 +1735,7 @@ body.lang-ar .ct-card-head h3{font-family:'Cairo',sans-serif;}
 }
 .ct-field:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px rgba(139,92,246,.15),0 0 18px rgba(139,92,246,.22);transform:translateY(-1px);}
 .ct-field .ic{color:var(--purple);flex-shrink:0;font-size:16px;line-height:1;}
-.ct-field input,.ct-field textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:14.5px;resize:none;min-width:0;}
+.ct-field input,.ct-field textarea{flex:1;background:transparent;border:none;outline:none;color:var(--text);font-family:inherit;font-size:14.5px;resize:none;min-width:0;text-align:left;}
 .ct-field input::placeholder,.ct-field textarea::placeholder{color:var(--muted);opacity:.75;}
 .ct-field-textarea{align-items:flex-start;}
 .ct-field-textarea .ic{margin-top:3px;}
@@ -1763,6 +1764,9 @@ body.lang-ar .ct-card-head h3{font-family:'Cairo',sans-serif;}
 .ct-thanks-radio{flex-shrink:0;width:120px;height:120px;}
 .ct-radio-svg{width:100%;height:100%;animation:supRadioFloat 4.2s ease-in-out infinite;filter:drop-shadow(0 0 8px rgba(236,72,153,.5)) drop-shadow(0 0 16px rgba(139,92,246,.4));}
 .ct-thanks-text{flex:1;min-width:200px;}
+@media(min-width:881px){
+  .ct-thanks-text{text-align:left;}
+}
 .ct-thanks-text h3{font-family:'Cinzel',serif;font-size:23px;display:flex;align-items:center;gap:8px;margin-bottom:8px;}
 body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 .ct-thanks-text h3 .ic{color:var(--pink);animation:supHeartbeat 1.8s ease-in-out infinite;filter:drop-shadow(0 0 6px var(--glow-p));}
@@ -1788,6 +1792,14 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 @media(max-width:560px){
   .ct-title{font-size:29px;}
   .ct-card{padding:22px;}
+}
+
+/* Contact page — only page mirrored to true RTL in Arabic */
+#page-contact[dir="rtl"] .ct-card-head > div{text-align:right;}
+#page-contact[dir="rtl"] .ct-field input,
+#page-contact[dir="rtl"] .ct-field textarea{text-align:right;}
+@media(min-width:881px){
+  #page-contact[dir="rtl"] .ct-thanks-text{text-align:right;}
 }
 /* prefers-reduced-motion override removed per request — animations always run */
 
@@ -2000,6 +2012,18 @@ body.lang-ar .ap-quote{font-family:'Cairo',sans-serif;}
   transition:opacity .9s ease .5s, transform .9s ease .5s;
 }
 .about-feature.in-view ~ .about-body{opacity:1;transform:translateY(0);}
+
+/* Text stays anchored to the portrait's side on desktop in English; in
+   Arabic the whole About page (like the Contact page) mirrors to true RTL,
+   so the portrait and text swap sides and the eyebrow/quote right-align.
+   Only below the 700px breakpoint does .about-feature switch to a stacked,
+   centered layout (see media query below), where centering applies to both
+   languages equally and directions/#page-about[dir] no longer matter. */
+@media(min-width:701px){
+  .ap-eyebrow,.ap-quote{text-align:left;}
+  #page-about[dir="rtl"] .ap-eyebrow,
+  #page-about[dir="rtl"] .ap-quote{text-align:right;}
+}
 
 /* prefers-reduced-motion override removed per request — animations always run */
 
@@ -2909,8 +2933,7 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="np-art">🎙️</div>
           <div>
             <div class="np-label"><span class="dot"></span><span data-en="On Air" data-ar="يُبث الآن">On Air</span></div>
-            <div class="np-title" id="npTitle" data-en="Press play to start listening" data-ar="اضغط تشغيل للاستماع">Press play to start listening</div>
-            <div class="np-sub" id="npSub" data-en="Fairouz World FM — Live" data-ar="عالم فيروز FM — بث مباشر">Fairouz World FM — Live</div>
+            <div class="np-title" id="npTitle" dir="auto" data-en="Press play to start listening" data-ar="اضغط تشغيل للاستماع">Press play to start listening</div>
             <div class="np-ai" id="npAi">
               <span class="ai-badge">AI ✨</span>
               <span class="np-ai-text" id="npAiText"></span>
@@ -3302,7 +3325,7 @@ body.occasion-sham-elnessim .occ-tint{
     </button>
     <div class="mp-info">
       <div class="mp-onair"><span class="mp-dot"></span><span data-en="On Air" data-ar="يُبث الآن">On Air</span></div>
-      <div class="mp-title" id="miniPlayerTitle" data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
+      <div class="mp-title" id="miniPlayerTitle" dir="auto" data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</div>
     </div>
     <div class="mp-vol-wrap">
       <button class="mp-vol-btn" id="miniPlayerVolBtn" aria-label="Volume">
@@ -3336,6 +3359,13 @@ function applyLang() {
   // end of the sentence) without moving any element's position on the page.
   document.documentElement.setAttribute('dir', 'ltr');
   document.documentElement.setAttribute('lang', currentLang);
+  // The Contact and About pages are the exceptions to the rule above: they get
+  // a real mirrored RTL layout in Arabic (icons, field/portrait order, and
+  // alignment flip), while every other page keeps its fixed LTR structure.
+  const contactPageEl = document.getElementById('page-contact');
+  if (contactPageEl) contactPageEl.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+  const aboutPageEl = document.getElementById('page-about');
+  if (aboutPageEl) aboutPageEl.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
   if (currentLang === 'ar') {
     body.classList.add('lang-ar');
     body.setAttribute('lang','ar');
@@ -3359,7 +3389,7 @@ function applyLang() {
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang);
     if (val !== null) el.innerHTML = val;
-    el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+    if (el.id !== 'npTitle' && el.id !== 'miniPlayerTitle') el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
   });
   document.querySelectorAll('[data-en-ph]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang + '-ph');
@@ -3367,7 +3397,7 @@ function applyLang() {
     el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
   });
   if (typeof isPlaying !== 'undefined' && isPlaying) {
-    npTitle.textContent = lastRawTitle || (currentLang==='ar' ? 'عالم فيروز FM — بث مباشر' : 'Fairouz World FM — Live');
+    if (lastRawTitle) npTitle.textContent = lastRawTitle;
     if (npAi && npAi.style.display==='flex' && lastRawTitle && !isArabicText(lastRawTitle)) {
       npAiText.textContent = currentLang==='ar' ? 'جارِ الترجمة بالذكاء الاصطناعي...' : 'AI translating...';
       translateToArabic(lastRawTitle).then(ar=>{ if(ar && lastRawTitle) npAiText.textContent = ar; });
@@ -4666,7 +4696,6 @@ function startRadio(){
     retryCount=0;
     btnPlay.innerHTML=ICON_PAUSE;
     document.querySelector('.player-bar').classList.add('playing');
-    npTitle.textContent=currentLang==='ar'?'عالم فيروز FM — بث مباشر':'Fairouz World FM — Live';
     loadingText.textContent='';setupAnalyser();cancelAnimationFrame(rafId);animateBars();
     connectMetadata();
   }).catch((err)=>{
