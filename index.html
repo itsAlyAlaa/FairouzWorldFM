@@ -3329,7 +3329,12 @@ function toggleLang() {
 }
 function applyLang() {
   const body = document.body;
-  document.documentElement.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+  // Layout direction is intentionally always LTR — switching to Arabic must
+  // only change the language of the text, not mirror the page. Each
+  // translated text element still gets its own correct dir below, so Arabic
+  // sentences read right-to-left internally (punctuation lands at the true
+  // end of the sentence) without moving any element's position on the page.
+  document.documentElement.setAttribute('dir', 'ltr');
   document.documentElement.setAttribute('lang', currentLang);
   if (currentLang === 'ar') {
     body.classList.add('lang-ar');
@@ -3344,11 +3349,13 @@ function applyLang() {
   '<img src="https://flagcdn.com/24x18/eg.png" alt="العربية" width="20" height="15">';
     document.getElementById('langName').textContent = 'العربية';
   }
-  // The whole document direction is now flipped via <html dir="rtl">
-  // above, so flex rows, default text alignment, and native form controls
-  // mirror automatically across the entire page in Arabic. We still set an
-  // explicit dir on each translated element too, since dir="auto" is not
-  // reliable for strings that start with a Latin word/brand name.
+  // The page layout stays LTR at all times (see above), so nothing on the
+  // page mirrors or moves when switching to Arabic. What DOES need to flip
+  // per-language is the internal reading direction of each text node, since
+  // dir="auto" is not reliable for strings that start with a Latin word/
+  // brand name. Setting dir explicitly here keeps Arabic sentences shaping
+  // and wrapping correctly (punctuation stays at the true end of the
+  // sentence) while every element keeps its fixed position on the page.
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang);
     if (val !== null) el.innerHTML = val;
