@@ -537,21 +537,34 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
   z-index:-1;
   animation:tpGlowPulse 5.5s ease-in-out infinite;
 }
+.topbar-palestine-shadowwrap{
+  width:100%;
+  filter:drop-shadow(0 8px 18px rgba(0,0,0,.32));
+  /* perspective lives on the static wrapper so every browser establishes
+     the same 3D containing block for the child's rotateY below */
+  perspective:420px;
+}
 .topbar-palestine-img{
   width:100%;height:auto;display:block;
-  filter:drop-shadow(0 8px 18px rgba(0,0,0,.32));
   animation:tpWave 4.8s ease-in-out infinite;
   transform-origin:22% 45%;
+  transform-style:preserve-3d;
+  backface-visibility:hidden;
   will-change:transform;
 }
 /* Gentle rotateY "ripple" (the same trick used for the World Cup champion
    flag) layered with a light float — reads as cloth fluttering in the wind
-   rather than the whole icon just bobbing up and down. */
+   rather than the whole icon just bobbing up and down.
+   NOTE: transform no longer bundles perspective() per-keyframe — some
+   WebKit/older-Chromium builds silently freeze an element on the first
+   frame when a 3D transform and a filter animate/composite together on
+   the very same node. Splitting them (filter on the wrapper, transform on
+   the child) sidesteps that compositing bug. */
 @keyframes tpWave{
-  0%,100%{ transform:perspective(420px) rotateY(0deg) rotateZ(0deg) translateY(0); }
-  25%    { transform:perspective(420px) rotateY(-5deg) rotateZ(-.6deg) translateY(-3px); }
-  50%    { transform:perspective(420px) rotateY(4deg)  rotateZ(.5deg)  translateY(-6px); }
-  75%    { transform:perspective(420px) rotateY(-3deg) rotateZ(-.4deg) translateY(-2px); }
+  0%,100%{ transform:rotateY(0deg) rotateZ(0deg) translateY(0); }
+  25%    { transform:rotateY(-5deg) rotateZ(-.6deg) translateY(-3px); }
+  50%    { transform:rotateY(4deg)  rotateZ(.5deg)  translateY(-6px); }
+  75%    { transform:rotateY(-3deg) rotateZ(-.4deg) translateY(-2px); }
 }
 @keyframes tpGlowPulse{
   0%,100%{ opacity:.28; transform:scale(1); }
@@ -1989,6 +2002,9 @@ body.lang-ar .ct-thanks-text h3{font-family:'Cairo',sans-serif;}
 .wc-flag-img{width:30px;height:22px;object-fit:cover;border-radius:4px;box-shadow:0 0 0 1px var(--border), 0 2px 6px rgba(0,0,0,.35);flex-shrink:0;background:var(--surface);}
 .wc-flag-placeholder{width:30px;height:22px;border-radius:4px;background:var(--surface);border:1px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:12.5px;color:var(--muted);flex-shrink:0;}
 .wc-score{font-family:'Cinzel',serif;font-size:23px;color:var(--gold);min-width:64px;text-align:center;letter-spacing:.05em;}
+.wc-score-col{display:flex;flex-direction:column;align-items:center;}
+.wc-pens-label{font-size:10.5px;color:var(--muted);text-align:center;white-space:nowrap;letter-spacing:.01em;margin-bottom:2px;}
+.wc-dispute-label{font-size:10.5px;color:var(--rose);text-align:center;letter-spacing:.01em;margin-top:2px;max-width:150px;line-height:1.4;}
 .wc-vs{font-size:14px;color:var(--muted);min-width:64px;text-align:center;}
 .wc-note{font-size:13px;color:var(--rose);text-align:center;margin-top:2px;font-weight:700;}
 .wc-scorers{display:flex;justify-content:space-between;gap:10px;margin-top:6px;}
@@ -2039,11 +2055,15 @@ body.lang-ar .wc-champion-title{font-family:'Cairo',sans-serif;}
   .wc-flag-img,.wc-flag-placeholder{width:22px;height:16px;}
   .wc-score{font-size:19px;min-width:46px;}
   .wc-vs{min-width:46px;font-size:12.5px;}
+  .wc-pens-label{font-size:9.5px;}
+  .wc-dispute-label{font-size:9.5px;white-space:normal;max-width:120px;}
 }
 @media(max-width:380px){
   .wc-team{font-size:12.5px;gap:5px;}
   .wc-flag-img,.wc-flag-placeholder{width:19px;height:14px;}
   .wc-score{font-size:17px;min-width:40px;}
+  .wc-pens-label{font-size:9px;}
+  .wc-dispute-label{font-size:9px;white-space:normal;max-width:100px;}
 }
 
 /* ── About: featured portrait ── */
@@ -3080,7 +3100,9 @@ body.occasion-sham-elnessim .occ-tint{
 
   <div class="topbar-palestine" id="topbarPalestine" aria-hidden="true">
     <div class="topbar-palestine-glow"></div>
-    <img class="topbar-palestine-img" src="assets/palestine-flag.webp" alt="" loading="lazy" decoding="async">
+    <div class="topbar-palestine-shadowwrap">
+      <img class="topbar-palestine-img" src="assets/palestine-flag.webp" alt="" loading="lazy" decoding="async">
+    </div>
   </div>
 
   <div class="clock-card">
@@ -4069,8 +4091,8 @@ const WC_TEAMS = {
 const WC_MATCHES = [
   {id:'53452539',stage:{en:'Round of 32',ar:'دور الـ32'},home:'RSA',away:'CAN',kickoff:'2026-06-28T19:00:00Z',status:'final',score:{home:0,away:1},note:{en:'Eustáquio scored the only goal (90+2)',ar:'يوستاكيو سجل الهدف الوحيد في الدقيقة (90+2)'},free:false},
   {id:'53452545',stage:{en:'Round of 32',ar:'دور الـ32'},home:'BRA',away:'JPN',kickoff:'2026-06-29T17:00:00Z',status:'final',score:{home:2,away:1},note:{en:'Sano (29) for Japan; Casemiro (56) and Martinelli (90+6) for Brazil',ar:'سانو (29) لليابان، وكاسيميرو (56) ومارتينيلي (90+6) للبرازيل'},free:false},
-  {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},note:{en:'Enciso (42) for Paraguay, Havertz (54) for Germany; PAR won 4-3 on penalties',ar:'إنسيسو (42) لباراغواي، وهافرتز (54) لألمانيا؛ باراغواي فازت 4-3 بركلات الترجيح'},free:false},
-  {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},note:{en:'Gakpo (72) for Netherlands, Diop (90+1) for Morocco; MAR won 3-2 on penalties',ar:'غاكبو (72) لهولندا، وديوب (90+1) للمغرب؛ المغرب فاز 3-2 بركلات الترجيح'},free:false},
+  {id:'53452541',stage:{en:'Round of 32',ar:'دور الـ32'},home:'GER',away:'PAR',kickoff:'2026-06-29T20:30:00Z',status:'final',score:{home:1,away:1},pens:{home:3,away:4},note:{en:'Enciso (42) for Paraguay, Havertz (54) for Germany; PAR won 4-3 on penalties',ar:'إنسيسو (42) لباراغواي، وهافرتز (54) لألمانيا؛ باراغواي فازت 4-3 بركلات الترجيح'},free:false},
+  {id:'53452547',stage:{en:'Round of 32',ar:'دور الـ32'},home:'NED',away:'MAR',kickoff:'2026-06-30T01:00:00Z',status:'final',score:{home:1,away:1},pens:{home:2,away:3},note:{en:'Gakpo (72) for Netherlands, Diop (90+1) for Morocco; MAR won 3-2 on penalties',ar:'غاكبو (72) لهولندا، وديوب (90+1) للمغرب؛ المغرب فاز 3-2 بركلات الترجيح'},free:false},
   {id:'53452561',stage:{en:'Round of 32',ar:'دور الـ32'},home:'CIV',away:'NOR',kickoff:'2026-06-30T17:00:00Z',status:'final',score:{home:1,away:2},note:{en:'Nusa (39) and Haaland (86) for Norway; Diallo (74) for Ivory Coast',ar:'نوسا (39) وهالاند (86) للنرويج، وديالو (74) لساحل العاج'},free:false},
   {id:'53452543',stage:{en:'Round of 32',ar:'دور الـ32'},home:'FRA',away:'SWE',kickoff:'2026-06-30T21:00:00Z',status:'final',score:{home:3,away:0},note:{en:'Mbappé (45, 74) and Barcola (53) scored for France',ar:'مبابي (45، 74) وباركولا (53) سجلوا لفرنسا'},free:false},
   {id:'53452563',stage:{en:'Round of 32',ar:'دور الـ32'},home:'MEX',away:'ECU',kickoff:'2026-07-01T02:00:00Z',status:'final',score:{home:2,away:0},note:{en:'Quiñones (22) and Jiménez (31) scored for Mexico',ar:'كينيونيس (22) وخيمينيز (31) سجلا للمكسيك'},free:true},
@@ -4080,7 +4102,7 @@ const WC_MATCHES = [
   {id:'53452551',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ESP',away:'AUT',kickoff:'2026-07-02T19:00:00Z',status:'final',score:{home:3,away:0},note:{en:'Oyarzabal (36, 89) and Porro (66) scored for Spain',ar:'أويارثابال (36، 89) وبورو (66) سجلا لإسبانيا'},free:false},
   {id:'53452549',stage:{en:'Round of 32',ar:'دور الـ32'},home:'POR',away:'CRO',kickoff:'2026-07-02T23:00:00Z',status:'final',score:{home:2,away:1},note:{en:'Perisic (53) for Croatia; Ronaldo penalty (68) and Ramos (90+4) won it for Portugal',ar:'بيريسيتش (53) لكرواتيا؛ ثم ركلة جزاء رونالدو (68) وهدف راموش (90+4) منحا الفوز للبرتغال'},free:false},
   {id:'53452505',stage:{en:'Round of 32',ar:'دور الـ32'},home:'SUI',away:'DZA',kickoff:'2026-07-03T03:00:00Z',status:'final',score:{home:2,away:0},note:{en:'Embolo (10) and Ndoye (46) scored for Switzerland',ar:'إمبولو (10) وندوي (46) سجلا لسويسرا'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
-  {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'final',score:{home:1,away:1},note:{en:'Ashour (13) for Egypt, Hany own goal (55) for Australia; EGY won 4-2 on penalties',ar:'عاشور (13) لمصر، وهدف حاني في مرماه (55) لأستراليا؛ مصر فازت 4-2 بركلات الترجيح'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
+  {id:'53452503',stage:{en:'Round of 32',ar:'دور الـ32'},home:'AUS',away:'EGY',kickoff:'2026-07-03T18:00:00Z',status:'final',score:{home:1,away:1},pens:{home:2,away:4},note:{en:'Ashour (13) for Egypt, Hany own goal (55) for Australia; EGY won 4-2 on penalties',ar:'عاشور (13) لمصر، وهدف حاني في مرماه (55) لأستراليا؛ مصر فازت 4-2 بركلات الترجيح'},free:true,channels:['beIN SPORTS (free) + beIN SPORTS MAX']},
   {id:'53452569',stage:{en:'Round of 32',ar:'دور الـ32'},home:'ARG',away:'CPV',kickoff:'2026-07-03T22:00:00Z',status:'final',score:{home:3,away:2},note:{en:'Messi (29) and Duarte (59) traded goals, then extra time saw L. Martínez (92) and Lopes Cabral (103) level again before a Borges own goal (111) won it for Argentina',ar:'تبادل ميسي (29) ودوارتي (59) الأهداف، وفي الوقت الإضافي تعادل الفريقان مجددًا عبر ل. مارتينيز (92) ولوبيز كابرال (103)، قبل أن يمنح هدف بورغيس في مرماه (111) الفوز للأرجنتين'},free:false,channels:['beIN SPORTS MAX 2 + beIN SPORTS MAX 4']},
   {id:'53452507',stage:{en:'Round of 32',ar:'دور الـ32'},home:'COL',away:'GHA',kickoff:'2026-07-04T01:30:00Z',status:'final',score:{home:1,away:0},note:{en:'Arias (14) scored the only goal for Colombia',ar:'أرياس (14) سجل الهدف الوحيد لكولومبيا'},free:true,channels:['beIN SPORTS MAX 1 + beIN SPORTS MAX 3 (free)']},
   {id:'53452511',stage:{en:'Round of 16',ar:'دور الـ16'},home:'CAN',away:'MAR',kickoff:'2026-07-04T17:00:00Z',status:'final',score:{home:0,away:3},note:{en:'Ounahi (50, 82) and Rahimi (90+8) scored for Morocco',ar:'أوناحي (50، 82) وراحيمي (90+8) سجلوا للمغرب'},free:false},
@@ -4089,12 +4111,12 @@ const WC_MATCHES = [
   {id:'53452519',stage:{en:'Round of 16',ar:'دور الـ16'},home:'MEX',away:'ENG',kickoff:'2026-07-06T00:00:00Z',status:'final',score:{home:2,away:3},note:{en:'Bellingham (36, 38) and a Kane penalty (60) for England; Quiñones (42) and a Jiménez penalty for Mexico',ar:'بيلينغهام (36، 38) وركلة جزاء كين (60) لإنجلترا، وكينيونيس (42) وركلة جزاء خيمينيز للمكسيك'},free:false},
   {id:'53452513',stage:{en:'Round of 16',ar:'دور الـ16'},home:'POR',away:'ESP',kickoff:'2026-07-06T19:00:00Z',status:'final',score:{home:0,away:1},note:{en:'Merino scored the winner in stoppage time',ar:'ميرينو سجل هدف الفوز في الوقت بدل الضائع'},free:false},
   {id:'53452515',stage:{en:'Round of 16',ar:'دور الـ16'},home:'USA',away:'BEL',kickoff:'2026-07-07T00:00:00Z',status:'final',score:{home:1,away:4},note:{en:'De Ketelaere (9, 33) and Vanaken (57) put Belgium in control; Tillman (31) briefly leveled for the USA before Lukaku (90+3) sealed it',ar:'دي كيتيلاره (9، 33) وفاناكن (57) منحوا بلجيكا السيطرة، وتيلمان (31) عادل النتيجة مؤقتًا لأمريكا قبل أن يحسم لوكاكو (90+3) النتيجة'},free:false},
-  {id:'53452521',stage:{en:'Round of 16',ar:'دور الـ16'},home:'ARG',away:'EGY',kickoff:'2026-07-07T16:00:00Z',status:'scheduled',free:false},
-  {id:'53452523',stage:{en:'Round of 16',ar:'دور الـ16'},home:'SUI',away:'COL',kickoff:'2026-07-07T20:00:00Z',status:'scheduled',free:false},
+  {id:'53452521',stage:{en:'Round of 16',ar:'دور الـ16'},home:'ARG',away:'EGY',kickoff:'2026-07-07T16:00:00Z',status:'final',score:{home:3,away:2},dispute:{en:'(Egypt exited amid a major refereeing/VAR controversy)',ar:'(مصر خرجت وسط جدل تحكيمي واسع حول قرارات الفار)'},note:{en:'Ibrahim (15) and Zico (67) put Egypt 2-0 up; Romero (79), Messi (83) and Fernández (90+2) completed Argentina\'s comeback',ar:'إبراهيم (15) وزيكو (67) قدّما مصر بهدفين نظيفين، ثم أكمل روميرو (79) وميسي (83) وفرنانديز (90+2) عودة الأرجنتين المذهلة'},free:false,channels:['beIN SPORTS MAX']},
+  {id:'53452523',stage:{en:'Round of 16',ar:'دور الـ16'},home:'SUI',away:'COL',kickoff:'2026-07-07T20:00:00Z',status:'final',score:{home:0,away:0},pens:{home:4,away:3},note:{en:'Goalless after 120 minutes; Switzerland won 4-3 on penalties, R. Vargas scoring the decisive spot-kick',ar:'تعادل سلبي بعد 120 دقيقة؛ سويسرا فازت 4-3 بركلات الترجيح، وسجل ر. فارغاس ركلة الحسم'},free:false,channels:['beIN SPORTS MAX']},
   {id:'wcQF1',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'MAR',away:'FRA',kickoff:'2026-07-09T20:00:00Z',status:'scheduled',free:false},
   {id:'wcQF2',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'W83',away:'ESP',kickoff:'2026-07-10T19:00:00Z',status:'scheduled',free:false,note:{en:'Faces the winner of USA vs Belgium',ar:'يواجه الفائز من مباراة أمريكا وبلجيكا'}},
   {id:'wcQF3',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'NOR',away:'ENG',kickoff:'2026-07-11T21:00:00Z',status:'scheduled',free:false},
-  {id:'wcQF4',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'W83',away:'W83',kickoff:'2026-07-12T01:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Argentina vs Egypt takes on the winner of Switzerland vs Colombia',ar:'الفائز من مباراة الأرجنتين ومصر يواجه الفائز من مباراة سويسرا وكولومبيا'}},
+  {id:'wcQF4',stage:{en:'Quarterfinal',ar:'ربع النهائي'},home:'ARG',away:'SUI',kickoff:'2026-07-12T01:00:00Z',status:'scheduled',free:false},
   {id:'wcSF1',stage:{en:'Semifinal',ar:'نصف النهائي'},home:'W83',away:'W83',kickoff:'2026-07-14T19:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Morocco vs France takes on the winner of the Spain quarterfinal (vs USA/Belgium)',ar:'الفائز من مباراة المغرب وفرنسا يواجه الفائز من مباراة إسبانيا (ضد أمريكا/بلجيكا)'}},
   {id:'wcSF2',stage:{en:'Semifinal',ar:'نصف النهائي'},home:'W83',away:'W83',kickoff:'2026-07-15T19:00:00Z',status:'scheduled',free:false,note:{en:'Winner of Norway vs England takes on the winner of the Argentina/Egypt vs Switzerland/Colombia quarterfinal',ar:'الفائز من مباراة النرويج وإنجلترا يواجه الفائز من ربع نهائي الأرجنتين/مصر ضد سويسرا/كولومبيا'}},
   {id:'wcThird2026',stage:{en:'Third place',ar:'مباراة تحديد المركز الثالث'},home:'W83',away:'W83',kickoff:'2026-07-18T21:00:00Z',status:'scheduled',free:true,note:{en:'Contested by the two semifinal losers',ar:'تجمع بين خاسرَي مباراتَي نصف النهائي'}},
@@ -4198,8 +4220,16 @@ function wcRenderFixtures(){
       : isFinalMatch ? '<span class="wc-badge wc-badge-final">🏆 '+(lang==='ar'?'النهائي':'Final')+'</span>'
       : '<span class="wc-badge wc-badge-upcoming">'+(lang==='ar'?'قادمة':'Upcoming')+'</span>';
 
+    const pensLabel = (st==='finished' && m.pens)
+      ? '<div class="wc-pens-label">'+(lang==='ar'
+          ? '(ركلات الترجيح '+m.pens.home+'-'+m.pens.away+')'
+          : '(Penalties '+m.pens.home+'-'+m.pens.away+')')+'</div>'
+      : '';
+    const disputeLabel = (st==='finished' && m.dispute)
+      ? '<div class="wc-dispute-label">'+(lang==='ar'?m.dispute.ar:m.dispute.en)+'</div>'
+      : '';
     const scoreOrVs = st==='finished'
-      ? '<div class="wc-score">'+(m.score.home+' — '+m.score.away)+'</div>'
+      ? '<div class="wc-score-col">'+pensLabel+'<div class="wc-score">'+(m.score.home+' — '+m.score.away)+'</div>'+disputeLabel+'</div>'
       : '<div class="wc-vs">'+wcFmtClock(kickoff,lang)+'</div>';
 
     const noteHtml = m.note
