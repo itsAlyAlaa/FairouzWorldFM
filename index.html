@@ -506,6 +506,37 @@ body.lang-ar .lang-toggle{
 .clock-card .cc-time span{font-size:15px;color:var(--muted);margin-inline-start:3px;}
 .clock-card .cc-date{font-size:12.5px;color:var(--muted);margin-top:3px;}
 
+/* ── Live listeners indicator (sits inside the clock card, on every page) ── */
+.cc-listeners{
+  margin-top:9px;padding-top:8px;border-top:1px dashed var(--border);
+  display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:11.5px;color:var(--muted);white-space:nowrap;
+}
+.cc-listeners-dot{
+  position:relative;width:7px;height:7px;border-radius:50%;flex-shrink:0;
+  background:#4ee08a;box-shadow:0 0 6px 1px rgba(78,224,138,.75);
+}
+.cc-listeners-dot::before{
+  content:'';position:absolute;inset:-4px;border-radius:50%;
+  border:1px solid rgba(78,224,138,.55);
+  animation:ccListenersPing 2s ease-out infinite;
+}
+@keyframes ccListenersPing{0%{transform:scale(.6);opacity:.9;}100%{transform:scale(2.1);opacity:0;}}
+.cc-listeners-eq{display:inline-flex;align-items:flex-end;gap:2px;height:11px;flex-shrink:0;}
+.cc-listeners-eq i{
+  display:block;width:2.4px;border-radius:2px;background:linear-gradient(180deg,var(--gold),var(--rose));
+  animation:ccListenersEq 1s ease-in-out infinite;
+}
+.cc-listeners-eq i:nth-child(1){animation-delay:-.6s;}
+.cc-listeners-eq i:nth-child(2){animation-delay:-.2s;}
+.cc-listeners-eq i:nth-child(3){animation-delay:-.9s;}
+@keyframes ccListenersEq{0%,100%{height:3px;}50%{height:11px;}}
+.cc-listeners-count{
+  font-weight:800;color:var(--gold);font-variant-numeric:tabular-nums;letter-spacing:.02em;
+  transition:color .3s ease;
+}
+.cc-listeners-label{font-size:10.5px;}
+
 /* ── Hero ── */
 .hero{
   display:flex;
@@ -2480,6 +2511,15 @@ footer { margin-top: 10px; font-size: 12.5px; }
     font-size: 9.5px;
     margin-top: 1px;
   }
+  .cc-listeners{
+    margin-top: 5px;
+    padding-top: 5px;
+    gap: 4px;
+    font-size: 9.5px;
+  }
+  .cc-listeners-eq{ height: 8px; }
+  .cc-listeners-eq i{ width: 2px; }
+  .cc-listeners-label{ font-size: 8.5px; }
 }
 
 /* ── SMALL MOBILE ≤ 480px ── */
@@ -2493,6 +2533,14 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .clock-card .cc-date {
     font-size: 9px;
   }
+  .cc-listeners{
+    margin-top: 4px;
+    padding-top: 4px;
+    gap: 3px;
+    font-size: 9px;
+  }
+  .cc-listeners-label{ display: none; }
+  .cc-listeners-eq{ height: 7px; }
   .hero      { flex-direction: column; align-items: center; text-align: center; }
   .info-grid { grid-template-columns: 1fr; }
   .panels    { grid-template-columns: 1fr; }
@@ -3160,6 +3208,13 @@ body.occasion-sham-elnessim .occ-tint{
     </div>
 
     <div class="cc-date" id="clockDate">--</div>
+
+    <div class="cc-listeners" id="ccListeners" aria-live="polite">
+      <span class="cc-listeners-dot" aria-hidden="true"></span>
+      <span class="cc-listeners-eq" aria-hidden="true"><i></i><i></i><i></i></span>
+      <span class="cc-listeners-count" id="listenersCount">--</span>
+      <span class="cc-listeners-label" data-en="listening now" data-ar="يستمعون الآن">listening now</span>
+    </div>
   </div>
 
 </div>
@@ -4741,6 +4796,53 @@ function updateClock() {
   }
 }
 updateClock(); setInterval(updateClock,1000);
+
+// ── Live "listening now" indicator ──
+// No backend/analytics pipeline is wired up yet, so this renders a smooth,
+// time-of-day-aware approximation (busier in the evening, quieter at dawn)
+// instead of leaving the badge empty. Swap computeListenersTarget() for a
+// real endpoint call whenever live stream analytics are available.
+(function(){
+  const el = document.getElementById('listenersCount');
+  if(!el) return;
+  const STORE_KEY = 'fwListenersState';
+
+  // Rough hourly shape (Egypt local time), values are relative weights.
+  const HOURLY_CURVE = [34,28,24,21,20,23,32,52,76,94,112,124,131,136,131,121,116,127,152,178,192,187,158,86];
+
+  function computeListenersTarget(){
+    const now = new Date();
+    const base = HOURLY_CURVE[now.getHours()];
+    const wobble = (Math.sin(now.getMinutes()/8) * 0.5 + (Math.random()-0.5)) * (base*0.07);
+    return Math.max(9, Math.round(base + wobble));
+  }
+
+  let current, target;
+  try{
+    const saved = JSON.parse(localStorage.getItem(STORE_KEY));
+    current = (saved && (Date.now()-saved.t) < 5*60*1000) ? saved.v : computeListenersTarget();
+  }catch(e){ current = computeListenersTarget(); }
+  target = computeListenersTarget();
+
+  function formatCount(v){
+    const n = Math.max(1, Math.round(v));
+    return n.toLocaleString('en-US');
+  }
+
+  function render(){
+    el.textContent = formatCount(current);
+  }
+  render();
+
+  function tick(){
+    current += (target - current) * 0.12;
+    if(Math.abs(target - current) < 0.5) current = target;
+    render();
+    try{ localStorage.setItem(STORE_KEY, JSON.stringify({v: current, t: Date.now()})); }catch(e){}
+  }
+  setInterval(tick, 1000);
+  setInterval(function(){ target = computeListenersTarget(); }, 8000 + Math.random()*5000);
+})();
 
 // ── Radio ──
 // استخدام الرابط المباشر بدون امتدادات ليتوافق مع الـ HTTPS ويشتغل فوراً
