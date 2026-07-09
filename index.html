@@ -5393,21 +5393,9 @@ function renderPrayerFx(phase){
       fx.appendChild(t);
     }
   } else if(phase==='dawn' || phase==='dusk'){
-    const glow=document.createElement('div');
-    glow.className='fx-prayer-glow';
-    glow.style.width='140px'; glow.style.height='140px';
-    glow.style.top='-8%'; glow.style.insetInlineEnd='4%';
-    glow.style.background = phase==='dawn'
-      ? 'radial-gradient(circle, rgba(217,184,136,.35), transparent 70%)'
-      : 'radial-gradient(circle, rgba(224,138,166,.35), transparent 70%)';
-    fx.appendChild(glow);
+    // (ambient corner glow removed — it was rendering directly behind the Hijri date chip)
   } else {
-    const glow=document.createElement('div');
-    glow.className='fx-prayer-glow';
-    glow.style.width='120px'; glow.style.height='120px';
-    glow.style.top='-8%'; glow.style.insetInlineEnd='6%';
-    glow.style.background='radial-gradient(circle, rgba(255,182,72,.26), transparent 72%)';
-    fx.appendChild(glow);
+    // (ambient corner glow removed — it was rendering directly behind the Hijri date chip)
   }
 
   // A couple of gently twinkling geometric (Islamic-star) ornaments, present in every phase
