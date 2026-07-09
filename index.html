@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en" dir="ltr" class="boot">
 <head>
 <meta charset="UTF-8">
 <title>إذاعة عالم فيروز | البث المباشر</title>
@@ -62,6 +62,19 @@ body{
   transition:background 2.2s ease, color 1.6s ease;
 }
 body, body *{transition:background-color 1.6s ease, border-color 1.6s ease, color 1.4s ease;}
+/* Skip the (costly, DOM-wide) color transitions during the very first paint burst,
+   they only matter for later runtime theme changes (day/night, occasions, etc.) */
+html.boot body, html.boot body *{transition:none !important;}
+
+@media (prefers-reduced-motion: reduce){
+  .aurora, .loader-aurora, .loader-sparkles span, .loader-halo, .loader-ring-dash, .loader-logo-wrap::before, .loader-logo-wrap::after{
+    animation:none !important;
+  }
+}
+@media (max-width:768px){
+  .aurora{filter:blur(55px);}
+  .loader-aurora{filter:blur(60px);}
+}
 body.lang-ar{font-family:'Cairo',sans-serif;}
 #starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 2.2s ease;}
 .aurora{position:fixed;border-radius:50%;filter:blur(90px);opacity:.22;z-index:0;pointer-events:none;animation:drift 16s ease-in-out infinite alternate;transition:opacity 2.2s ease;}
@@ -2916,13 +2929,24 @@ body.occasion-sham-elnessim .occ-tint{
 </div>
 <script>
 (function(){
+  // Shared helper: run non-critical work off the critical path, staggered
+  // across idle slices so nothing competes with the loader / first paint.
+  window.whenIdle = function(fn, timeout){
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(fn, {timeout: timeout || 1200});
+    } else {
+      setTimeout(fn, Math.min(timeout || 1200, 300));
+    }
+  };
+
   document.documentElement.style.overflow = 'hidden';
   var loader = document.getElementById('siteLoader');
   var fill = document.getElementById('loaderFill');
   var percentEl = document.getElementById('loaderPercent');
   if (!loader) return;
 
-  var DURATION = 2400;   // simulated fill duration (ms) — the elegant minimum
+  // Shorter, snappier minimum — still feels intentional without stalling the user.
+  var DURATION = 1200;   // simulated fill duration (ms)
   var start = performance.now();
   var progress = 0, finished = false;
 
@@ -2944,8 +2968,11 @@ body.occasion-sham-elnessim .occ-tint{
     setTimeout(function(){
       loader.classList.add('hide');
       document.documentElement.style.overflow = '';
-      setTimeout(function(){ if (loader.parentNode) loader.parentNode.removeChild(loader); }, 950);
-    }, 380);
+      setTimeout(function(){
+        if (loader.parentNode) loader.parentNode.removeChild(loader);
+        document.documentElement.classList.remove('boot');
+      }, 950);
+    }, 300);
   }
 
   window.addEventListener('load', function(){
@@ -2954,7 +2981,7 @@ body.occasion-sham-elnessim .occ-tint{
     setTimeout(finish, remaining);
   });
   // Safety net so the site is never blocked behind the loader indefinitely
-  setTimeout(finish, 6000);
+  setTimeout(finish, 3500);
 })();
 </script>
 
@@ -4669,8 +4696,10 @@ function initWorldCupPage(){
 }
 
 window.addEventListener('load', () => {
-  wcApplyLifecycle();
-  initWorldCupPage();
+  (window.whenIdle || setTimeout)(() => {
+    wcApplyLifecycle();
+    initWorldCupPage();
+  }, 1500);
 });
 
 setInterval(() => { if(wcApplyLifecycle()) wcSyncFinalTabFireworks(); }, 60 * 60 * 1000);
@@ -5015,7 +5044,7 @@ volSlider.addEventListener('input',function(){audio.volume=this.value/100;this.s
 volSlider.style.setProperty('--val','100%');
 
 // Autoplay on load (works automatically on returning visitors / some browsers)
-window.addEventListener('load',()=>{setTimeout(()=>{if(!hasStarted)startRadio();},800);});
+window.addEventListener('load',()=>{(window.whenIdle||setTimeout)(()=>{if(!hasStarted)startRadio();},1000);});
 // Fallback: browsers block audio-with-sound autoplay until a real user gesture happens.
 // We listen for the *first* tap/click/key/scroll anywhere on the page (desktop + mobile)
 // and use it to start playback — this is the closest to "automatic" browsers allow.
@@ -6581,7 +6610,7 @@ setInterval(() => {
     if(window.__occSetParticles) window.__occSetParticles(configs);
   }
 
-  window.addEventListener('load', applyOccasionTheme);
+  window.addEventListener('load', () => (window.whenIdle||setTimeout)(applyOccasionTheme, 1300));
   setInterval(applyOccasionTheme, 60*60*1000); // safety re-check, e.g. across midnight
 })();
 
