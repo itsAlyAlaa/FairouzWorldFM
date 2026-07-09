@@ -592,13 +592,9 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
   width:min(260px, 34vw);
   flex-shrink:0;
 }
-.topbar-palestine-glow{
-  position:absolute;inset:-16% -9%;
-  background:radial-gradient(circle at 45% 42%, rgba(217,184,136,.30), rgba(224,138,166,.16) 45%, transparent 70%);
-  filter:blur(18px);
-  z-index:-1;
-  animation:tpGlowPulse 5.5s ease-in-out infinite;
-}
+/* Glow halo removed per request — element kept empty/inert in case JS still
+   references it; the flag's own wave animation is untouched below. */
+.topbar-palestine-glow{display:none;}
 .topbar-palestine-shadowwrap{
   width:100%;
   filter:drop-shadow(0 8px 18px rgba(0,0,0,.32));
