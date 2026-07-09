@@ -3616,10 +3616,16 @@ function applyLang() {
     el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
   });
   if (typeof isPlaying !== 'undefined' && isPlaying) {
-    if (lastRawTitle) npTitle.textContent = lastRawTitle;
-    if (npAi && npAi.style.display==='flex' && lastRawTitle && !isArabicText(lastRawTitle)) {
-      npAiText.textContent = currentLang==='ar' ? 'جارِ الترجمة بالذكاء الاصطناعي...' : 'AI translating...';
-      translateToArabic(lastRawTitle).then(ar=>{ if(ar && lastRawTitle) npAiText.textContent = ar; });
+    const langFix = (typeof findTitleFix === 'function') ? findTitleFix(lastRawTitle) : null;
+    if(langFix){
+      npTitle.textContent = langFix.en;
+      if(npAi){ npAi.style.display='flex'; npAiText.textContent = langFix.ar; }
+    } else {
+      if (lastRawTitle) npTitle.textContent = lastRawTitle;
+      if (npAi && npAi.style.display==='flex' && lastRawTitle && !isArabicText(lastRawTitle)) {
+        npAiText.textContent = currentLang==='ar' ? 'جارِ الترجمة بالذكاء الاصطناعي...' : 'AI translating...';
+        translateToArabic(lastRawTitle).then(ar=>{ if(ar && lastRawTitle) npAiText.textContent = ar; });
+      }
     }
   }
   updateClock(); renderPrayers();
@@ -4854,12 +4860,33 @@ async function translateToArabic(text){
   }catch(e){ return ''; }
 }
 
+// ── تصحيحات يدوية لأسماء أغاني مسجّلة غلط على السيرفر ──
+// لو السيرفر بيبعت اسم غلط لأغنية معينة ومفيش وصول للسيرفر لتصليحه من الأصل،
+// ضيف هنا نمط (regex) يطابق العنوان الغلط + الاسم الصح بالإنجليزي والعربي.
+const TRACK_TITLE_FIXES = [
+  { match: /shat+\s*[-_]?\s*(el\s*)?[ie]skandar/i, en: 'Fairouz - Asamina', ar: 'فيروز - أسامينا' }
+];
+function findTitleFix(rawTitle){
+  for(const fix of TRACK_TITLE_FIXES){ if(fix.match.test(rawTitle)) return fix; }
+  return null;
+}
+
 async function handleStreamTitle(rawTitle){
   if(!rawTitle) return;
   rawTitle=rawTitle.trim();
   if(!rawTitle || rawTitle===lastRawTitle) return;
   lastRawTitle=rawTitle;
-  
+
+  // لو العنوان ده معروف إنه متسجل غلط على السيرفر، بنستخدم الاسم الصح
+  // مباشرة ونتجاوز خطوة الترجمة بالذكاء الاصطناعي تمامًا.
+  const fix=findTitleFix(rawTitle);
+  if(fix){
+    stopCompilationClock();
+    npTitle.textContent = fix.en;
+    if(npAi){ npAi.style.display='flex'; npAiText.textContent = fix.ar; }
+    return;
+  }
+
   // تنظيف اسم الأغنية من أي دمج وتنسيقه بشكل مريح للعين
   let cleanTitle = rawTitle.replace(/[-_]/g, ' - ').replace(/\s+/g, ' ');
   npTitle.textContent = cleanTitle;
