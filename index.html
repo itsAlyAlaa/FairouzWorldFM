@@ -973,13 +973,8 @@ input[type=range]::-webkit-slider-thumb{
 .fx-prayer-star svg{display:block;width:100%;height:100%;}
 @keyframes fxPrayerStarTwinkle{0%,100%{opacity:.3;}50%{opacity:.85;}}
 
-/* A soft halo breathing behind the next-prayer icon, plus the same gentle float the weather icon gets */
+/* Glow halo removed per request — icon keeps the same gentle float the weather icon gets */
 .prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
-.prayer-icon-big::before{
-  content:'';position:absolute;inset:-12px;border-radius:50%;z-index:-1;
-  background:radial-gradient(circle,rgba(139,92,246,.28),transparent 70%);
-  animation:fxSunPulse 4.2s ease-in-out infinite;
-}
 
 /* ── Prayer panel: "next prayer" hero + extra stats (mirrors weather panel) ── */
 .prayer-main{
@@ -1126,16 +1121,9 @@ input[type=range]::-webkit-slider-thumb{
   box-shadow:0 3px 10px -2px rgba(0,0,0,.5);
 }
 
-/* Hero (next-prayer) icon: one calm, contained glow matching the actual next
-   prayer's accent color — sized to stay within the icon's own space so it
-   never crowds into the "Next Prayer" text beside it. */
+/* Hero (next-prayer) icon: glow removed per request — icon keeps its gentle
+   float animation only, no radial-gradient halo behind it. */
 .prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
-.prayer-icon-big::before{
-  content:'';position:absolute;inset:-8px;border-radius:50%;z-index:-1;
-  background:radial-gradient(circle, rgba(var(--pr-rgb,139,92,246),.34), transparent 72%);
-  animation:prHeroGlow 3.4s ease-in-out infinite;
-}
-@keyframes prHeroGlow{0%,100%{opacity:.6;transform:scale(1);}50%{opacity:1;transform:scale(1.1);}}
 
 /* Per-prayer SVG animations */
 .pr-svg{overflow:visible;}
