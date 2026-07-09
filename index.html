@@ -167,7 +167,7 @@ body.lang-ar{font-family:'Cairo',sans-serif;}
   animation:loaderTitleShine 2.8s ease-in-out 1.7s infinite;
 }
 @keyframes loaderTitleShine{0%{left:-40%;} 55%{left:120%;} 100%{left:120%;}}
-.lt-letter{display:inline-block; opacity:0; transform:translateY(14px); animation:ltIn .6s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(.5s + var(--i) * .05s);}
+.lt-letter{display:inline-block; opacity:0; transform:translateY(14px); animation:ltIn .5s cubic-bezier(.2,.8,.2,1) forwards; animation-delay:calc(.12s + var(--i) * .032s);}
 .lt-fm{font-weight:900; color:var(--gold2);}
 .lt-space{display:inline-block; width:.5em;}
 @keyframes ltIn{to{opacity:1; transform:translateY(0);}}
@@ -175,13 +175,13 @@ body.lang-ar{font-family:'Cairo',sans-serif;}
 .loader-subtitle{
   margin-top:10px; font-family:'Dancing Script',cursive; font-weight:600;
   font-size:clamp(15px,2.6vw,19px); color:var(--rose); letter-spacing:.02em;
-  opacity:0; animation:loaderFadeUp .8s ease 1.85s forwards;
+  opacity:0; animation:loaderFadeUp .6s ease .7s forwards;
 }
 @keyframes loaderFadeUp{0%{opacity:0; transform:translateY(8px);} 100%{opacity:1; transform:translateY(0);}}
 
 .loader-progress{
-  margin-top:26px; display:flex; flex-direction:column; align-items:center; gap:8px;
-  opacity:0; animation:loaderFadeUp .8s ease 2.1s forwards;
+  margin-top:26px; display:flex; flex-direction:column; align-items:center; gap:9px;
+  opacity:0; animation:loaderFadeUp .6s ease .85s forwards;
 }
 .loader-progress-track{
   width:180px; height:4px; border-radius:10px; background:rgba(255,255,255,.08);
@@ -197,8 +197,26 @@ body.lang-ar{font-family:'Cairo',sans-serif;}
   background:linear-gradient(100deg,transparent,rgba(255,255,255,.55),transparent);
   transform:translateX(-100%); animation:loaderBarShine 1.4s ease-in-out infinite;
 }
+.loader-progress-fill::before{
+  content:''; position:absolute; top:50%; right:0; width:8px; height:8px; border-radius:50%;
+  background:var(--gold); transform:translate(50%,-50%);
+  box-shadow:0 0 8px 2px rgba(217,184,136,.85), 0 0 16px 4px rgba(217,184,136,.4);
+  animation:loaderDotPulse 1.1s ease-in-out infinite;
+}
+@keyframes loaderDotPulse{0%,100%{opacity:.7; transform:translate(50%,-50%) scale(.85);} 50%{opacity:1; transform:translate(50%,-50%) scale(1.25);}}
 @keyframes loaderBarShine{100%{transform:translateX(220%);}}
-.loader-percent{font-size:11px; letter-spacing:.08em; color:var(--muted); font-variant-numeric:tabular-nums;}
+.loader-percent{
+  font-size:15px; font-weight:700; letter-spacing:.05em;
+  font-variant-numeric:tabular-nums;
+  background:linear-gradient(90deg,var(--gold2),var(--gold),var(--rose));
+  -webkit-background-clip:text; background-clip:text; color:transparent;
+  filter:drop-shadow(0 0 6px rgba(217,184,136,.45));
+  animation:loaderPercentGlow 1.8s ease-in-out infinite;
+}
+@keyframes loaderPercentGlow{
+  0%,100%{filter:drop-shadow(0 0 6px rgba(217,184,136,.35));}
+  50%{filter:drop-shadow(0 0 12px rgba(217,184,136,.7));}
+}
 
 @media(max-width:480px){
   .loader-logo-wrap{width:132px; height:132px;}
@@ -2946,7 +2964,7 @@ body.occasion-sham-elnessim .occ-tint{
   if (!loader) return;
 
   // Shorter, snappier minimum — still feels intentional without stalling the user.
-  var DURATION = 1200;   // simulated fill duration (ms)
+  var DURATION = 1500;   // simulated fill duration (ms)
   var start = performance.now();
   var progress = 0, finished = false;
 
