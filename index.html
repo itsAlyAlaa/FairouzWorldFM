@@ -849,16 +849,6 @@ input[type=range]::-webkit-slider-thumb{
     will-change:height;
 }
 .loading-text{width:100%;font-size:14px;color:var(--muted);text-align:center;}
-.audio-mode-dot{
-  width:7px;height:7px;border-radius:50%;flex-shrink:0;
-  margin-inline-start:7px;
-  background:var(--muted);opacity:.7;
-  box-shadow:0 0 6px currentColor;
-  transition:background .5s ease, box-shadow .5s ease, opacity .5s ease;
-}
-.audio-mode-dot.live{background:#39d98a;color:#39d98a;opacity:1;animation:audioDotPulse 1.8s ease-in-out infinite;}
-.audio-mode-dot.sim{background:#e0a83a;color:#e0a83a;opacity:.9;}
-@keyframes audioDotPulse{0%,100%{box-shadow:0 0 4px currentColor;}50%{box-shadow:0 0 10px currentColor;}}
 
 .player-bar.playing{
     border-color:rgba(139,92,246,.35);
@@ -3335,7 +3325,6 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
           <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
           <div class="wave-bar"></div><div class="wave-bar"></div><div class="wave-bar"></div>
-          <span class="audio-mode-dot" id="audioModeDot" aria-hidden="true"></span>
         </div>
         <div class="loading-text" id="loadingText"></div>
       </section>
@@ -5098,22 +5087,6 @@ function setAuroraLive(on){
   auroraEls.forEach(el=>el.classList.toggle('audio-live',on));
 }
 
-// نقطة صغيرة جنب الموجة بتوضح هل إحنا بنقرا صوت حقيقي دلوقتي ولا في وضع محاكاة —
-// شفافية كاملة، الهدف بس تأكيد للمستخدم إن الميزة شغالة فعلاً
-const audioModeDot=document.getElementById('audioModeDot');
-let lastAudioModeLive=null;
-function updateAudioModeDot(){
-  if(!audioModeDot) return;
-  const live=!!(analyser&&usingRealData);
-  if(live===lastAudioModeLive) return;
-  lastAudioModeLive=live;
-  audioModeDot.classList.toggle('live',live);
-  audioModeDot.classList.toggle('sim',!live);
-  audioModeDot.title = live
-    ? (currentLang==='ar' ? 'بتتفاعل مع الصوت الحقيقي دلوقتي 🎧' : 'Reacting to real live audio 🎧')
-    : (currentLang==='ar' ? 'وضع محاكاة (المتصفح مش قادر يقرا الصوت مباشرة دلوقتي)' : 'Ambient simulation mode (direct audio read isn\'t available right now)');
-}
-
 // تحديد الـ Mount الخاص بإذاعتك بشكل ثابت لضمان جلب اسم الأغنية دائماً
 const ZENO_MOUNT='zv3e5wykprhvv';
 let metaSource=null, lastRawTitle='', metaRetryTimer=null;
@@ -5149,7 +5122,6 @@ function animateBars(){
     if(usedSum>40){usingRealData=true;silentFrames=0;}
     else{silentFrames++;if(silentFrames>60)usingRealData=false;}
   }
-  updateAudioModeDot();
   const t=Date.now()/220;
   waveBars.forEach((b,i)=>{
     const target=analyser&&usingRealData
