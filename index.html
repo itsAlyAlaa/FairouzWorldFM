@@ -1026,8 +1026,22 @@ input[type=range]::-webkit-slider-thumb{
   0%,100%{transform:translateX(-50%) rotate(-6deg);}
   50%{transform:translateX(-50%) rotate(6deg);}
 }
-.fx-lantern-flame{animation:fxLanternFlicker 1.6s ease-in-out infinite;filter:drop-shadow(0 0 9px var(--sun-c)) drop-shadow(0 0 16px rgba(255,182,72,.55));transform-origin:center;}
-@keyframes fxLanternFlicker{0%,100%{opacity:.5;transform:scale(.85);}50%{opacity:1;transform:scale(1.2);}}
+.fx-lantern-flame{
+  animation:fxLanternFlicker 1.9s ease-in-out infinite;
+  filter:drop-shadow(0 0 7px var(--sun-c)) drop-shadow(0 0 14px rgba(255,182,72,.5));
+  transform-origin:20px 38.5px;
+}
+@keyframes fxLanternFlicker{
+  0%{opacity:.8;transform:scale(1,1) skewX(0deg);}
+  10%{opacity:.9;transform:scale(.93,1.07) skewX(-2.5deg);}
+  22%{opacity:.68;transform:scale(1.06,.9) skewX(2deg);}
+  35%{opacity:1;transform:scale(.95,1.12) skewX(-1.5deg);}
+  48%{opacity:.72;transform:scale(1.04,.94) skewX(2.5deg);}
+  60%{opacity:.95;transform:scale(.94,1.06) skewX(-3deg);}
+  75%{opacity:.8;transform:scale(1.02,.97) skewX(1.5deg);}
+  88%{opacity:1;transform:scale(.95,1.1) skewX(-2deg);}
+  100%{opacity:.8;transform:scale(1,1) skewX(0deg);}
+}
 
 /* Glow halo removed per request — icon keeps the same gentle float the weather icon gets */
 .prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
@@ -5831,17 +5845,26 @@ function ambientIslamicMotifSVG(){
 function islamicStarSVG(fill){
   return `<svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 12 L26 20 L36 28 L24 26 L20 38 L16 26 L4 28 L14 20 L4 12 L16 14 Z" fill="${fill}"/></svg>`;
 }
-function ambientLanternSVG(){
-  return `<svg viewBox="0 0 40 64">
-    <line x1="20" y1="0" x2="20" y2="8" stroke="#8a6a3e" stroke-width="1.6"/>
-    <path d="M13 8 h14 v4 h-14 z" fill="#8a6a3e"/>
-    <path d="M11 12 C11 12 9 18 9 27 C9 38 14 45 20 45 C26 45 31 38 31 27 C31 18 29 12 29 12 Z" fill="var(--gold2)" opacity=".22" stroke="#8a6a3e" stroke-width="1.4"/>
-    <line x1="20" y1="12" x2="20" y2="45" stroke="#8a6a3e" stroke-width="1" opacity=".5"/>
-    <line x1="12.5" y1="20" x2="27.5" y2="20" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
-    <line x1="9.5" y1="29" x2="30.5" y2="29" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
-    <path d="M15 45 h10 v4 h-10 z" fill="#8a6a3e"/>
-    <path d="M17 49 l3 9 l3 -9 z" fill="#8a6a3e"/>
-    <circle class="fx-lantern-flame" cx="20" cy="27" r="7" fill="var(--sun-c)"/>
+function ambientLanternSVG(uid){
+  uid = uid || Math.random().toString(36).slice(2,8);
+  return `<svg viewBox="0 0 40 70">
+    <defs>
+      <radialGradient id="flameGrad-${uid}" cx="50%" cy="75%" r="70%">
+        <stop offset="0%" stop-color="#fff6d8"/>
+        <stop offset="40%" stop-color="var(--sun-c)"/>
+        <stop offset="100%" stop-color="#e8722c"/>
+      </radialGradient>
+    </defs>
+    <circle cx="20" cy="2" r="2.2" fill="#8a6a3e"/>
+    <line x1="20" y1="4" x2="20" y2="12" stroke="#8a6a3e" stroke-width="1.6"/>
+    <path d="M13 12 h14 v4 h-14 z" fill="#8a6a3e"/>
+    <path d="M11 16 C11 16 9 22 9 31 C9 42 14 49 20 49 C26 49 31 42 31 31 C31 22 29 16 29 16 Z" fill="var(--gold2)" opacity=".22" stroke="#8a6a3e" stroke-width="1.4"/>
+    <line x1="20" y1="16" x2="20" y2="49" stroke="#8a6a3e" stroke-width="1" opacity=".5"/>
+    <line x1="12.5" y1="24" x2="27.5" y2="24" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
+    <line x1="9.5" y1="33" x2="30.5" y2="33" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
+    <path d="M15 49 h10 v4 h-10 z" fill="#8a6a3e"/>
+    <path d="M17 53 l3 9 l3 -9 z" fill="#8a6a3e"/>
+    <path class="fx-lantern-flame" d="M20 23 C24.5 28.5 25.5 33 20 38.5 C14.5 33 15.5 28.5 20 23 Z" fill="url(#flameGrad-${uid})"/>
   </svg>`;
 }
 // ── Per-prayer accent colors (used for the "next" glow + hero halo) ──
@@ -6002,8 +6025,8 @@ function renderPrayerFx(phase){
   // after dark, softer through the day.
   const lantern=document.createElement('div');
   lantern.className='fx-lantern';
-  lantern.style.width='46px'; lantern.style.height='72px';
-  lantern.style.left='50%'; lantern.style.top='5%';
+  lantern.style.width='46px'; lantern.style.height='78px';
+  lantern.style.left='50%'; lantern.style.top='0%';
   lantern.style.setProperty('--lantern-glow', phase==='night' ? '.95' : (phase==='dawn'||phase==='dusk') ? '.8' : '.45');
   lantern.innerHTML=ambientLanternSVG();
   fx.appendChild(lantern);
