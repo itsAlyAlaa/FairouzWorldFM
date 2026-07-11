@@ -1390,6 +1390,7 @@ input[type=range]::-webkit-slider-thumb{
 
 @keyframes wAqiRingFill{from{stroke-dashoffset:var(--circ);}to{stroke-dashoffset:var(--off);}}
 .w-aqi-ring{stroke-dasharray:var(--circ);stroke-dashoffset:var(--circ);transform:rotate(-90deg);transform-box:fill-box;transform-origin:center;animation:wAqiRingFill .7s cubic-bezier(.3,.8,.3,1) .05s forwards;}
+.w-aqi-core{animation:wUvPulse 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
 @keyframes wAqiBadgePop{0%{transform:scale(0) rotate(-20deg);opacity:0;}55%{transform:scale(1.22) rotate(6deg);opacity:1;}75%{transform:scale(.94) rotate(-2deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
 .w-aqi-badge{animation:wAqiBadgePop .55s cubic-bezier(.34,1.56,.64,1) both;transform-box:fill-box;transform-origin:center;}
 @keyframes wAqiMarkDraw{from{stroke-dashoffset:var(--len);}to{stroke-dashoffset:0;}}
@@ -6622,7 +6623,7 @@ function wAqiIconSVG(pm){
     // Unhealthy — exclamation mark draws itself in
     mark = '<path class="w-aqi-badge-mark" style="--len:4.5" d="M12 7.8v4.4" stroke="var(--bg)" stroke-width="1.7" stroke-linecap="round"/><circle class="w-aqi-badge-dot" cx="12" cy="15.4" r="1.05" fill="var(--bg)"/>';
   }
-  return '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="'+r+'" fill="none" stroke="var(--border)" stroke-width="2.4"/><circle class="w-aqi-ring" style="--circ:'+circ.toFixed(2)+';--off:'+off.toFixed(2)+'" cx="12" cy="12" r="'+r+'" fill="none" stroke="'+c+'" stroke-width="2.6" stroke-linecap="round"/><circle cx="12" cy="12" r="6.6" fill="'+c+'" opacity=".16"/><g class="w-aqi-badge">'+mark+'</g></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="'+r+'" fill="none" stroke="var(--border)" stroke-width="2.4"/><circle class="w-aqi-ring" style="--circ:'+circ.toFixed(2)+';--off:'+off.toFixed(2)+'" cx="12" cy="12" r="'+r+'" fill="none" stroke="'+c+'" stroke-width="2.6" stroke-linecap="round"/><circle class="w-aqi-core" cx="12" cy="12" r="6.6" fill="'+c+'" opacity=".16"/><g class="w-aqi-badge">'+mark+'</g></svg>';
 }
 function uvLabel(v,lang){
   if(v==null||isNaN(v)) return '—';
@@ -6655,7 +6656,7 @@ function weatherStatsHtml(humidity, visibilityM, lang, extra){
     html += '<div class="w-stat"><span class="w-stat-ic">'+wUvIconSVG(extra.uv)+'</span><span class="w-stat-val">'+uvLabel(extra.uv,lang)+'</span><span class="w-stat-label">'+(lang==='ar'?'الأشعة فوق البنفسجية':'UV Index')+'</span></div>';
   }
   if(extra.pm25!=null && !isNaN(extra.pm25)){
-    html += '<div class="w-stat"><span class="w-stat-ic">'+wAqiIconSVG(extra.pm25)+'</span><span class="w-stat-val">'+aqiLabel(extra.pm25,lang)+'</span><span class="w-stat-label">PM2.5</span></div>';
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wAqiIconSVG(extra.pm25)+'</span><span class="w-stat-val">'+aqiLabel(extra.pm25,lang)+'</span><span class="w-stat-label">'+(lang==='ar'?'جودة الهواء':'Air Quality')+'</span><span class="w-stat-sub">PM2.5</span></div>';
   }
   return html;
 }
