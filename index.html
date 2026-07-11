@@ -3339,7 +3339,7 @@ body.occasion-sham-elnessim .occ-tint{
           <h1 data-en="Fairouz World FM" data-ar="عالم فيروز FM">Fairouz World FM</h1>
           <span class="hero-divider" aria-hidden="true"></span>
           <p class="tagline" data-en="Her voice never fades — it travels with you always" data-ar="صوت لا يغيب .. يرافقك في كل حين">Her voice never fades — it travels with you always</p>
-          <p class="tagline-sub" data-en="Live Fairouz Radio · 24 Hours" data-ar="راديو فيروز اللايف · ٢٤ ساعة">Live Fairouz Radio · 24 Hours</p>
+          <p class="tagline-sub" data-en="Live Fairouz Radio · 24/7" data-ar="راديو فيروز اللايف · شغالة 24 ساعة طوال أيام الأسبوع">Live Fairouz Radio · 24/7</p>
         </div>
       </section>
 
@@ -5774,7 +5774,7 @@ function formatCountdown(ms){
 function to12h(t){
   const [hS,mS]=t.split(':'); let h=parseInt(hS);
   const ap=h>=12?'PM':'AM'; h=h%12===0?12:h%12;
-  return h+':'+mS+' '+ap;
+  return '<bdi>'+h+':'+mS+' '+ap+'</bdi>';
 }
 // ── Prayer panel ambient FX: a mosque silhouette that's always there, plus a
 // crescent + stars at night, warm glows at dawn/dusk/day — mirrors the weather panel's approach.
@@ -6665,7 +6665,15 @@ function renderHourlyStrip(wData, startIdx){
   let html='';
   for(let i=startIdx; i<Math.min(startIdx+8, wData.hourly.time.length); i++){
     const d=new Date(wData.hourly.time[i]);
-    const hourLabel = i===startIdx ? (isAr?'دلوقتي':'Now') : toLatinDigits(d.toLocaleTimeString(isAr?'ar-EG-u-nu-latn':'en-US',{hour:'numeric',hour12:true}));
+    let hourLabel;
+    if(i===startIdx){
+      hourLabel = isAr?'دلوقتي':'Now';
+    } else {
+      const hr=d.getHours();
+      let h12=hr%12; if(h12===0) h12=12;
+      const per=isAr?(hr<12?'ص':'م'):(hr<12?'AM':'PM');
+      hourLabel = `<bdi>${h12} ${per}</bdi>`;
+    }
     const temp = wData.hourly.temperature_2m ? Math.round(wData.hourly.temperature_2m[i]) : '—';
     const code = wData.hourly.weather_code ? wData.hourly.weather_code[i] : 0;
     const isDayHour = wData.hourly.is_day ? !!wData.hourly.is_day[i] : true;
