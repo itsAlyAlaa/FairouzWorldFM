@@ -1368,6 +1368,32 @@ input[type=range]::-webkit-slider-thumb{
 @keyframes wEyeBlink{0%,90%,100%{transform:scaleY(1);}95%{transform:scaleY(.12);}}
 .w-vis-eye-lid{animation:wEyeBlink 5.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
 
+/* ── Animated weather-stat icons (feels-like / wind / UV / air quality) ── */
+@keyframes wFeelsBreathe{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.9);}}
+.w-feels-mercury{animation:wFeelsBreathe 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom;}
+@keyframes wFeelsGlow{0%,100%{filter:drop-shadow(0 0 1.5px var(--sun-c));}50%{filter:drop-shadow(0 0 5px var(--sun-c));}}
+.w-feels-bulb{animation:wFeelsGlow 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+
+@keyframes wWindFlow{0%{opacity:0;transform:translateX(-3px);}35%{opacity:.9;}100%{opacity:0;transform:translateX(4px);}}
+.w-wind-line{animation:wWindFlow 1.7s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+.w-wind-line:nth-of-type(1){animation-delay:0s;}
+.w-wind-line:nth-of-type(2){animation-delay:.4s;}
+.w-wind-line:nth-of-type(3){animation-delay:.8s;}
+@keyframes wWindSway{0%,100%{transform:rotate(-5deg);}50%{transform:rotate(5deg);}}
+.w-wind-arrow{animation:wWindSway 2.8s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+
+@keyframes wUvSpin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.w-uv-rays{animation:wUvSpin 9s linear infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes wUvPulse{0%,100%{transform:scale(1);}50%{transform:scale(1.15);}}
+.w-uv-core{animation:wUvPulse 2.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+
+.w-aqi-cloud{animation:wCloudBob 3.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+@keyframes wAqiDrift{0%,100%{opacity:.35;transform:translateY(0);}50%{opacity:.95;transform:translateY(-2.2px);}}
+.w-aqi-dot{animation:wAqiDrift 2.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+.w-aqi-dot:nth-of-type(2){animation-delay:.3s;}
+.w-aqi-dot:nth-of-type(3){animation-delay:.6s;}
+.w-aqi-dot:nth-of-type(4){animation-delay:.9s;}
+
 .forecast-grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
@@ -1483,8 +1509,11 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 }
 
 /* ── Prayer settings row: calculation method + reminder notification ── */
+.prayer-method-label{
+  font-size:12px; color:var(--muted); margin-top:12px; opacity:.85;
+}
 .prayer-settings-row{
-  display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; padding-top:12px;
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; padding-top:12px;
   border-top:1px solid var(--border);
 }
 .notif-minutes-select{
@@ -3420,6 +3449,7 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="prayer-main" id="prayerMain"></div>
           <div class="prayer-stats" id="prayerStats"></div>
           <div class="prayer-grid" id="prayerGrid"></div>
+          <div class="prayer-method-label" id="prayerMethodLabel">📐 طريقة الحساب: ...</div>
           <div class="prayer-settings-row">
             <button type="button" id="notifToggleBtn" class="notif-toggle-btn">🔕 Enable prayer reminders</button>
             <select id="notifMinutesSelect" class="notif-minutes-select" title="Minutes before">
@@ -3899,6 +3929,7 @@ function applyLang() {
   if (currentAthanName) updateAthanBanner(currentAthanName);
   if (typeof refreshWeatherLang === 'function') refreshWeatherLang();
   if (typeof updateNotifToggleUi === 'function') updateNotifToggleUi();
+  if (typeof updatePrayerMethodLabel === 'function') updatePrayerMethodLabel();
   if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && !document.getElementById('page-worldcup').classList.contains('page-hidden')) {
     const wcState = wcLifecyclePhase(new Date());
     if (wcState.phase === 'champion') { wcRenderChampion(wcState.final); }
@@ -5714,6 +5745,27 @@ function methodForCountry(cc){
   if(!cc) return '3';
   return COUNTRY_PRAYER_METHOD[cc.toLowerCase()] || '3'; // default: Muslim World League
 }
+const PRAYER_METHOD_NAMES={
+  '1':{ar:'جامعة العلوم الإسلامية، كراتشي', en:'Univ. of Islamic Sciences, Karachi'},
+  '2':{ar:'الجمعية الإسلامية لأمريكا الشمالية (ISNA)', en:'ISNA (North America)'},
+  '3':{ar:'رابطة العالم الإسلامي', en:'Muslim World League'},
+  '4':{ar:'أم القرى، مكة المكرمة', en:'Umm Al-Qura, Makkah'},
+  '5':{ar:'الهيئة المصرية العامة للمساحة', en:'Egyptian General Authority of Survey'},
+  '7':{ar:'معهد الجيوفيزياء، جامعة طهران', en:'Institute of Geophysics, Univ. of Tehran'},
+  '8':{ar:'منطقة الخليج', en:'Gulf Region'},
+  '9':{ar:'الكويت', en:'Kuwait'},
+  '10':{ar:'قطر', en:'Qatar'},
+  '11':{ar:'مجلس الشؤون الدينية، سنغافورة', en:'Majlis Ugama Islam Singapura'},
+  '13':{ar:'الشؤون الدينية، تركيا (Diyanet)', en:'Diyanet İşleri Başkanlığı, Turkey'}
+};
+function updatePrayerMethodLabel(){
+  const el=document.getElementById('prayerMethodLabel');
+  if(!el) return;
+  const method=methodForCountry(currentPrayerCountry);
+  const name=PRAYER_METHOD_NAMES[method] || PRAYER_METHOD_NAMES['3'];
+  const isAr=currentLang==='ar';
+  el.textContent=(isAr?'📐 طريقة الحساب: ':'📐 Method: ')+(isAr?name.ar:name.en);
+}
 async function fetchPrayerTimes(lat,lon,countryCode){
   try{
     lastPrayerLat=lat; lastPrayerLon=lon;
@@ -5735,6 +5787,7 @@ async function fetchPrayerTimes(lat,lon,countryCode){
     prayerExtra.hijri = h ? {day:h.day, monthAr:h.month.ar, monthEn:h.month.en, year:h.year} : null;
     renderPrayers();
     scheduleAthanNotifications();
+    updatePrayerMethodLabel();
   }catch(e){}
 }
 // Great-circle bearing from (lat,lon) to the Kaaba, in degrees (0-360)
@@ -6173,6 +6226,7 @@ document.getElementById('notifMinutesSelect')?.addEventListener('change', (e)=>{
   if(pref.enabled) scheduleAthanNotifications();
 });
 updateNotifToggleUi();
+updatePrayerMethodLabel();
 
 // ── Weather ──
 const WCODE={
@@ -6638,21 +6692,26 @@ function wVisibilityIconSVG(){
     '</svg>';
 }
 function wFeelsLikeIconSVG(){
-  return '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5a2.3 2.3 0 0 1 2.3 2.3v8.1a4.3 4.3 0 1 1-4.6 0V4.8A2.3 2.3 0 0 1 12 2.5z" fill="none" stroke="var(--sun-c)" stroke-width="1.4"/><circle cx="12" cy="16.4" r="2.6" fill="var(--sun-c)"/><rect x="10.9" y="6" width="2.2" height="7.5" rx="1.1" fill="var(--sun-c)"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none"><rect class="w-feels-mercury" x="10.9" y="6" width="2.2" height="7.5" rx="1.1" fill="var(--sun-c)"/><path d="M12 2.5a2.3 2.3 0 0 1 2.3 2.3v8.1a4.3 4.3 0 1 1-4.6 0V4.8A2.3 2.3 0 0 1 12 2.5z" fill="none" stroke="var(--sun-c)" stroke-width="1.4"/><circle class="w-feels-bulb" cx="12" cy="16.4" r="2.6" fill="var(--sun-c)"/></svg>';
 }
 function wWindIconSVG(deg){
   const rot = (deg!=null && !isNaN(deg)) ? deg : 0;
-  return '<svg viewBox="0 0 24 24" fill="none" style="transform:rotate('+rot+'deg)"><path d="M12 3.5v15M12 3.5l-4 4.2M12 3.5l4 4.2" stroke="var(--sea-c)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none" style="transform:rotate('+rot+'deg)">'+
+    '<g class="w-wind-lines" stroke="var(--sea-c)" stroke-width="1.3" stroke-linecap="round" opacity=".55">'+
+      '<path class="w-wind-line" d="M4 15h4"/><path class="w-wind-line" d="M4 18h6"/><path class="w-wind-line" d="M4 12h3"/>'+
+    '</g>'+
+    '<path class="w-wind-arrow" d="M12 3.5v15M12 3.5l-4 4.2M12 3.5l4 4.2" stroke="var(--sea-c)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>'+
+  '</svg>';
 }
 function wUvIconSVG(uv){
   const v=(uv!=null && !isNaN(uv))?uv:0;
   const c = v>=8?'var(--storm-c)':(v>=6?'var(--sun-c)':(v>=3?'var(--gold)':'var(--muted)'));
-  return '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5.5" fill="'+c+'"/><g stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4.2"/><line x1="12" y1="19.8" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.2" y2="12"/><line x1="19.8" y1="12" x2="22.5" y2="12"/><line x1="4.4" y1="4.4" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.6" y2="19.6"/><line x1="4.4" y1="19.6" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.6" y2="4.4"/></g></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none"><circle class="w-uv-core" cx="12" cy="12" r="5.5" fill="'+c+'"/><g class="w-uv-rays" stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4.2"/><line x1="12" y1="19.8" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.2" y2="12"/><line x1="19.8" y1="12" x2="22.5" y2="12"/><line x1="4.4" y1="4.4" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.6" y2="19.6"/><line x1="4.4" y1="19.6" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.6" y2="4.4"/></g></svg>';
 }
 function wAqiIconSVG(pm){
   const v=(pm!=null && !isNaN(pm))?pm:0;
   const c = v>55?'var(--storm-c)':(v>25?'var(--gold2)':(v>12?'var(--gold)':'#7fd88a'));
-  return '<svg viewBox="0 0 24 24" fill="none"><path d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/></svg>';
+  return '<svg viewBox="0 0 24 24" fill="none"><path class="w-aqi-cloud" d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/><circle class="w-aqi-dot" cx="8.5" cy="17.5" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="12" cy="18.3" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="15.5" cy="17.5" r=".9" fill="'+c+'"/></svg>';
 }
 function uvLabel(v,lang){
   if(v==null||isNaN(v)) return '—';
