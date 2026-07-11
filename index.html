@@ -1662,6 +1662,33 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 .fx-parasol svg{display:block;width:100%;height:100%;}
 @keyframes fxParasolSway{0%,100%{transform:rotate(-1.5deg);}50%{transform:rotate(1.5deg);}}
 
+/* Warm sun motes drifting upward — the sunny counterpart to rain drops */
+.fx-sunmote{
+  position:absolute; bottom:-6%;
+  width:4px; height:4px; border-radius:50%;
+  background:radial-gradient(circle, rgba(255,210,120,.95), rgba(255,180,70,.2) 70%, transparent);
+  filter:drop-shadow(0 0 3px rgba(255,190,90,.55));
+  pointer-events:none;
+  animation-name:fxSunMoteRise; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+}
+@keyframes fxSunMoteRise{
+  0%{transform:translate(0,0) scale(.6);opacity:0;}
+  15%{opacity:.9;}
+  55%{transform:translate(var(--sx,10px),-120px) scale(1);}
+  85%{opacity:.4;}
+  100%{transform:translate(var(--sx2,-8px),-230px) scale(.5);opacity:0;}
+}
+
+/* Soft diagonal sun-ray beams sweeping the panel on a bright summer day */
+.fx-raybeam{
+  position:absolute; top:-25%; width:56px; height:170%;
+  background:linear-gradient(180deg, rgba(255,205,110,.14), transparent 72%);
+  transform:rotate(16deg);
+  pointer-events:none;
+  animation-name:fxRayBeamBreathe; animation-timing-function:ease-in-out; animation-iteration-count:infinite;
+}
+@keyframes fxRayBeamBreathe{0%,100%{opacity:.3;}50%{opacity:.7;}}
+
 /* ── Winter ambience — pale sky, snow flurries, snow-hills, icy sparkle, snowy pine ── */
 .fx-snowhill{position:absolute;left:-12%;width:124%;pointer-events:none;will-change:transform;}
 .fx-snowhill svg{display:block;width:100%;height:100%;}
@@ -6217,7 +6244,16 @@ function ambientGullSVG(){
   return `<svg viewBox="0 0 24 24"><path class="fx-gull-wing" d="M2 14 Q7 6 12 13 Q17 6 22 14" stroke="var(--text)" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/></svg>`;
 }
 function ambientParasolSVG(){
-  return `<svg viewBox="0 0 60 60"><path d="M30 6 C14 6 4 20 4 26 H56 C56 20 46 6 30 6 Z" fill="var(--rose)"/><path d="M30 6 C22 6 15 15 12 22 H30 Z" fill="var(--gold2)" opacity=".85"/><path d="M30 6 C38 6 45 15 48 22 H30 Z" fill="var(--gold2)" opacity=".55"/><line x1="30" y1="26" x2="30" y2="54" stroke="var(--gold2)" stroke-width="2.5"/></svg>`;
+  return `<svg viewBox="0 0 60 60">
+    <ellipse cx="30" cy="55" rx="14" ry="3" fill="#000" opacity=".18"/>
+    <line x1="30" y1="24" x2="30" y2="54" stroke="#8a5a34" stroke-width="2.4" stroke-linecap="round"/>
+    <rect x="27" y="50" width="6" height="5" rx="1.5" fill="#6e4527"/>
+    <path d="M30 6 C15 6 5 19 4 27 C4 28.5 5.5 28.5 7 27.5 C9 26 11 27.5 13 28.4 C15 29.3 17 27.7 19 26.8 C21 25.9 23 27.7 25 28.6 C27 29.4 28.5 28 30 28 C31.5 28 33 29.4 35 28.6 C37 27.7 39 25.9 41 26.8 C43 27.7 45 29.3 47 28.4 C49 27.5 51 26 53 27.5 C54.5 28.5 56 28.5 56 27 C55 19 45 6 30 6 Z" fill="var(--rose)"/>
+    <path d="M30 6 C22 6 14.5 13.5 10 22.5 C13.5 22 17 24 19 26.8 C21.5 24 25.5 22 30 22 Z" fill="var(--gold2)" opacity=".9"/>
+    <path d="M30 6 C38 6 45.5 13.5 50 22.5 C46.5 22 43 24 41 26.8 C38.5 24 34.5 22 30 22 Z" fill="var(--gold2)" opacity=".6"/>
+    <path d="M30 6 L30 22" stroke="#7a3d2a" stroke-width="1" opacity=".35"/>
+    <path d="M4 27 C4 28.5 5.5 28.5 7 27.5 C9 26 11 27.5 13 28.4 C15 29.3 17 27.7 19 26.8 C21 25.9 23 27.7 25 28.6 C27 29.4 28.5 28 30 28 C31.5 28 33 29.4 35 28.6 C37 27.7 39 25.9 41 26.8 C43 27.7 45 29.3 47 28.4 C49 27.5 51 26 53 27.5 C54.5 28.5 56 28.5 56 27" fill="none" stroke="#7a3d2a" stroke-width="1" opacity=".4"/>
+  </svg>`;
 }
 function renderBeachFx(fx, dayTime){
   // Note: the big sun/moon icon used to live here, floating in the panel's
@@ -6249,6 +6285,30 @@ function renderBeachFx(fx, dayTime){
       g.style.animationDelay=(-Math.random()*dur)+'s';
       g.innerHTML=ambientGullSVG();
       fx.appendChild(g);
+    }
+    // Soft diagonal sun-ray beams sweeping the whole panel — the sunny,
+    // full-panel counterpart to the rain drops, so a bright summer day reads
+    // as clearly as a rainy one at a glance.
+    for(let i=0;i<3;i++){
+      const rb=document.createElement('div');
+      rb.className='fx-raybeam';
+      rb.style.left=(10+i*30+Math.random()*8)+'%';
+      const dur=5+Math.random()*3;
+      rb.style.animationDuration=dur+'s';
+      rb.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(rb);
+    }
+    // Warm golden light motes drifting upward across the whole panel
+    for(let i=0;i<14;i++){
+      const sm=document.createElement('div');
+      sm.className='fx-sunmote';
+      sm.style.left=(Math.random()*98)+'%';
+      sm.style.setProperty('--sx',(Math.random()*30-15)+'px');
+      sm.style.setProperty('--sx2',(Math.random()*40-20)+'px');
+      const dur=6+Math.random()*5;
+      sm.style.animationDuration=dur+'s';
+      sm.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(sm);
     }
   }
   // Layered sea horizon at the bottom of the panel
