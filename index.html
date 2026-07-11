@@ -322,7 +322,7 @@ body.lang-ar .sidebar{border-right:none;border-left:none;border-bottom:1px solid
 }
 
 /* Nav */
-.nav{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px;flex:1;min-width:0;}
+.nav{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;gap:6px;flex:1;min-width:0;position:relative;}
 .nav-item{
   display:flex;align-items:center;gap:8px;
   padding:9px 13px;border-radius:12px;
@@ -374,9 +374,13 @@ body.lang-ar .nav-item{text-align:center;font-family:'Cairo',sans-serif;}
 
 .nav-lang{
   width:auto;
-  margin:0 0 0 auto;
+  margin:0;
   flex-shrink:0;
   padding:8px 12px;
+  position:absolute;
+  right:0;
+  top:50%;
+  transform:translateY(-50%);
 }
 
 body.lang-ar .lang-toggle{
