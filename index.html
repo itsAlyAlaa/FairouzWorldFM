@@ -1394,6 +1394,12 @@ input[type=range]::-webkit-slider-thumb{
 .w-aqi-dot:nth-of-type(2){animation-delay:.3s;}
 .w-aqi-dot:nth-of-type(3){animation-delay:.6s;}
 .w-aqi-dot:nth-of-type(4){animation-delay:.9s;}
+@keyframes wAqiBadgePop{0%{transform:scale(0) rotate(-20deg);opacity:0;}55%{transform:scale(1.22) rotate(6deg);opacity:1;}75%{transform:scale(.94) rotate(-2deg);}100%{transform:scale(1) rotate(0deg);opacity:1;}}
+.w-aqi-badge{animation:wAqiBadgePop .55s cubic-bezier(.34,1.56,.64,1) both;transform-box:fill-box;transform-origin:center;}
+@keyframes wAqiMarkDraw{from{stroke-dashoffset:var(--len);}to{stroke-dashoffset:0;}}
+.w-aqi-badge-mark{stroke-dasharray:var(--len);stroke-dashoffset:var(--len);animation:wAqiMarkDraw .3s ease-out .38s forwards;}
+@keyframes wAqiDotPop{0%{transform:scale(0);opacity:0;}100%{transform:scale(1);opacity:1;}}
+.w-aqi-badge-dot{animation:wAqiDotPop .2s ease-out .55s both;transform-box:fill-box;transform-origin:center;}
 
 .forecast-grid{
   display:grid;
@@ -2599,6 +2605,7 @@ footer { margin-top: 10px; font-size: 12.5px; }
     background: rgba(13,6,16,.97);
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(14px);
+    will-change: transform;
     padding: calc(6px + env(safe-area-inset-top)) 0 6px;
     justify-content: center;
   }
@@ -3908,7 +3915,7 @@ function applyLang() {
   document.querySelectorAll('[data-en]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang);
     if (val !== null) el.innerHTML = val;
-    if (el.id !== 'npTitle' && el.id !== 'miniPlayerTitle') el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
+    if (el.id !== 'npTitle' && el.id !== 'miniPlayerTitle' && el.id !== 'citySearchToggle' && el.id !== 'useGpsBtn') el.setAttribute('dir', currentLang === 'ar' ? 'rtl' : 'ltr');
   });
   document.querySelectorAll('[data-en-ph]').forEach(el => {
     const val = el.getAttribute('data-' + currentLang + '-ph');
@@ -6714,18 +6721,18 @@ function wUvIconSVG(uv){
 function wAqiIconSVG(pm){
   const v=(pm!=null && !isNaN(pm))?pm:0;
   const c = v>55?'var(--storm-c)':(v>25?'var(--gold2)':(v>12?'var(--gold)':'#7fd88a'));
-  let badge;
+  let mark;
   if(v<=12){
-    // Good — checkmark
-    badge = '<path d="M16.6 6.9l1.15 1.15 2.25-2.4" stroke="var(--bg)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
+    // Good — checkmark draws itself in
+    mark = '<path class="w-aqi-badge-mark" style="--len:5" d="M16.6 6.9l1.15 1.15 2.25-2.4" stroke="var(--bg)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
   } else if(v<=55){
-    // Fair / Moderate — dash
-    badge = '<path d="M16.7 6.55h3" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/>';
+    // Fair / Moderate — dash draws itself in
+    mark = '<path class="w-aqi-badge-mark" style="--len:3" d="M16.7 6.55h3" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/>';
   } else {
-    // Unhealthy — exclamation mark
-    badge = '<path d="M18.2 4.4v2.2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/><circle cx="18.2" cy="8.1" r=".65" fill="var(--bg)"/>';
+    // Unhealthy — exclamation mark draws itself in
+    mark = '<path class="w-aqi-badge-mark" style="--len:2.2" d="M18.2 4.4v2.2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/><circle class="w-aqi-badge-dot" cx="18.2" cy="8.1" r=".65" fill="var(--bg)"/>';
   }
-  return '<svg viewBox="0 0 24 24" fill="none"><path class="w-aqi-cloud" d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/><circle class="w-aqi-dot" cx="8.5" cy="17.5" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="12" cy="18.3" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="15.5" cy="17.5" r=".9" fill="'+c+'"/><circle cx="18.2" cy="6.2" r="3.3" fill="'+c+'" stroke="var(--card)" stroke-width="1.2"/>'+badge+'</svg>';
+  return '<svg viewBox="0 0 24 24" fill="none"><path class="w-aqi-cloud" d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/><circle class="w-aqi-dot" cx="8.5" cy="17.5" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="12" cy="18.3" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="15.5" cy="17.5" r=".9" fill="'+c+'"/><g class="w-aqi-badge"><circle cx="18.2" cy="6.2" r="3.3" fill="'+c+'" stroke="var(--card)" stroke-width="1.2"/>'+mark+'</g></svg>';
 }
 function uvLabel(v,lang){
   if(v==null||isNaN(v)) return '—';
@@ -7066,6 +7073,21 @@ setInterval(() => {
 }, 60 * 60 * 1000);
 
 
+// ── Shared scroll-activity flag: lets always-on background canvases (starfield,
+// season/occasion particles) skip a few draw calls while the page is actively
+// being scrolled, so the main thread isn't fighting the scroll for CPU time.
+// Purely a perf hint — the animations themselves are untouched and resume
+// drawing the instant scrolling stops (~140ms later), which is imperceptible.
+(function(){
+  let timer=null;
+  window.__scrollBusy=false;
+  window.addEventListener('scroll', function(){
+    window.__scrollBusy=true;
+    clearTimeout(timer);
+    timer=setTimeout(function(){window.__scrollBusy=false;}, 140);
+  }, {passive:true, capture:true});
+})();
+
 // ── Starfield ──
 (function(){
   const canvas=document.getElementById('starCanvas'),ctx=canvas.getContext('2d',{alpha:true});
@@ -7087,14 +7109,16 @@ setInterval(() => {
   resize();
   function tick(t){
     if(paused)return;
-    ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
-    stars.forEach(s=>{
-      const alpha=.22+.55*Math.sin(s.phase+t*s.speed);
-      ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
-      ctx.fillStyle=s.color.replace('A',Math.max(alpha,.08).toFixed(2));
-      if(s.glow){ctx.shadowColor=s.color.replace('A','.8');ctx.shadowBlur=8;}else{ctx.shadowBlur=0;}
-      ctx.fill();
-    });
+    if(!window.__scrollBusy){
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      stars.forEach(s=>{
+        const alpha=.22+.55*Math.sin(s.phase+t*s.speed);
+        ctx.beginPath(); ctx.arc(s.x,s.y,s.r,0,Math.PI*2);
+        ctx.fillStyle=s.color.replace('A',Math.max(alpha,.08).toFixed(2));
+        if(s.glow){ctx.shadowColor=s.color.replace('A','.8');ctx.shadowBlur=8;}else{ctx.shadowBlur=0;}
+        ctx.fill();
+      });
+    }
     rafId2=requestAnimationFrame(tick);
   }
   document.addEventListener('visibilitychange',()=>{
@@ -7226,7 +7250,7 @@ setInterval(() => {
   }
   function setActiveThemes(configs){ activeConfigs=configs.filter(Boolean); buildParticles(); }
   function tick(t){
-    if(!paused){
+    if(!paused && !window.__scrollBusy){
       const dt=Math.min((t-lastT)/1000,.05)||.016; lastT=t;
       ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
       particles.forEach(p=>{
