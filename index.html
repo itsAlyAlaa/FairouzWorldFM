@@ -1431,9 +1431,14 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
   margin-inline-start:auto; background:var(--card); border:1px solid var(--border);
   color:var(--text); border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer;
   display:flex; align-items:center; gap:5px; transition:border-color .2s ease, transform .15s ease;
+  white-space:nowrap; font-family:inherit;
 }
 .panel-tool-btn:hover{border-color:var(--gold2); transform:translateY(-1px);}
 #useGpsBtn{margin-inline-start:0;}
+@media(max-width:480px){
+  .panel-title{flex-wrap:wrap;}
+  .panel-tool-btn{font-size:11.5px; padding:5px 9px;}
+}
 
 /* ── City search box ── */
 .city-search-box{position:relative; z-index:5; margin:2px 0 10px; animation:fadeSlideIn .25s ease;}
@@ -1458,26 +1463,31 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 
 /* ── Hourly forecast strip ── */
 .hourly-strip{
-  display:flex; gap:10px; overflow-x:auto; padding:12px 2px; margin:4px 0 6px;
+  display:flex; gap:6px; overflow-x:auto; padding:14px 2px; margin:4px 0 6px;
   border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+  justify-content:space-between;
 }
 .hourly-strip::-webkit-scrollbar{height:5px;}
 .hourly-strip::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
 .hourly-item{
-  flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:4px;
-  min-width:52px; padding:6px 4px; text-align:center;
+  flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:5px;
+  min-width:46px; padding:6px 2px; text-align:center;
 }
 .hourly-item .h-time{font-size:11.5px; color:var(--muted); white-space:nowrap;}
-.hourly-item .h-icon{width:28px; height:28px;}
+.hourly-item .h-icon{width:26px; height:26px;}
 .hourly-item .h-icon svg{width:100%;height:100%;display:block;}
-.hourly-item .h-temp{font-size:14px; font-weight:700; color:var(--text);}
+.hourly-item .h-temp{font-size:14px; font-weight:700; color:var(--text); white-space:nowrap;}
+@media(max-width:600px){
+  .hourly-strip{justify-content:flex-start;}
+  .hourly-item{flex:0 0 auto; min-width:50px;}
+}
 
 /* ── Prayer settings row: calculation method + reminder notification ── */
 .prayer-settings-row{
   display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; padding-top:12px;
   border-top:1px solid var(--border);
 }
-.prayer-method-select,.notif-minutes-select{
+.notif-minutes-select{
   background:var(--surface); color:var(--text); border:1px solid var(--border);
   border-radius:10px; padding:7px 10px; font-size:12.5px; font-family:inherit; cursor:pointer; max-width:100%;
 }
@@ -1489,7 +1499,7 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 .notif-toggle-btn.active{border-color:var(--gold2); background:rgba(217,184,136,.12); color:var(--gold);}
 @media(max-width:480px){
   .prayer-settings-row{flex-direction:column; align-items:stretch;}
-  .prayer-method-select,.notif-minutes-select,.notif-toggle-btn{width:100%;}
+  .notif-minutes-select,.notif-toggle-btn{width:100%;}
 }
 
 @media(max-width:480px){
@@ -3387,7 +3397,7 @@ body.occasion-sham-elnessim .occ-tint{
         <div class="panel panel-weather">
           <div class="weather-fx" id="weatherFx" aria-hidden="true"></div>
           <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span><span class="weather-season-badge" id="weatherSeasonBadge" aria-hidden="true"></span>
-            <button type="button" id="citySearchToggle" class="panel-tool-btn" title="Change city / غيّر المدينة">🔍</button>
+            <button type="button" id="citySearchToggle" class="panel-tool-btn" title="Change city / غيّر المدينة" data-en="🔍 Change city" data-ar="🔍 غيّر المدينة">🔍 Change city</button>
             <button type="button" id="useGpsBtn" class="panel-tool-btn" style="display:none;" data-en="📍 Use my location" data-ar="📍 استخدم موقعي">📍 Use my location</button>
           </div>
           <div id="citySearchBox" class="city-search-box" style="display:none;">
@@ -3411,18 +3421,6 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="prayer-stats" id="prayerStats"></div>
           <div class="prayer-grid" id="prayerGrid"></div>
           <div class="prayer-settings-row">
-            <select id="prayerMethodSelect" class="prayer-method-select" title="Calculation method">
-              <option value="5">الهيئة المصرية العامة للمساحة / Egyptian General Authority</option>
-              <option value="4">أم القرى، مكة / Umm Al-Qura, Makkah</option>
-              <option value="3">رابطة العالم الإسلامي / Muslim World League</option>
-              <option value="2">الجمعية الإسلامية لأمريكا الشمالية / ISNA (North America)</option>
-              <option value="1">جامعة العلوم الإسلامية، كراتشي / Univ. Islamic Sciences, Karachi</option>
-              <option value="9">الكويت / Kuwait</option>
-              <option value="10">قطر / Qatar</option>
-              <option value="11">مجلس الشؤون الدينية، سنغافورة / Singapore</option>
-              <option value="13">الشؤون الدينية، تركيا / Diyanet, Turkey</option>
-              <option value="15">لجنة رؤية الهلال العالمية / Moonsighting Committee Worldwide</option>
-            </select>
             <button type="button" id="notifToggleBtn" class="notif-toggle-btn">🔕 Enable prayer reminders</button>
             <select id="notifMinutesSelect" class="notif-minutes-select" title="Minutes before">
               <option value="5">5 دقايق / min</option>
@@ -5700,17 +5698,27 @@ const ATHAN_FILES = {
 
 const ATHAN_FALLBACK = './athan.mp3';
 
-const PRAYER_METHOD_KEY='fwfm_prayer_method_v1';
-function getPrayerMethod(){
-  try{ return localStorage.getItem(PRAYER_METHOD_KEY) || '5'; }catch(e){ return '5'; }
+// Calculation method is picked automatically from the person's country —
+// no manual choice needed. Falls back to the widely-used Muslim World League
+// method for countries not explicitly mapped.
+const COUNTRY_PRAYER_METHOD={
+  eg:'5', // Egyptian General Authority of Survey
+  sa:'4', // Umm Al-Qura, Makkah
+  kw:'9', qa:'10', sg:'11', tr:'13', ir:'7',
+  ae:'8', om:'8', bh:'8', // Gulf Region
+  pk:'1', in:'1', bd:'1', af:'1', // Univ. of Islamic Sciences, Karachi
+  us:'2', ca:'2' // ISNA
+};
+let currentPrayerCountry=null;
+function methodForCountry(cc){
+  if(!cc) return '3';
+  return COUNTRY_PRAYER_METHOD[cc.toLowerCase()] || '3'; // default: Muslim World League
 }
-function setPrayerMethod(m){
-  try{ localStorage.setItem(PRAYER_METHOD_KEY, m); }catch(e){}
-}
-async function fetchPrayerTimes(lat,lon){
+async function fetchPrayerTimes(lat,lon,countryCode){
   try{
     lastPrayerLat=lat; lastPrayerLon=lon;
-    const method=getPrayerMethod();
+    if(countryCode) currentPrayerCountry=countryCode;
+    const method=methodForCountry(currentPrayerCountry);
     const res=await fetch('https://api.aladhan.com/v1/timings?latitude='+lat+'&longitude='+lon+'&method='+method);
     const data=await res.json(); const t=data.data.timings;
     const clean=v=>v.split(' ')[0];
@@ -6164,15 +6172,7 @@ document.getElementById('notifMinutesSelect')?.addEventListener('change', (e)=>{
   setNotifPref(pref);
   if(pref.enabled) scheduleAthanNotifications();
 });
-document.getElementById('prayerMethodSelect')?.addEventListener('change', (e)=>{
-  setPrayerMethod(e.target.value);
-  if(lastPrayerLat!=null && lastPrayerLon!=null) fetchPrayerTimes(lastPrayerLat, lastPrayerLon);
-});
 updateNotifToggleUi();
-(function initPrayerMethodSelect(){
-  const sel=document.getElementById('prayerMethodSelect');
-  if(sel) sel.value=getPrayerMethod();
-})();
 
 // ── Weather ──
 const WCODE={
@@ -6726,7 +6726,7 @@ function renderHourlyStrip(wData, startIdx){
   if(!wData.hourly || !wData.hourly.time || startIdx<0){ el.innerHTML=''; return; }
   const isAr=currentLang==='ar';
   let html='';
-  for(let i=startIdx; i<Math.min(startIdx+7, wData.hourly.time.length); i++){
+  for(let i=startIdx; i<Math.min(startIdx+8, wData.hourly.time.length); i++){
     const d=new Date(wData.hourly.time[i]);
     const hourLabel = i===startIdx ? (isAr?'دلوقتي':'Now') : d.toLocaleTimeString(isAr?'ar-EG':'en-US',{hour:'numeric',hour12:true});
     const temp = wData.hourly.temperature_2m ? Math.round(wData.hourly.temperature_2m[i]) : '—';
@@ -6795,7 +6795,7 @@ city = locationName;
 const WEATHER_CACHE_KEY='fwfm_weather_cache_v1';
 function saveWeatherCache(lat,lon,city,wData,flag){
   try{
-    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,flag,manual:isManualCity,manualMeta:lastManualCityMeta,ts:Date.now()}));
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,flag,manual:isManualCity,manualMeta:lastManualCityMeta,countryCode:currentPrayerCountry,ts:Date.now()}));
   }catch(e){/* storage unavailable/full — non-critical, just skip caching */}
 }
 function loadWeatherCache(){
@@ -6847,6 +6847,7 @@ lastWeatherFlag = countryFlagEmoji(countryCode);
 
 const cityLabel = document.getElementById('prayerCityLabel');
 if (cityLabel) cityLabel.textContent = locationName;
+    if(countryCode && countryCode!==currentPrayerCountry) fetchPrayerTimes(lat, lon, countryCode);
     const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day,relative_humidity_2m,apparent_temperature,wind_speed_10m,wind_direction_10m&hourly=precipitation_probability,visibility,temperature_2m,weather_code,uv_index,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
@@ -6970,6 +6971,7 @@ if(cachedWeather && cachedWeather.wData){
   lastWeatherFlag=cachedWeather.flag||'';
   isManualCity=!!cachedWeather.manual;
   lastManualCityMeta=cachedWeather.manualMeta||null;
+  currentPrayerCountry=cachedWeather.countryCode||null;
   renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city, lastWeatherFlag);
   renderWeatherFx(cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m, cachedWeather.wData.current.is_day);
   document.getElementById('weatherSection').style.display='block';
