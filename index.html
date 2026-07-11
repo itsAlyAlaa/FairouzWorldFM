@@ -639,6 +639,7 @@ body.lang-ar .btn-start{font-family:'Cairo',sans-serif;}
   position:relative;
   width:min(260px, 34vw);
   flex-shrink:0;
+  margin:0 auto 18px;
 }
 /* Glow halo removed per request — element kept empty/inert in case JS still
    references it; the flag's own wave animation is untouched below. */
@@ -2459,9 +2460,9 @@ body.lang-ar .nav-item:hover{transform:translateY(-3px);}
     position:sticky;
     top:0;
     z-index:50;
-    background:var(--bg);
+    background:linear-gradient(var(--bg) 75%, transparent);
     padding-top:8px;
-    padding-bottom:8px;
+    padding-bottom:16px;
 }
 .top-lang{
     width:auto;
@@ -3345,13 +3346,6 @@ body.occasion-sham-elnessim .occ-tint{
     <span class="lang-name" id="langName">العربية</span>
   </button>
 
-  <div class="topbar-palestine" id="topbarPalestine" aria-hidden="true">
-    <div class="topbar-palestine-glow"></div>
-    <div class="topbar-palestine-shadowwrap">
-      <img class="topbar-palestine-img" src="assets/palestine-flag.webp" alt="" loading="lazy" decoding="async">
-    </div>
-  </div>
-
   <div class="clock-card">
     <div class="cc-label">
       <span data-en="Current Time" data-ar="الوقت الآن">Current Time</span>
@@ -3371,6 +3365,13 @@ body.occasion-sham-elnessim .occ-tint{
     </div>
   </div>
 
+</div>
+
+<div class="topbar-palestine" id="topbarPalestine" aria-hidden="true">
+  <div class="topbar-palestine-glow"></div>
+  <div class="topbar-palestine-shadowwrap">
+    <img class="topbar-palestine-img" src="assets/palestine-flag.webp" alt="" loading="lazy" decoding="async">
+  </div>
 </div>
 
     <div id="page-home">
