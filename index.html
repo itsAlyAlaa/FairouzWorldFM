@@ -1018,6 +1018,14 @@ input[type=range]::-webkit-slider-thumb{
 .fx-prayer-star svg{display:block;width:100%;height:100%;}
 @keyframes fxPrayerStarTwinkle{0%,100%{opacity:.3;}50%{opacity:.85;}}
 
+.fx-lantern{position:absolute;pointer-events:none;--lantern-glow:.6;
+  animation:fxLanternSway 4.8s ease-in-out infinite;transform-origin:top center;
+  opacity:var(--lantern-glow);transition:opacity 1.2s ease;}
+.fx-lantern svg{display:block;width:100%;height:100%;}
+@keyframes fxLanternSway{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
+.fx-lantern-flame{animation:fxLanternFlicker 2.2s ease-in-out infinite;filter:drop-shadow(0 0 5px var(--sun-c));transform-origin:center;}
+@keyframes fxLanternFlicker{0%,100%{opacity:.55;transform:scale(.92);}50%{opacity:1;transform:scale(1.08);}}
+
 /* Glow halo removed per request — icon keeps the same gentle float the weather icon gets */
 .prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
 
@@ -5820,6 +5828,19 @@ function ambientIslamicMotifSVG(){
 function islamicStarSVG(fill){
   return `<svg viewBox="0 0 40 40"><path d="M20 2 L24 14 L36 12 L26 20 L36 28 L24 26 L20 38 L16 26 L4 28 L14 20 L4 12 L16 14 Z" fill="${fill}"/></svg>`;
 }
+function ambientLanternSVG(){
+  return `<svg viewBox="0 0 40 64">
+    <line x1="20" y1="0" x2="20" y2="8" stroke="#8a6a3e" stroke-width="1.6"/>
+    <path d="M13 8 h14 v4 h-14 z" fill="#8a6a3e"/>
+    <path d="M11 12 C11 12 9 18 9 27 C9 38 14 45 20 45 C26 45 31 38 31 27 C31 18 29 12 29 12 Z" fill="var(--gold2)" opacity=".22" stroke="#8a6a3e" stroke-width="1.4"/>
+    <line x1="20" y1="12" x2="20" y2="45" stroke="#8a6a3e" stroke-width="1" opacity=".5"/>
+    <line x1="12.5" y1="20" x2="27.5" y2="20" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
+    <line x1="9.5" y1="29" x2="30.5" y2="29" stroke="#8a6a3e" stroke-width="1" opacity=".45"/>
+    <path d="M15 45 h10 v4 h-10 z" fill="#8a6a3e"/>
+    <path d="M17 49 l3 9 l3 -9 z" fill="#8a6a3e"/>
+    <circle class="fx-lantern-flame" cx="20" cy="27" r="7" fill="var(--sun-c)"/>
+  </svg>`;
+}
 // ── Per-prayer accent colors (used for the "next" glow + hero halo) ──
 const PR_ACCENT={
   fajr:   {c:'#e6a15c', rgb:'230,161,92'},
@@ -5955,21 +5976,34 @@ function renderPrayerFx(phase){
     // (ambient corner glow removed — it was rendering directly behind the Hijri date chip)
   }
 
-  // A couple of gently twinkling geometric (Islamic-star) ornaments, present in every phase
+  // A couple of gently twinkling geometric (Islamic-star) ornaments — kept to
+  // a safe empty band well below the next-prayer text and Hijri chip, and
+  // well above the prayer card grid, so they never land on top of any text.
   const starCount = phase==='night' ? 2 : 3;
   for(let i=0;i<starCount;i++){
     const st=document.createElement('div');
     st.className='fx-prayer-star';
     const s=13+Math.random()*9;
     st.style.width=s+'px'; st.style.height=s+'px';
-    st.style.left=(10+Math.random()*80)+'%';
-    st.style.top=(10+Math.random()*35)+'%';
+    st.style.left=(8+Math.random()*84)+'%';
+    st.style.top=(29+Math.random()*16)+'%';
     st.style.transform='rotate('+(Math.random()*40-20)+'deg)';
     st.style.animationDuration=(2.4+Math.random()*1.6)+'s';
     st.style.animationDelay=(-Math.random()*3)+'s';
     st.innerHTML=islamicStarSVG('var(--gold2)');
     fx.appendChild(st);
   }
+
+  // A small lantern (فانوس) swaying gently in the safe middle band — mirrors
+  // the parasol/pine-tree touch in the weather panel. Glows warmer and
+  // brighter after dark, softer through the day.
+  const lantern=document.createElement('div');
+  lantern.className='fx-lantern';
+  lantern.style.width='26px'; lantern.style.height='42px';
+  lantern.style.left='6%'; lantern.style.top='24%';
+  lantern.style.setProperty('--lantern-glow', phase==='night' ? '.95' : (phase==='dawn'||phase==='dusk') ? '.8' : '.45');
+  lantern.innerHTML=ambientLanternSVG();
+  fx.appendChild(lantern);
 }
 let lastPrayerGridKey=null, lastPrayerMainKey=null, lastPrayerStatsKey=null;
 function renderPrayers(){
