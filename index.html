@@ -946,6 +946,7 @@ input[type=range]::-webkit-slider-thumb{
   align-items:center;
   gap:10px;
   flex:0 0 auto;
+  position:relative;
 }
 
 .prayer-grid{
@@ -1424,6 +1425,72 @@ input[type=range]::-webkit-slider-thumb{
   text-align:end;
 }
 body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
+
+/* ── New: panel tool buttons (city search / GPS toggle) ── */
+.panel-tool-btn{
+  margin-inline-start:auto; background:var(--card); border:1px solid var(--border);
+  color:var(--text); border-radius:999px; padding:6px 12px; font-size:13px; cursor:pointer;
+  display:flex; align-items:center; gap:5px; transition:border-color .2s ease, transform .15s ease;
+}
+.panel-tool-btn:hover{border-color:var(--gold2); transform:translateY(-1px);}
+#useGpsBtn{margin-inline-start:0;}
+
+/* ── City search box ── */
+.city-search-box{position:relative; z-index:5; margin:2px 0 10px; animation:fadeSlideIn .25s ease;}
+@keyframes fadeSlideIn{from{opacity:0; transform:translateY(-6px);} to{opacity:1; transform:translateY(0);}}
+.city-search-input{
+  width:100%; padding:10px 14px; border-radius:12px; border:1px solid var(--border);
+  background:var(--surface); color:var(--text); font-size:14px; font-family:inherit;
+}
+.city-search-input:focus{outline:none; border-color:var(--gold2);}
+.city-search-results{
+  margin-top:6px; max-height:220px; overflow-y:auto; border-radius:12px;
+  background:var(--surface); border:1px solid var(--border);
+}
+.city-result-item{
+  display:block; width:100%; text-align:start; padding:10px 14px; background:none; border:none;
+  color:var(--text); font-size:13.5px; cursor:pointer; border-bottom:1px solid var(--border);
+  font-family:inherit;
+}
+.city-result-item:last-child{border-bottom:none;}
+.city-result-item:hover{background:var(--card); color:var(--gold);}
+.city-result-loading,.city-result-empty{padding:10px 14px; color:var(--muted); font-size:13px;}
+
+/* ── Hourly forecast strip ── */
+.hourly-strip{
+  display:flex; gap:10px; overflow-x:auto; padding:12px 2px; margin:4px 0 6px;
+  border-top:1px solid var(--border); border-bottom:1px solid var(--border);
+}
+.hourly-strip::-webkit-scrollbar{height:5px;}
+.hourly-strip::-webkit-scrollbar-thumb{background:var(--border); border-radius:4px;}
+.hourly-item{
+  flex:0 0 auto; display:flex; flex-direction:column; align-items:center; gap:4px;
+  min-width:52px; padding:6px 4px; text-align:center;
+}
+.hourly-item .h-time{font-size:11.5px; color:var(--muted); white-space:nowrap;}
+.hourly-item .h-icon{width:28px; height:28px;}
+.hourly-item .h-icon svg{width:100%;height:100%;display:block;}
+.hourly-item .h-temp{font-size:14px; font-weight:700; color:var(--text);}
+
+/* ── Prayer settings row: calculation method + reminder notification ── */
+.prayer-settings-row{
+  display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.prayer-method-select,.notif-minutes-select{
+  background:var(--surface); color:var(--text); border:1px solid var(--border);
+  border-radius:10px; padding:7px 10px; font-size:12.5px; font-family:inherit; cursor:pointer; max-width:100%;
+}
+.notif-toggle-btn{
+  background:var(--card); border:1px solid var(--border); color:var(--text);
+  border-radius:10px; padding:7px 12px; font-size:12.5px; cursor:pointer; font-family:inherit;
+  transition:border-color .2s ease, background .2s ease;
+}
+.notif-toggle-btn.active{border-color:var(--gold2); background:rgba(217,184,136,.12); color:var(--gold);}
+@media(max-width:480px){
+  .prayer-settings-row{flex-direction:column; align-items:stretch;}
+  .prayer-method-select,.notif-minutes-select,.notif-toggle-btn{width:100%;}
+}
 
 @media(max-width:480px){
   .weather-main{flex-direction:column;align-items:stretch;}
@@ -3319,10 +3386,18 @@ body.occasion-sham-elnessim .occ-tint{
       <section class="panels">
         <div class="panel panel-weather">
           <div class="weather-fx" id="weatherFx" aria-hidden="true"></div>
-          <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span><span class="weather-season-badge" id="weatherSeasonBadge" aria-hidden="true"></span></div>
+          <div class="panel-title">🌤️ <span data-en="Weather Near You" data-ar="الجو عندك">Weather Near You</span><span class="weather-season-badge" id="weatherSeasonBadge" aria-hidden="true"></span>
+            <button type="button" id="citySearchToggle" class="panel-tool-btn" title="Change city / غيّر المدينة">🔍</button>
+            <button type="button" id="useGpsBtn" class="panel-tool-btn" style="display:none;" data-en="📍 Use my location" data-ar="📍 استخدم موقعي">📍 Use my location</button>
+          </div>
+          <div id="citySearchBox" class="city-search-box" style="display:none;">
+            <input type="text" id="citySearchInput" class="city-search-input" data-en-ph="Search for a city..." data-ar-ph="دوّر على مدينة..." placeholder="Search for a city...">
+            <div id="citySearchResults" class="city-search-results"></div>
+          </div>
           <div id="weatherSection" style="display:none;">
             <div class="weather-main" id="weatherMain"></div>
             <div class="weather-stats" id="weatherStats"></div>
+            <div class="hourly-strip" id="hourlyStrip"></div>
             <div class="forecast-grid" id="forecastGrid"></div>
           </div>
           <div id="weatherLoading" class="weather-loading">
@@ -3335,6 +3410,28 @@ body.occasion-sham-elnessim .occ-tint{
           <div class="prayer-main" id="prayerMain"></div>
           <div class="prayer-stats" id="prayerStats"></div>
           <div class="prayer-grid" id="prayerGrid"></div>
+          <div class="prayer-settings-row">
+            <select id="prayerMethodSelect" class="prayer-method-select" title="Calculation method">
+              <option value="5">الهيئة المصرية العامة للمساحة / Egyptian General Authority</option>
+              <option value="4">أم القرى، مكة / Umm Al-Qura, Makkah</option>
+              <option value="3">رابطة العالم الإسلامي / Muslim World League</option>
+              <option value="2">الجمعية الإسلامية لأمريكا الشمالية / ISNA (North America)</option>
+              <option value="1">جامعة العلوم الإسلامية، كراتشي / Univ. Islamic Sciences, Karachi</option>
+              <option value="9">الكويت / Kuwait</option>
+              <option value="10">قطر / Qatar</option>
+              <option value="11">مجلس الشؤون الدينية، سنغافورة / Singapore</option>
+              <option value="13">الشؤون الدينية، تركيا / Diyanet, Turkey</option>
+              <option value="15">لجنة رؤية الهلال العالمية / Moonsighting Committee Worldwide</option>
+            </select>
+            <button type="button" id="notifToggleBtn" class="notif-toggle-btn">🔕 Enable prayer reminders</button>
+            <select id="notifMinutesSelect" class="notif-minutes-select" title="Minutes before">
+              <option value="5">5 دقايق / min</option>
+              <option value="10" selected>10 دقايق / min</option>
+              <option value="15">15 دقيقة / min</option>
+              <option value="20">20 دقيقة / min</option>
+              <option value="30">30 دقيقة / min</option>
+            </select>
+          </div>
         </div>
       </section>
     </div>
@@ -3803,6 +3900,7 @@ function applyLang() {
   updateClock(); renderPrayers();
   if (currentAthanName) updateAthanBanner(currentAthanName);
   if (typeof refreshWeatherLang === 'function') refreshWeatherLang();
+  if (typeof updateNotifToggleUi === 'function') updateNotifToggleUi();
   if (typeof wcLifecyclePhase === 'function' && document.getElementById('page-worldcup') && !document.getElementById('page-worldcup').classList.contains('page-hidden')) {
     const wcState = wcLifecyclePhase(new Date());
     if (wcState.phase === 'champion') { wcRenderChampion(wcState.final); }
@@ -5602,10 +5700,18 @@ const ATHAN_FILES = {
 
 const ATHAN_FALLBACK = './athan.mp3';
 
+const PRAYER_METHOD_KEY='fwfm_prayer_method_v1';
+function getPrayerMethod(){
+  try{ return localStorage.getItem(PRAYER_METHOD_KEY) || '5'; }catch(e){ return '5'; }
+}
+function setPrayerMethod(m){
+  try{ localStorage.setItem(PRAYER_METHOD_KEY, m); }catch(e){}
+}
 async function fetchPrayerTimes(lat,lon){
   try{
     lastPrayerLat=lat; lastPrayerLon=lon;
-    const res=await fetch('https://api.aladhan.com/v1/timings?latitude='+lat+'&longitude='+lon+'&method=5');
+    const method=getPrayerMethod();
+    const res=await fetch('https://api.aladhan.com/v1/timings?latitude='+lat+'&longitude='+lon+'&method='+method);
     const data=await res.json(); const t=data.data.timings;
     const clean=v=>v.split(' ')[0];
     prayers=[
@@ -5620,6 +5726,7 @@ async function fetchPrayerTimes(lat,lon){
     const h = data.data.date && data.data.date.hijri;
     prayerExtra.hijri = h ? {day:h.day, monthAr:h.month.ar, monthEn:h.month.en, year:h.year} : null;
     renderPrayers();
+    scheduleAthanNotifications();
   }catch(e){}
 }
 // Great-circle bearing from (lat,lon) to the Kaaba, in degrees (0-360)
@@ -5978,6 +6085,94 @@ function triggerAthan(prayer){
 };
 }
 setInterval(checkAthan,15000);
+
+// ── Pre-prayer reminder notifications (free browser Notification API — no
+// server, no paid push service; works while this tab/browser is open) ──
+const NOTIF_PREF_KEY='fwfm_notif_pref_v1';
+function getNotifPref(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(NOTIF_PREF_KEY));
+    return raw || {enabled:false, minutesBefore:10};
+  }catch(e){ return {enabled:false, minutesBefore:10}; }
+}
+function setNotifPref(pref){ try{ localStorage.setItem(NOTIF_PREF_KEY, JSON.stringify(pref)); }catch(e){} }
+let athanNotifTimers=[];
+function clearAthanNotifTimers(){ athanNotifTimers.forEach(id=>clearTimeout(id)); athanNotifTimers=[]; }
+function scheduleAthanNotifications(){
+  clearAthanNotifTimers();
+  const pref=getNotifPref();
+  if(!pref.enabled || typeof Notification==='undefined' || Notification.permission!=='granted' || !prayers.length) return;
+  const now=new Date();
+  prayers.forEach(p=>{
+    const [h,m]=p.time.split(':').map(Number);
+    const target=new Date(now); target.setHours(h,m,0,0);
+    target.setMinutes(target.getMinutes()-pref.minutesBefore);
+    if(target<=now) target.setDate(target.getDate()+1);
+    const ms=target-now;
+    if(ms>0 && ms<24*3600*1000+120000){
+      const id=setTimeout(()=>{
+        const isAr=currentLang==='ar';
+        const name=isAr?p.nameAr:p.nameEn;
+        const title='🕌 '+(isAr?'اقترب أذان '+name:name+' is coming up');
+        const body=isAr?('باقي '+pref.minutesBefore+' دقيقة على '+name):(pref.minutesBefore+' minutes until '+name);
+        try{ new Notification(title,{body, icon:'assets/favicon.png'}); }catch(e){}
+      }, ms);
+      athanNotifTimers.push(id);
+    }
+  });
+}
+function updateNotifToggleUi(){
+  const pref=getNotifPref();
+  const btn=document.getElementById('notifToggleBtn');
+  const sel=document.getElementById('notifMinutesSelect');
+  if(!btn) return;
+  const isAr=currentLang==='ar';
+  const supported = typeof Notification!=='undefined';
+  if(!supported){ btn.style.display='none'; return; }
+  if(pref.enabled && Notification.permission==='granted'){
+    btn.textContent = isAr? '🔔 التنبيهات مفعّلة' : '🔔 Reminders on';
+    btn.classList.add('active');
+  } else {
+    btn.textContent = isAr? '🔕 فعّل تنبيه قبل الأذان' : '🔕 Enable prayer reminders';
+    btn.classList.remove('active');
+  }
+  if(sel) sel.value=String(pref.minutesBefore);
+}
+async function toggleAthanNotifications(){
+  const pref=getNotifPref();
+  if(typeof Notification==='undefined'){
+    alert(currentLang==='ar'?'المتصفح ده مش بيدعم التنبيهات':'This browser doesn\'t support notifications');
+    return;
+  }
+  if(pref.enabled && Notification.permission==='granted'){
+    pref.enabled=false; setNotifPref(pref); clearAthanNotifTimers(); updateNotifToggleUi();
+    return;
+  }
+  let perm=Notification.permission;
+  if(perm!=='granted'){ perm = await Notification.requestPermission(); }
+  if(perm==='granted'){
+    pref.enabled=true; setNotifPref(pref); scheduleAthanNotifications();
+  } else {
+    pref.enabled=false; setNotifPref(pref);
+  }
+  updateNotifToggleUi();
+}
+document.getElementById('notifToggleBtn')?.addEventListener('click', toggleAthanNotifications);
+document.getElementById('notifMinutesSelect')?.addEventListener('change', (e)=>{
+  const pref=getNotifPref();
+  pref.minutesBefore=parseInt(e.target.value,10)||10;
+  setNotifPref(pref);
+  if(pref.enabled) scheduleAthanNotifications();
+});
+document.getElementById('prayerMethodSelect')?.addEventListener('change', (e)=>{
+  setPrayerMethod(e.target.value);
+  if(lastPrayerLat!=null && lastPrayerLon!=null) fetchPrayerTimes(lastPrayerLat, lastPrayerLon);
+});
+updateNotifToggleUi();
+(function initPrayerMethodSelect(){
+  const sel=document.getElementById('prayerMethodSelect');
+  if(sel) sel.value=getPrayerMethod();
+})();
 
 // ── Weather ──
 const WCODE={
@@ -6393,6 +6588,7 @@ function renderWeatherFx(code, temp, isDay){
   }
 }
 let lastWeatherData=null, lastWeatherCoords=null, lastWeatherCity=null, lastWeatherFlag='';
+let isManualCity=false, lastManualCityMeta=null;
 function countryFlagEmoji(cc){
   if(!cc || cc.length!==2) return '';
   const code = cc.toLowerCase();
@@ -6441,15 +6637,57 @@ function wVisibilityIconSVG(){
     '<g class="w-vis-eye-lid"><circle cx="12" cy="12" r="3.4" fill="var(--gold)"/><circle cx="12" cy="12" r="1.3" fill="var(--bg)"/></g>'+
     '</svg>';
 }
-function weatherStatsHtml(humidity, visibilityM, lang){
+function wFeelsLikeIconSVG(){
+  return '<svg viewBox="0 0 24 24" fill="none"><path d="M12 2.5a2.3 2.3 0 0 1 2.3 2.3v8.1a4.3 4.3 0 1 1-4.6 0V4.8A2.3 2.3 0 0 1 12 2.5z" fill="none" stroke="var(--sun-c)" stroke-width="1.4"/><circle cx="12" cy="16.4" r="2.6" fill="var(--sun-c)"/><rect x="10.9" y="6" width="2.2" height="7.5" rx="1.1" fill="var(--sun-c)"/></svg>';
+}
+function wWindIconSVG(deg){
+  const rot = (deg!=null && !isNaN(deg)) ? deg : 0;
+  return '<svg viewBox="0 0 24 24" fill="none" style="transform:rotate('+rot+'deg)"><path d="M12 3.5v15M12 3.5l-4 4.2M12 3.5l4 4.2" stroke="var(--sea-c)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+}
+function wUvIconSVG(uv){
+  const v=(uv!=null && !isNaN(uv))?uv:0;
+  const c = v>=8?'var(--storm-c)':(v>=6?'var(--sun-c)':(v>=3?'var(--gold)':'var(--muted)'));
+  return '<svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="5.5" fill="'+c+'"/><g stroke="'+c+'" stroke-width="1.8" stroke-linecap="round"><line x1="12" y1="1.5" x2="12" y2="4.2"/><line x1="12" y1="19.8" x2="12" y2="22.5"/><line x1="1.5" y1="12" x2="4.2" y2="12"/><line x1="19.8" y1="12" x2="22.5" y2="12"/><line x1="4.4" y1="4.4" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.6" y2="19.6"/><line x1="4.4" y1="19.6" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.6" y2="4.4"/></g></svg>';
+}
+function wAqiIconSVG(pm){
+  const v=(pm!=null && !isNaN(pm))?pm:0;
+  const c = v>55?'var(--storm-c)':(v>25?'var(--gold2)':(v>12?'var(--gold)':'#7fd88a'));
+  return '<svg viewBox="0 0 24 24" fill="none"><path d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/></svg>';
+}
+function uvLabel(v,lang){
+  if(v==null||isNaN(v)) return '—';
+  const lvl = v>=11? (lang==='ar'?'شديد جدًا':'Extreme') : v>=8?(lang==='ar'?'شديد':'Very High') : v>=6?(lang==='ar'?'مرتفع':'High') : v>=3?(lang==='ar'?'معتدل':'Moderate') : (lang==='ar'?'منخفض':'Low');
+  return Math.round(v)+' · '+lvl;
+}
+function aqiLabel(pm,lang){
+  if(pm==null||isNaN(pm)) return '—';
+  const lvl = pm>55? (lang==='ar'?'خطر':'Unhealthy') : pm>25?(lang==='ar'?'متوسطة':'Moderate') : pm>12?(lang==='ar'?'مقبولة':'Fair') : (lang==='ar'?'جيدة':'Good');
+  return Math.round(pm)+' · '+lvl;
+}
+function weatherStatsHtml(humidity, visibilityM, lang, extra){
+  extra = extra || {};
   const humStr = (humidity!=null && !isNaN(humidity)) ? Math.round(humidity)+'%' : '—';
   let visStr = '—';
   if(visibilityM!=null && !isNaN(visibilityM)){
     const km = visibilityM/1000;
     visStr = km>=10 ? (lang==='ar'?'+10 كم':'10+ km') : km.toFixed(1)+' '+(lang==='ar'?'كم':'km');
   }
-  return '<div class="w-stat"><span class="w-stat-ic">'+wHumidityIconSVG(humidity)+'</span><span class="w-stat-val">'+humStr+'</span><span class="w-stat-label">'+(lang==='ar'?'الرطوبة':'Humidity')+'</span></div>'+
+  let html = '<div class="w-stat"><span class="w-stat-ic">'+wHumidityIconSVG(humidity)+'</span><span class="w-stat-val">'+humStr+'</span><span class="w-stat-label">'+(lang==='ar'?'الرطوبة':'Humidity')+'</span></div>'+
     '<div class="w-stat"><span class="w-stat-ic">'+wVisibilityIconSVG()+'</span><span class="w-stat-val">'+visStr+'</span><span class="w-stat-label">'+(lang==='ar'?'مدى الرؤية':'Visibility')+'</span></div>';
+  if(extra.feelsLike!=null && !isNaN(extra.feelsLike)){
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wFeelsLikeIconSVG()+'</span><span class="w-stat-val">'+Math.round(extra.feelsLike)+'°</span><span class="w-stat-label">'+(lang==='ar'?'الإحساس الحقيقي':'Feels like')+'</span></div>';
+  }
+  if(extra.windSpeed!=null && !isNaN(extra.windSpeed)){
+    const dirTxt = extra.windDir!=null ? Math.round(extra.windDir)+'°' : '';
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wWindIconSVG(extra.windDir)+'</span><span class="w-stat-val">'+Math.round(extra.windSpeed)+' '+(lang==='ar'?'كم/س':'km/h')+'</span><span class="w-stat-label">'+(lang==='ar'?'الرياح '+dirTxt:'Wind '+dirTxt)+'</span></div>';
+  }
+  if(extra.uv!=null && !isNaN(extra.uv)){
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wUvIconSVG(extra.uv)+'</span><span class="w-stat-val">'+uvLabel(extra.uv,lang)+'</span><span class="w-stat-label">'+(lang==='ar'?'الأشعة فوق البنفسجية':'UV Index')+'</span></div>';
+  }
+  if(extra.pm25!=null && !isNaN(extra.pm25)){
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wAqiIconSVG(extra.pm25)+'</span><span class="w-stat-val">'+aqiLabel(extra.pm25,lang)+'</span><span class="w-stat-label">PM2.5</span></div>';
+  }
+  return html;
 }
 function renderWeatherText(cur, wData, city, flag){
   const flagPart = flag !== undefined ? flag : lastWeatherFlag;
@@ -6460,8 +6698,15 @@ function renderWeatherText(cur, wData, city, flag){
 
   const visibilityM = (wData.hourly && wData.hourly.visibility && hourlyIdx>=0) ? wData.hourly.visibility[hourlyIdx] : null;
   const humidity = cur.relative_humidity_2m!=null ? cur.relative_humidity_2m : null;
+  const uvNow = (wData.hourly && wData.hourly.uv_index && hourlyIdx>=0) ? wData.hourly.uv_index[hourlyIdx] : (wData.daily && wData.daily.uv_index_max ? wData.daily.uv_index_max[0] : null);
   const statsEl = document.getElementById('weatherStats');
-  if(statsEl) statsEl.innerHTML = weatherStatsHtml(humidity, visibilityM, currentLang);
+  if(statsEl) statsEl.innerHTML = weatherStatsHtml(humidity, visibilityM, currentLang, {
+    feelsLike: cur.apparent_temperature,
+    windSpeed: cur.wind_speed_10m,
+    windDir: cur.wind_direction_10m,
+    uv: uvNow,
+    pm25: lastAirQuality
+  });
 
   const daysEn=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'],daysAr=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
   let fc='';
@@ -6470,15 +6715,44 @@ function renderWeatherText(cur, wData, city, flag){
     fc+=`<div class="forecast-item"><div class="f-day">${currentLang==='ar'?daysAr[d.getDay()]:daysEn[d.getDay()]}</div><div class="f-icon">${weatherIconSVG(wData.daily.weather_code[i],true)}</div><div class="f-temp">${Math.round(wData.daily.temperature_2m_max[i])}° / ${Math.round(wData.daily.temperature_2m_min[i])}°</div></div>`;
   }
   document.getElementById('forecastGrid').innerHTML=fc;
+  renderHourlyStrip(wData, hourlyIdx);
   const cityLabel=document.getElementById('prayerCityLabel');
   if(cityLabel)cityLabel.textContent=city;
+}
+// ── Hourly forecast strip: next few hours (temperature + condition icon) ──
+function renderHourlyStrip(wData, startIdx){
+  const el=document.getElementById('hourlyStrip');
+  if(!el) return;
+  if(!wData.hourly || !wData.hourly.time || startIdx<0){ el.innerHTML=''; return; }
+  const isAr=currentLang==='ar';
+  let html='';
+  for(let i=startIdx; i<Math.min(startIdx+7, wData.hourly.time.length); i++){
+    const d=new Date(wData.hourly.time[i]);
+    const hourLabel = i===startIdx ? (isAr?'دلوقتي':'Now') : d.toLocaleTimeString(isAr?'ar-EG':'en-US',{hour:'numeric',hour12:true});
+    const temp = wData.hourly.temperature_2m ? Math.round(wData.hourly.temperature_2m[i]) : '—';
+    const code = wData.hourly.weather_code ? wData.hourly.weather_code[i] : 0;
+    const isDayHour = wData.hourly.is_day ? !!wData.hourly.is_day[i] : true;
+    html += `<div class="hourly-item"><div class="h-time">${hourLabel}</div><div class="h-icon">${weatherIconSVG(code,isDayHour)}</div><div class="h-temp">${temp}°</div></div>`;
+  }
+  el.innerHTML=html;
+}
+// ── Air Quality (PM2.5) — Open-Meteo's free Air Quality API, no key needed ──
+let lastAirQuality=null;
+async function fetchAirQuality(lat,lon){
+  try{
+    const res=await fetch('https://air-quality-api.open-meteo.com/v1/air-quality?latitude='+lat+'&longitude='+lon+'&current=pm2_5');
+    const data=await res.json();
+    lastAirQuality = data.current ? data.current.pm2_5 : null;
+    // Re-render stats now that PM2.5 has arrived (it comes back slightly after the main weather call).
+    if(lastWeatherData) renderWeatherText(lastWeatherData.current, lastWeatherData, lastWeatherCity, lastWeatherFlag);
+  }catch(e){ lastAirQuality=null; }
 }
 async function refreshWeatherLang(){
   if(!lastWeatherData) return;
 
   let city = lastWeatherCity;
 
-  if(lastWeatherCoords){
+  if(lastWeatherCoords && !isManualCity){
     try{
       const geoRes = await fetch(
         'https://nominatim.openstreetmap.org/reverse?lat=' +
@@ -6521,7 +6795,7 @@ city = locationName;
 const WEATHER_CACHE_KEY='fwfm_weather_cache_v1';
 function saveWeatherCache(lat,lon,city,wData,flag){
   try{
-    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,flag,ts:Date.now()}));
+    localStorage.setItem(WEATHER_CACHE_KEY, JSON.stringify({lat,lon,city,wData,flag,manual:isManualCity,manualMeta:lastManualCityMeta,ts:Date.now()}));
   }catch(e){/* storage unavailable/full — non-critical, just skip caching */}
 }
 function loadWeatherCache(){
@@ -6533,10 +6807,22 @@ function loadWeatherCache(){
     return parsed;
   }catch(e){ return null; }
 }
-async function fetchWeather(lat,lon){
+async function fetchWeather(lat,lon,manualCity){
   fetchPrayerTimes(lat,lon);
   lastWeatherCoords={lat,lon};
   try{
+    let locationName, countryCode='';
+    if(manualCity){
+      // City was picked from the manual search box — no need to reverse-geocode.
+      isManualCity = true;
+      lastManualCityMeta = manualCity;
+      locationName = manualCity.label;
+      countryCode = manualCity.countryCode || '';
+      lastWeatherCity = locationName;
+      lastWeatherFlag = countryFlagEmoji(countryCode);
+    } else {
+    isManualCity = false;
+    lastManualCityMeta = null;
     const geoRes=await fetch('https://nominatim.openstreetmap.org/reverse?lat='+lat+'&lon='+lon+'&format=json&accept-language='+currentLang);
     const geoData=await geoRes.json();
     const city =
@@ -6548,19 +6834,20 @@ async function fetchWeather(lat,lon){
 
 const country =
     geoData.address?.country || '';
-const countryCode = geoData.address?.country_code || '';
+countryCode = geoData.address?.country_code || '';
 
-const locationName =
+    locationName =
     country
         ? `${city}, ${country}`
         : city;
 
 lastWeatherCity = locationName;
 lastWeatherFlag = countryFlagEmoji(countryCode);
+    }
 
 const cityLabel = document.getElementById('prayerCityLabel');
 if (cityLabel) cityLabel.textContent = locationName;
-    const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day,relative_humidity_2m&hourly=precipitation_probability,visibility&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max&timezone=auto');
+    const wRes=await fetch('https://api.open-meteo.com/v1/forecast?latitude='+lat+'&longitude='+lon+'&current=temperature_2m,weather_code,is_day,relative_humidity_2m,apparent_temperature,wind_speed_10m,wind_direction_10m&hourly=precipitation_probability,visibility,temperature_2m,weather_code,uv_index,is_day&daily=weather_code,temperature_2m_max,temperature_2m_min,sunrise,sunset,precipitation_probability_max,uv_index_max&timezone=auto');
     const wData=await wRes.json(); const cur=wData.current;
     lastWeatherData=wData;
     renderWeatherText(cur, wData, locationName, lastWeatherFlag);
@@ -6568,6 +6855,7 @@ if (cityLabel) cityLabel.textContent = locationName;
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
     saveWeatherCache(lat, lon, locationName, wData, lastWeatherFlag);
+    fetchAirQuality(lat, lon);
   }catch(e){
     const btn=document.getElementById('weatherStatus');
     btn.textContent=currentLang==='ar'?'مش قادر اجيبلك الطقس — حاول تاني 😔':"Couldn't fetch weather — tap to retry 😔";
@@ -6610,6 +6898,68 @@ document.getElementById('weatherStatus').addEventListener('click', ()=>{
   if(document.getElementById('weatherStatus').classList.contains('retryable')) requestLocation();
 });
 
+// ── Manual city search — Open-Meteo's free geocoding API, no key needed ──
+let citySearchDebounce=null;
+function toggleCitySearch(){
+  const box=document.getElementById('citySearchBox');
+  if(!box) return;
+  const show = box.style.display==='none' || !box.style.display;
+  box.style.display = show?'block':'none';
+  if(show){ document.getElementById('citySearchInput').focus(); }
+}
+async function runCitySearch(q){
+  const resultsEl=document.getElementById('citySearchResults');
+  if(!resultsEl) return;
+  if(!q || q.trim().length<2){ resultsEl.innerHTML=''; return; }
+  resultsEl.innerHTML='<div class="city-result-loading">'+(currentLang==='ar'?'بندور...':'Searching...')+'</div>';
+  try{
+    const res=await fetch('https://geocoding-api.open-meteo.com/v1/search?name='+encodeURIComponent(q.trim())+'&count=8&language='+(currentLang==='ar'?'ar':'en')+'&format=json');
+    const data=await res.json();
+    const list=data.results||[];
+    if(!list.length){ resultsEl.innerHTML='<div class="city-result-empty">'+(currentLang==='ar'?'مفيش نتايج':'No results')+'</div>'; return; }
+    resultsEl.innerHTML=list.map(r=>{
+      const parts=[r.name, r.admin1, r.country].filter(Boolean);
+      const label=parts.join(', ');
+      const cc=(r.country_code||'').toLowerCase();
+      return `<button type="button" class="city-result-item" data-lat="${r.latitude}" data-lon="${r.longitude}" data-label="${label.replace(/"/g,'&quot;')}" data-cc="${cc}">📍 ${label}</button>`;
+    }).join('');
+  }catch(e){
+    resultsEl.innerHTML='<div class="city-result-empty">'+(currentLang==='ar'?'حصل خطأ، حاول تاني':'Something went wrong, try again')+'</div>';
+  }
+}
+document.getElementById('citySearchInput')?.addEventListener('input', (e)=>{
+  clearTimeout(citySearchDebounce);
+  const val=e.target.value;
+  citySearchDebounce=setTimeout(()=>runCitySearch(val), 450);
+});
+document.getElementById('citySearchResults')?.addEventListener('click', (e)=>{
+  const btn=e.target.closest('.city-result-item');
+  if(!btn) return;
+  const lat=parseFloat(btn.dataset.lat), lon=parseFloat(btn.dataset.lon);
+  const label=btn.dataset.label, cc=btn.dataset.cc;
+  document.getElementById('citySearchResults').innerHTML='';
+  document.getElementById('citySearchInput').value='';
+  document.getElementById('citySearchBox').style.display='none';
+  document.getElementById('weatherSection').style.display='none';
+  document.getElementById('weatherLoading').style.display='block';
+  setWeatherStatus(currentLang==='ar'?'📍 بنجيب طقس '+label+'...':'📍 Fetching weather for '+label+'...', false);
+  fetchWeather(lat, lon, {label, countryCode:cc});
+  updateCitySearchUiState();
+});
+function useMyLocationInstead(){
+  isManualCity=false; lastManualCityMeta=null;
+  document.getElementById('weatherSection').style.display='none';
+  document.getElementById('weatherLoading').style.display='block';
+  requestLocation();
+  updateCitySearchUiState();
+}
+function updateCitySearchUiState(){
+  const gpsBtn=document.getElementById('useGpsBtn');
+  if(gpsBtn) gpsBtn.style.display = isManualCity ? 'inline-flex' : 'none';
+}
+document.getElementById('useGpsBtn')?.addEventListener('click', useMyLocationInstead);
+document.getElementById('citySearchToggle')?.addEventListener('click', toggleCitySearch);
+
 // Show cached weather instantly (if we have any from a previous visit) while a fresh
 // location fix runs quietly in the background — makes the site feel instant on reopen.
 const cachedWeather=loadWeatherCache();
@@ -6618,16 +6968,25 @@ if(cachedWeather && cachedWeather.wData){
   lastWeatherCoords={lat:cachedWeather.lat, lon:cachedWeather.lon};
   lastWeatherCity=cachedWeather.city;
   lastWeatherFlag=cachedWeather.flag||'';
+  isManualCity=!!cachedWeather.manual;
+  lastManualCityMeta=cachedWeather.manualMeta||null;
   renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city, lastWeatherFlag);
   renderWeatherFx(cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m, cachedWeather.wData.current.is_day);
   document.getElementById('weatherSection').style.display='block';
   document.getElementById('weatherLoading').style.display='none';
+  if(lastAirQuality==null) fetchAirQuality(cachedWeather.lat, cachedWeather.lon);
 }
-requestLocation();
+updateCitySearchUiState();
+if(isManualCity && lastManualCityMeta){
+  // Respect the person's manual city choice instead of overriding it with GPS on reload.
+  fetchWeather(lastWeatherCoords.lat, lastWeatherCoords.lon, lastManualCityMeta);
+} else {
+  requestLocation();
+}
 // تحديث الطقس تلقائياً كل ساعة
 setInterval(() => {
   if (lastWeatherCoords) {
-    fetchWeather(lastWeatherCoords.lat, lastWeatherCoords.lon);
+    fetchWeather(lastWeatherCoords.lat, lastWeatherCoords.lon, isManualCity ? lastManualCityMeta : undefined);
   }
 }, 60 * 60 * 1000);
 
