@@ -1335,8 +1335,9 @@ input[type=range]::-webkit-slider-thumb{
 .w-stat:hover{transform:translateY(-4px);background:rgba(139,92,246,.13);border-color:rgba(139,92,246,.4);}
 .w-stat-ic{width:29px;height:29px;display:flex;align-items:center;justify-content:center;margin-bottom:1px;}
 .w-stat-ic svg{width:100%;height:100%;overflow:visible;}
-.w-stat-val{font-size:16.5px;font-weight:700;color:var(--text);line-height:1.2;}
+.w-stat-val{font-size:16.5px;font-weight:700;color:var(--text);line-height:1.2;white-space:nowrap;}
 .w-stat-label{font-size:11px;color:var(--muted);white-space:nowrap;}
+.w-wind-deg{font-size:12.5px;font-weight:600;color:var(--muted);margin-inline-start:2px;}
 @media(max-width:480px){
   .w-stat{min-width:78px;padding:10px 6px;}
   .w-stat-val{font-size:15px;}
@@ -1369,10 +1370,10 @@ input[type=range]::-webkit-slider-thumb{
 .w-vis-eye-lid{animation:wEyeBlink 5.5s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
 
 /* ── Animated weather-stat icons (feels-like / wind / UV / air quality) ── */
-@keyframes wFeelsBreathe{0%,100%{transform:scaleY(1);}50%{transform:scaleY(.9);}}
-.w-feels-mercury{animation:wFeelsBreathe 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom;}
+@keyframes wFeelsFill{0%{transform:scaleY(.18);}45%{transform:scaleY(1);}55%{transform:scaleY(1);}100%{transform:scaleY(.18);}}
+.w-feels-mercury{animation:wFeelsFill 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:bottom;}
 @keyframes wFeelsGlow{0%,100%{filter:drop-shadow(0 0 1.5px var(--sun-c));}50%{filter:drop-shadow(0 0 5px var(--sun-c));}}
-.w-feels-bulb{animation:wFeelsGlow 2.4s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
+.w-feels-bulb{animation:wFeelsGlow 3.2s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
 
 @keyframes wWindFlow{0%{opacity:0;transform:translateX(-3px);}35%{opacity:.9;}100%{opacity:0;transform:translateX(4px);}}
 .w-wind-line{animation:wWindFlow 1.7s ease-in-out infinite;transform-box:fill-box;transform-origin:center;}
@@ -1511,10 +1512,12 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 /* ── Prayer settings row: calculation method + reminder notification ── */
 .prayer-method-label{
   font-size:12px; color:var(--muted); margin-top:12px; opacity:.85;
+  text-align:center;
 }
 .prayer-settings-row{
   display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; padding-top:12px;
   border-top:1px solid var(--border);
+  justify-content:center;
 }
 .notif-minutes-select{
   background:var(--surface); color:var(--text); border:1px solid var(--border);
@@ -6711,7 +6714,18 @@ function wUvIconSVG(uv){
 function wAqiIconSVG(pm){
   const v=(pm!=null && !isNaN(pm))?pm:0;
   const c = v>55?'var(--storm-c)':(v>25?'var(--gold2)':(v>12?'var(--gold)':'#7fd88a'));
-  return '<svg viewBox="0 0 24 24" fill="none"><path class="w-aqi-cloud" d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/><circle class="w-aqi-dot" cx="8.5" cy="17.5" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="12" cy="18.3" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="15.5" cy="17.5" r=".9" fill="'+c+'"/></svg>';
+  let badge;
+  if(v<=12){
+    // Good — checkmark
+    badge = '<path d="M16.6 6.9l1.15 1.15 2.25-2.4" stroke="var(--bg)" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" fill="none"/>';
+  } else if(v<=55){
+    // Fair / Moderate — dash
+    badge = '<path d="M16.7 6.55h3" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/>';
+  } else {
+    // Unhealthy — exclamation mark
+    badge = '<path d="M18.2 4.4v2.2" stroke="var(--bg)" stroke-width="1.5" stroke-linecap="round"/><circle cx="18.2" cy="8.1" r=".65" fill="var(--bg)"/>';
+  }
+  return '<svg viewBox="0 0 24 24" fill="none"><path class="w-aqi-cloud" d="M4 15.5c0-3.6 3.1-6.4 6.8-5.9a5.6 5.6 0 0 1 10.7 2.4 3.9 3.9 0 0 1-.9 7.7H7a3 3 0 0 1-3-3.2z" fill="'+c+'" opacity=".85"/><circle class="w-aqi-dot" cx="8.5" cy="17.5" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="12" cy="18.3" r=".9" fill="'+c+'"/><circle class="w-aqi-dot" cx="15.5" cy="17.5" r=".9" fill="'+c+'"/><circle cx="18.2" cy="6.2" r="3.3" fill="'+c+'" stroke="var(--card)" stroke-width="1.2"/>'+badge+'</svg>';
 }
 function uvLabel(v,lang){
   if(v==null||isNaN(v)) return '—';
@@ -6737,8 +6751,8 @@ function weatherStatsHtml(humidity, visibilityM, lang, extra){
     html += '<div class="w-stat"><span class="w-stat-ic">'+wFeelsLikeIconSVG()+'</span><span class="w-stat-val">'+Math.round(extra.feelsLike)+'°</span><span class="w-stat-label">'+(lang==='ar'?'الإحساس الحقيقي':'Feels like')+'</span></div>';
   }
   if(extra.windSpeed!=null && !isNaN(extra.windSpeed)){
-    const dirTxt = extra.windDir!=null ? Math.round(extra.windDir)+'°' : '';
-    html += '<div class="w-stat"><span class="w-stat-ic">'+wWindIconSVG(extra.windDir)+'</span><span class="w-stat-val">'+Math.round(extra.windSpeed)+' '+(lang==='ar'?'كم/س':'km/h')+'</span><span class="w-stat-label">'+(lang==='ar'?'الرياح '+dirTxt:'Wind '+dirTxt)+'</span></div>';
+    const dirTxt = extra.windDir!=null ? '<bdi class="w-wind-deg">'+Math.round(extra.windDir)+'°</bdi>' : '';
+    html += '<div class="w-stat"><span class="w-stat-ic">'+wWindIconSVG(extra.windDir)+'</span><span class="w-stat-val">'+Math.round(extra.windSpeed)+' '+(lang==='ar'?'كم/س':'km/h')+(dirTxt?' '+dirTxt:'')+'</span><span class="w-stat-label">'+(lang==='ar'?'الرياح':'Wind')+'</span></div>';
   }
   if(extra.uv!=null && !isNaN(extra.uv)){
     html += '<div class="w-stat"><span class="w-stat-ic">'+wUvIconSVG(extra.uv)+'</span><span class="w-stat-val">'+uvLabel(extra.uv,lang)+'</span><span class="w-stat-label">'+(lang==='ar'?'الأشعة فوق البنفسجية':'UV Index')+'</span></div>';
