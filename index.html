@@ -6026,7 +6026,7 @@ function renderPrayerFx(phase){
   const lantern=document.createElement('div');
   lantern.className='fx-lantern';
   lantern.style.width='46px'; lantern.style.height='78px';
-  lantern.style.left='50%'; lantern.style.top='0%';
+  lantern.style.left='63%'; lantern.style.top='0%';
   lantern.style.setProperty('--lantern-glow', phase==='night' ? '.95' : (phase==='dawn'||phase==='dusk') ? '.8' : '.45');
   lantern.innerHTML=ambientLanternSVG();
   fx.appendChild(lantern);
