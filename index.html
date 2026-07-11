@@ -1647,16 +1647,6 @@ body.lang-ar .weather-advice{font-family:'Cairo',sans-serif;font-style:normal;}
 .fx-sparkle-sea{position:absolute;border-radius:50%;background:#fff;pointer-events:none;animation:fxSeaSparkle 2.2s ease-in-out infinite;}
 @keyframes fxSeaSparkle{0%,100%{opacity:0;transform:scale(.6);}50%{opacity:.85;transform:scale(1);}}
 
-.fx-gull{position:absolute;pointer-events:none;will-change:left,transform;
-  animation-name:fxGullFly;animation-timing-function:linear;animation-iteration-count:infinite;}
-.fx-gull svg{display:block;width:100%;height:100%;}
-@keyframes fxGullFly{
-  0%{left:-10%;transform:translateY(0);}
-  100%{left:110%;transform:translateY(-16px);}
-}
-.fx-gull-wing{animation:fxGullFlap .55s ease-in-out infinite alternate;transform-origin:12px 12px;}
-@keyframes fxGullFlap{0%{transform:scaleY(1);}100%{transform:scaleY(.45);}}
-
 .fx-parasol{position:absolute;bottom:-2%;pointer-events:none;opacity:.9;
   animation:fxParasolSway 4.5s ease-in-out infinite;transform-origin:bottom center;}
 .fx-parasol svg{display:block;width:100%;height:100%;}
@@ -6240,9 +6230,6 @@ function ambientBeachMoonSVG(){
 function ambientWaveSVG(fill,opacity){
   return `<svg viewBox="0 0 240 40" preserveAspectRatio="none"><path d="M0 22 Q20 8 40 22 T80 22 T120 22 T160 22 T200 22 T240 22 V40 H0 Z" fill="${fill}" opacity="${opacity}"/></svg>`;
 }
-function ambientGullSVG(){
-  return `<svg viewBox="0 0 24 24"><path class="fx-gull-wing" d="M2 14 Q7 6 12 13 Q17 6 22 14" stroke="var(--text)" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/></svg>`;
-}
 function ambientParasolSVG(){
   return `<svg viewBox="0 0 60 60">
     <ellipse cx="30" cy="55" rx="14" ry="3" fill="#000" opacity=".18"/>
@@ -6273,44 +6260,9 @@ function renderBeachFx(fx, dayTime){
       fx.appendChild(t);
     }
   }
-  // Seagulls gliding across the sky (day only)
-  if(dayTime){
-    for(let i=0;i<2;i++){
-      const g=document.createElement('div');
-      g.className='fx-gull';
-      g.style.width='16px'; g.style.height='16px';
-      g.style.top=(16+i*10+Math.random()*6)+'%';
-      const dur=10+i*4+Math.random()*4;
-      g.style.animationDuration=dur+'s';
-      g.style.animationDelay=(-Math.random()*dur)+'s';
-      g.innerHTML=ambientGullSVG();
-      fx.appendChild(g);
-    }
-    // Soft diagonal sun-ray beams sweeping the whole panel — the sunny,
-    // full-panel counterpart to the rain drops, so a bright summer day reads
-    // as clearly as a rainy one at a glance.
-    for(let i=0;i<3;i++){
-      const rb=document.createElement('div');
-      rb.className='fx-raybeam';
-      rb.style.left=(10+i*30+Math.random()*8)+'%';
-      const dur=5+Math.random()*3;
-      rb.style.animationDuration=dur+'s';
-      rb.style.animationDelay=(-Math.random()*dur)+'s';
-      fx.appendChild(rb);
-    }
-    // Warm golden light motes drifting upward across the whole panel
-    for(let i=0;i<14;i++){
-      const sm=document.createElement('div');
-      sm.className='fx-sunmote';
-      sm.style.left=(Math.random()*98)+'%';
-      sm.style.setProperty('--sx',(Math.random()*30-15)+'px');
-      sm.style.setProperty('--sx2',(Math.random()*40-20)+'px');
-      const dur=6+Math.random()*5;
-      sm.style.animationDuration=dur+'s';
-      sm.style.animationDelay=(-Math.random()*dur)+'s';
-      fx.appendChild(sm);
-    }
-  }
+  // Day/night are otherwise visually distinct via the sun-ray/mote effect
+  // added separately in renderWeatherFx (triggered by actual sunny/hot
+  // conditions, not just the calendar), so nothing extra needed here for day.
   // Layered sea horizon at the bottom of the panel
   const seaLayers=[
     {cls:'sea-l1', bottom:'-4%', h:34, fill:'var(--sea-c)', op:.30},
@@ -6458,6 +6410,33 @@ function renderWeatherFx(code, temp, isDay){
     : 'var(--cloud-c)';
   skyline.innerHTML=weatherSkylineSVG();
   fx.appendChild(skyline);
+
+  // Full-panel sunny/hot ambiance — soft sun-ray beams sweeping through plus
+  // warm light motes drifting upward. This is the bright, hot-weather
+  // counterpart to the rain drops, so it only shows up when it's genuinely
+  // sunny and/or hot outside (not just because the calendar says summer).
+  if(dayTime && (isClear || isHot) && !isRain && !isStorm && !isSnow && !isFog){
+    for(let i=0;i<3;i++){
+      const rb=document.createElement('div');
+      rb.className='fx-raybeam';
+      rb.style.left=(10+i*30+Math.random()*8)+'%';
+      const dur=5+Math.random()*3;
+      rb.style.animationDuration=dur+'s';
+      rb.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(rb);
+    }
+    for(let i=0;i<14;i++){
+      const sm=document.createElement('div');
+      sm.className='fx-sunmote';
+      sm.style.left=(Math.random()*98)+'%';
+      sm.style.setProperty('--sx',(Math.random()*30-15)+'px');
+      sm.style.setProperty('--sx2',(Math.random()*40-20)+'px');
+      const dur=6+Math.random()*5;
+      sm.style.animationDuration=dur+'s';
+      sm.style.animationDelay=(-Math.random()*dur)+'s';
+      fx.appendChild(sm);
+    }
+  }
 
   // In summer, swap the generic drifting clouds for a beach/seaside scene; in winter,
   // swap them for a snowy hillside scene — both skipped for rain/storm/snow/fog,
