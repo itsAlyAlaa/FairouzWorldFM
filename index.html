@@ -1019,12 +1019,15 @@ input[type=range]::-webkit-slider-thumb{
 @keyframes fxPrayerStarTwinkle{0%,100%{opacity:.3;}50%{opacity:.85;}}
 
 .fx-lantern{position:absolute;pointer-events:none;--lantern-glow:.6;
-  animation:fxLanternSway 4.8s ease-in-out infinite;transform-origin:top center;
+  animation:fxLanternSway 3s ease-in-out infinite;transform-origin:top center;
   opacity:var(--lantern-glow);transition:opacity 1.2s ease;}
 .fx-lantern svg{display:block;width:100%;height:100%;}
-@keyframes fxLanternSway{0%,100%{transform:rotate(-4deg);}50%{transform:rotate(4deg);}}
-.fx-lantern-flame{animation:fxLanternFlicker 2.2s ease-in-out infinite;filter:drop-shadow(0 0 5px var(--sun-c));transform-origin:center;}
-@keyframes fxLanternFlicker{0%,100%{opacity:.55;transform:scale(.92);}50%{opacity:1;transform:scale(1.08);}}
+@keyframes fxLanternSway{
+  0%,100%{transform:translateX(-50%) rotate(-6deg);}
+  50%{transform:translateX(-50%) rotate(6deg);}
+}
+.fx-lantern-flame{animation:fxLanternFlicker 1.6s ease-in-out infinite;filter:drop-shadow(0 0 9px var(--sun-c)) drop-shadow(0 0 16px rgba(255,182,72,.55));transform-origin:center;}
+@keyframes fxLanternFlicker{0%,100%{opacity:.5;transform:scale(.85);}50%{opacity:1;transform:scale(1.2);}}
 
 /* Glow halo removed per request — icon keeps the same gentle float the weather icon gets */
 .prayer-icon-big{position:relative;animation:iconFloatBob 4.6s ease-in-out infinite;}
@@ -5994,13 +5997,13 @@ function renderPrayerFx(phase){
     fx.appendChild(st);
   }
 
-  // A small lantern (فانوس) swaying gently in the safe middle band — mirrors
-  // the parasol/pine-tree touch in the weather panel. Glows warmer and
-  // brighter after dark, softer through the day.
+  // A lantern (فانوس) swaying at the top-center of the panel — mirrors the
+  // parasol/pine-tree touch in the weather panel. Glows warmer and brighter
+  // after dark, softer through the day.
   const lantern=document.createElement('div');
   lantern.className='fx-lantern';
-  lantern.style.width='26px'; lantern.style.height='42px';
-  lantern.style.left='6%'; lantern.style.top='24%';
+  lantern.style.width='46px'; lantern.style.height='72px';
+  lantern.style.left='50%'; lantern.style.top='5%';
   lantern.style.setProperty('--lantern-glow', phase==='night' ? '.95' : (phase==='dawn'||phase==='dusk') ? '.8' : '.45');
   lantern.innerHTML=ambientLanternSVG();
   fx.appendChild(lantern);
