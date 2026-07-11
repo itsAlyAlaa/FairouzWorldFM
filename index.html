@@ -6144,6 +6144,37 @@ const WCODE={
   fog:[45,48],
   storm:[95,96,99]
 };
+// ── Season decoration follows the selected city's actual weather/hemisphere,
+// not a fixed Egypt calendar — so picking a rainy or wintery city doesn't get
+// a mismatched summer-beach page background. ──
+function baseCalendarSeason(date){
+  const md=(date.getMonth()+1)*100+date.getDate();
+  if(md>=1221||md<=320) return 'winter';
+  if(md>=321&&md<=620) return 'spring';
+  if(md>=621&&md<=922) return 'summer';
+  return 'autumn';
+}
+function computeCityDecorSeason(lat, code, temp){
+  let season=baseCalendarSeason(new Date());
+  if(typeof lat==='number' && lat<0){
+    // Southern hemisphere: seasons are flipped relative to Egypt's calendar.
+    const flip={summer:'winter',winter:'summer',spring:'autumn',autumn:'spring'};
+    season=flip[season]||season;
+  }
+  const isSnowy = code!=null && WCODE.snow.includes(code);
+  const isWet = code!=null && (WCODE.rain.includes(code)||WCODE.storm.includes(code)||WCODE.fog.includes(code));
+  if(isSnowy) season='winter';
+  else if(isWet && season==='summer') season='autumn'; // no sunny beach vibe while it's raining
+  if(typeof temp==='number'){
+    if(temp<=5) season='winter';
+    else if(temp>=30 && !isWet && !isSnowy) season='summer';
+  }
+  return season;
+}
+function applyCityDecorSeason(lat, code, temp){
+  window.__citySeason=computeCityDecorSeason(lat, code, temp);
+  if(window.applyOccasionTheme) window.applyOccasionTheme();
+}
 function weatherIconSVG(code,isDay){
   const sun=`<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="13" fill="var(--sun-c)"/><g stroke="var(--sun-c)" stroke-width="3" stroke-linecap="round"><line x1="32" y1="4" x2="32" y2="12"/><line x1="32" y1="52" x2="32" y2="60"/><line x1="4" y1="32" x2="12" y2="32"/><line x1="52" y1="32" x2="60" y2="32"/><line x1="12" y1="12" x2="18" y2="18"/><line x1="46" y1="46" x2="52" y2="52"/><line x1="52" y1="12" x2="46" y2="18"/><line x1="18" y1="46" x2="12" y2="52"/></g></svg>`;
   const moon=`<svg viewBox="0 0 64 64"><path d="M40 8 a20 20 0 1 0 0 48 a25 25 0 1 1 0 -48" fill="var(--moon-c)"/></svg>`;
@@ -6785,6 +6816,7 @@ if (cityLabel) cityLabel.textContent = locationName;
     lastWeatherData=wData;
     renderWeatherText(cur, wData, locationName, lastWeatherFlag);
     renderWeatherFx(cur.weather_code, cur.temperature_2m, cur.is_day);
+    applyCityDecorSeason(lat, cur.weather_code, cur.temperature_2m);
     document.getElementById('weatherSection').style.display='block';
     document.getElementById('weatherLoading').style.display='none';
     saveWeatherCache(lat, lon, locationName, wData, lastWeatherFlag);
@@ -6906,6 +6938,7 @@ if(cachedWeather && cachedWeather.wData){
   currentPrayerCountry=cachedWeather.countryCode||null;
   renderWeatherText(cachedWeather.wData.current, cachedWeather.wData, cachedWeather.city, lastWeatherFlag);
   renderWeatherFx(cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m, cachedWeather.wData.current.is_day);
+  applyCityDecorSeason(cachedWeather.lat, cachedWeather.wData.current.weather_code, cachedWeather.wData.current.temperature_2m);
   document.getElementById('weatherSection').style.display='block';
   document.getElementById('weatherLoading').style.display='none';
   if(lastAirQuality==null) fetchAirQuality(cachedWeather.lat, cachedWeather.lon);
@@ -7262,7 +7295,7 @@ setInterval(() => {
       .replace(/\bseason-\S+/g,'')
       .replace(/\boccasion-\S+/g,'')
       .trim();
-    const season=getSeason(now);
+    const season = window.__citySeason || getSeason(now);
     document.body.classList.add('season-'+season);
     const occ=detectOccasion(now);
     const configs=[SEASON_PARTICLES[season]];
@@ -7273,6 +7306,7 @@ setInterval(() => {
     }
     if(window.__occSetParticles) window.__occSetParticles(configs);
   }
+  window.applyOccasionTheme=applyOccasionTheme;
 
   window.addEventListener('load', () => (window.whenIdle||setTimeout)(applyOccasionTheme, 1300));
   setInterval(applyOccasionTheme, 60*60*1000); // safety re-check, e.g. across midnight
