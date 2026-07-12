@@ -2713,78 +2713,22 @@ footer { margin-top: 10px; font-size: 12.5px; }
     display: block;
   }
 
-  /* Current Time widget — smaller on mobile so nothing needs zoom-out */
-  .clock-card {
-    padding: 5px 10px;
-    min-width: 0;
-    border-radius: 12px;
-  }
-  .clock-card .cc-label {
-    font-size: 10px;
-    margin-bottom: 1px;
-    gap: 3px;
-  }
-  .clock-card .cc-time {
-    font-size: 16px;
-    letter-spacing: 0;
-  }
-  .clock-card .cc-time span {
-    font-size: 11px;
-    margin-inline-start: 2px;
-  }
-  .clock-card .cc-date {
-    font-size: 9.5px;
-    margin-top: 1px;
-  }
-  .cc-listeners{
-    margin-top: 5px;
-    padding-top: 5px;
-    gap: 4px;
-    font-size: 9.5px;
-  }
-  .cc-listeners-eq{ height: 8px; }
-  .cc-listeners-eq i{ width: 2px; }
-  .cc-listeners-label{ font-size: 8.5px; }
+  /* Clock/listeners widget removed per request — nothing needed here now. */
 
-  /* Center the clock card instead of hugging the right edge — it no
-     longer needs to dodge anything, and centered reads calmer. */
-  .topbar{
-    justify-content: center;
-    margin-bottom: 4px;
-  }
-  .clock-card{
-    margin-inline: auto;
-  }
-
-  /* The decorative flag/dove graphic used to be pulled up -150px, which
-     dragged it up behind the nav bar and the clock card — that overlap
-     was the biggest source of the "crowded" look. Let it sit as a small,
-     calm flourish above the clock card instead. */
+  /* Flag banner: now the only thing up top, so give it real presence —
+     big, centered, hanging just below the nav like a banner. */
   .topbar-palestine{
-    width: min(76px, 22vw);
-    margin: 2px auto 8px;
+    width: min(230px, 62vw);
+    margin: -18px auto 14px;
   }
 }
 
 /* ── SMALL MOBILE ≤ 480px ── */
 @media (max-width: 480px) {
-  .clock-card {
-    padding: 4px 8px;
+  .topbar-palestine{
+    width: min(190px, 58vw);
+    margin: -14px auto 12px;
   }
-  .clock-card .cc-time {
-    font-size: 14px;
-  }
-  .clock-card .cc-date {
-    font-size: 9px;
-  }
-  .cc-listeners{
-    margin-top: 4px;
-    padding-top: 4px;
-    gap: 3px;
-    font-size: 9px;
-  }
-  .cc-listeners-label{ display: none; }
-  .cc-listeners-eq{ height: 7px; }
   .hero      { flex-direction: column; align-items: center; text-align: center; }
   .info-grid { grid-template-columns: 1fr; }
   .panels    { grid-template-columns: 1fr; }
@@ -3424,28 +3368,6 @@ body.occasion-sham-elnessim .occ-tint{
 
   <!-- Main -->
   <main class="content">
-    <div class="topbar">
-
-  <div class="clock-card">
-    <div class="cc-label">
-      <span data-en="Current Time" data-ar="الوقت الآن">Current Time</span>
-    </div>
-
-    <div class="cc-time" id="clockTime">
-      --:-- <span id="clockAmPm">--</span>
-    </div>
-
-    <div class="cc-date" id="clockDate">--</div>
-
-    <div class="cc-listeners" id="ccListeners" aria-live="polite">
-      <span class="cc-listeners-dot" aria-hidden="true"></span>
-      <span class="cc-listeners-eq" aria-hidden="true"><i></i><i></i><i></i></span>
-      <span class="cc-listeners-count" id="listenersCount">--</span>
-      <span class="cc-listeners-label" data-en="listening now" data-ar="يستمعون الآن">listening now</span>
-    </div>
-  </div>
-
-</div>
 
 <div class="topbar-palestine" id="topbarPalestine" aria-hidden="true">
   <div class="topbar-palestine-glow"></div>
@@ -5191,14 +5113,17 @@ window.addEventListener('load', () => {
 
 setInterval(() => { if(wcApplyLifecycle()) wcSyncFinalTabFireworks(); }, 60 * 60 * 1000);
 
-// ── Clock ──
+// ── Clock ── (widget removed from the UI; function kept inert/safe in case
+// other code still calls it)
 function updateClock() {
+  const timeEl = document.getElementById('clockTime');
+  if (!timeEl) return;
   const now = new Date();
   let h = now.getHours();
   const ampm = h >= 12 ? 'PM' : 'AM';
   const h12 = h % 12 === 0 ? 12 : h % 12;
   const m = String(now.getMinutes()).padStart(2,'0');
-  document.getElementById('clockTime').innerHTML = h12+':'+m+' <span id="clockAmPm">'+ampm+'</span>';
+  timeEl.innerHTML = h12+':'+m+' <span id="clockAmPm">'+ampm+'</span>';
   if (currentLang==='ar') {
     const days=['الأحد','الإثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
     const months=['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
