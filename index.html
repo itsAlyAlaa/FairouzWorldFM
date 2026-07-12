@@ -3144,6 +3144,171 @@ body.occasion-sham-elnessim .occ-tint{
 
 </head>
 <body>
+<!-- ══════════════════════════════════════════════════════════════
+     MAINTENANCE MODE — START
+     احذف هذا البلوك بالكامل (من هنا لحد "MAINTENANCE MODE — END")
+     عشان ترجع الموقع يشتغل عادي تاني
+     ══════════════════════════════════════════════════════════════ -->
+<style>
+#maintenanceOverlay{
+  position:fixed; inset:0; z-index:2147483647;
+  display:flex; align-items:center; justify-content:center;
+  background:radial-gradient(ellipse at 30% 15%,#1c0e22,#08040c 70%);
+  overflow:hidden; direction:rtl;
+}
+#maintenanceOverlay .m-aurora{position:absolute; border-radius:50%; filter:blur(95px); pointer-events:none; animation:mDrift 15s ease-in-out infinite alternate;}
+#maintenanceOverlay .m-aurora.a1{width:600px; height:600px; background:#6d28d9; opacity:.38; top:-150px; right:-110px;}
+#maintenanceOverlay .m-aurora.a2{width:520px; height:520px; background:#d9b888; opacity:.16; bottom:-130px; left:-100px; animation-delay:3s;}
+#maintenanceOverlay .m-aurora.a3{width:400px; height:400px; background:#8b5cf6; opacity:.22; top:45%; left:38%; animation-delay:6s;}
+@keyframes mDrift{0%{transform:translate(0,0) scale(1);}100%{transform:translate(28px,-24px) scale(1.1);}}
+#maintenanceOverlay .m-stars{position:absolute; inset:0; background-image:radial-gradient(1.5px 1.5px at 15% 25%,#f3e8f6 60%,transparent),radial-gradient(1.5px 1.5px at 75% 60%,#f3e8f6 60%,transparent),radial-gradient(1px 1px at 40% 85%,#c9a36a 60%,transparent),radial-gradient(1px 1px at 88% 15%,#f3e8f6 60%,transparent),radial-gradient(1.5px 1.5px at 55% 40%,#c9a36a 60%,transparent),radial-gradient(1px 1px at 8% 65%,#f3e8f6 60%,transparent),radial-gradient(1px 1px at 30% 10%,#f3e8f6 60%,transparent),radial-gradient(1px 1px at 92% 80%,#c9a36a 60%,transparent); background-size:100% 100%; opacity:.6; animation:mTwinkle 3.2s ease-in-out infinite alternate;}
+@keyframes mTwinkle{0%{opacity:.3;}100%{opacity:.8;}}
+#maintenanceOverlay .m-notes{position:absolute; inset:0; pointer-events:none; overflow:hidden;}
+#maintenanceOverlay .m-notes span{position:absolute; bottom:-40px; font-size:18px; color:#d9b888; opacity:0; animation:mFloat 9s linear infinite;}
+#maintenanceOverlay .m-notes span:nth-child(1){left:8%; animation-delay:0s; font-size:16px;}
+#maintenanceOverlay .m-notes span:nth-child(2){left:22%; animation-delay:1.6s; color:#c9879c; font-size:22px;}
+#maintenanceOverlay .m-notes span:nth-child(3){left:38%; animation-delay:3.2s; font-size:14px;}
+#maintenanceOverlay .m-notes span:nth-child(4){left:58%; animation-delay:.8s; color:#8b5cf6; font-size:20px;}
+#maintenanceOverlay .m-notes span:nth-child(5){left:74%; animation-delay:4.4s; font-size:16px;}
+#maintenanceOverlay .m-notes span:nth-child(6){left:88%; animation-delay:2.4s; color:#c9879c; font-size:18px;}
+@keyframes mFloat{0%{transform:translateY(0) rotate(0deg); opacity:0;}10%{opacity:.55;}90%{opacity:.4;}100%{transform:translateY(-110vh) rotate(50deg); opacity:0;}}
+#maintenanceOverlay .m-card{position:relative; z-index:2; text-align:center; padding:2.6rem 2rem; max-width:600px; width:92%;}
+#maintenanceOverlay .m-logo-wrap{position:relative; width:150px; height:150px; margin:0 auto 1.8rem;}
+#maintenanceOverlay .m-logo-halo{position:absolute; inset:-6px; border-radius:50%; background:conic-gradient(from 0deg,#d9b888,#8b5cf6,#c9879c,#d9b888); filter:blur(18px); opacity:.55; animation:mHalo 5s linear infinite;}
+@keyframes mHalo{to{transform:rotate(360deg);}}
+#maintenanceOverlay .m-ring{position:absolute; inset:0; border-radius:50%; border:1.5px solid transparent; border-top-color:#d9b888; border-left-color:#8b5cf6; animation:mSpin 3s linear infinite;}
+#maintenanceOverlay .m-ring.r2{inset:-12px; border-top-color:transparent; border-right-color:#c9879c; border-bottom-color:#d9b888; animation:mSpin 4.5s linear infinite reverse;}
+#maintenanceOverlay .m-ring.r3{inset:10px; border:1px dashed rgba(217,184,136,.35); animation:mSpin 8s linear infinite;}
+@keyframes mSpin{to{transform:rotate(360deg);}}
+#maintenanceOverlay .m-logo-disc{position:absolute; inset:14px; border-radius:50%; background:radial-gradient(circle at 35% 30%,#2a1533,#140a1a 75%); box-shadow:0 0 0 1px rgba(217,184,136,.25), inset 0 0 30px rgba(139,92,246,.25); display:flex; align-items:center; justify-content:center; overflow:hidden; animation:mPulse 2.6s ease-in-out infinite;}
+@keyframes mPulse{0%,100%{box-shadow:0 0 0 1px rgba(217,184,136,.25), inset 0 0 30px rgba(139,92,246,.25), 0 0 24px rgba(139,92,246,.15);}50%{box-shadow:0 0 0 1px rgba(217,184,136,.4), inset 0 0 34px rgba(139,92,246,.35), 0 0 40px rgba(217,184,136,.35);}}
+#maintenanceOverlay .m-logo-img{width:72%; height:72%; object-fit:contain; animation:mLogoFloat 3.4s ease-in-out infinite;}
+@keyframes mLogoFloat{0%,100%{transform:translateY(0) scale(1);}50%{transform:translateY(-5px) scale(1.035);}}
+#maintenanceOverlay .m-sub{font-family:'Cairo',sans-serif; font-weight:600; font-size:14px; color:#c9a36a; margin:0 0 .5rem; text-transform:uppercase; letter-spacing:3px;}
+#maintenanceOverlay h1{font-family:'Cairo',sans-serif; font-weight:800; font-size:clamp(24px,5vw,34px); color:#f3e8f6; margin:0 0 .7rem; letter-spacing:.3px;}
+#maintenanceOverlay p.m-desc{font-family:'Cairo',sans-serif; color:#a080b0; font-size:15px; line-height:1.95; margin:0 auto .35rem; max-width:460px;}
+#maintenanceOverlay p.m-signature{font-family:'Cairo',sans-serif; color:#7a6489; font-size:13.5px; margin:0 auto 2.1rem; font-weight:600;}
+#maintenanceOverlay .m-countdown{display:flex; gap:10px; justify-content:center; margin-bottom:1.9rem; flex-wrap:wrap; align-items:center;}
+#maintenanceOverlay .m-unit{position:relative; background:linear-gradient(160deg,rgba(139,92,246,.14),rgba(217,184,136,.05)); border:1px solid rgba(217,184,136,.28); border-radius:16px; padding:1rem 1.15rem; min-width:78px; backdrop-filter:blur(8px); overflow:hidden;}
+#maintenanceOverlay .m-unit::before{content:'';position:absolute; inset:0; background:linear-gradient(120deg,transparent,rgba(255,255,255,.08),transparent); transform:translateX(-100%); animation:mShine 3.5s ease-in-out infinite;}
+@keyframes mShine{0%{transform:translateX(-100%);}50%,100%{transform:translateX(100%);}}
+#maintenanceOverlay .m-unit b{position:relative; display:block; font-family:'Cairo',sans-serif; font-size:28px; font-weight:800; background:linear-gradient(180deg,#f3e8f6,#d9b888); -webkit-background-clip:text; background-clip:text; color:transparent; font-variant-numeric:tabular-nums; animation:mDigitPop .5s ease;}
+@keyframes mDigitPop{0%{transform:scale(1.18); opacity:.4;}100%{transform:scale(1); opacity:1;}}
+#maintenanceOverlay .m-unit span{position:relative; display:block; font-family:'Cairo',sans-serif; font-size:11px; color:#a080b0; margin-top:5px; letter-spacing:.5px;}
+#maintenanceOverlay .m-colon{font-family:'Cairo',sans-serif; font-size:22px; font-weight:800; color:#8b5cf6; align-self:flex-start; margin-top:12px; opacity:.7; animation:mBlink 1.4s steps(1) infinite;}
+@keyframes mBlink{50%{opacity:.15;}}
+#maintenanceOverlay .m-bar-wrap{width:100%; max-width:420px; height:6px; margin:0 auto; border-radius:99px; background:rgba(255,255,255,.06); overflow:hidden; position:relative;}
+#maintenanceOverlay .m-bar{height:100%; border-radius:99px; background:linear-gradient(90deg,#8b5cf6,#c9879c,#d9b888); width:0%; transition:width 1s linear; position:relative;}
+#maintenanceOverlay .m-bar::after{content:'';position:absolute; inset:0; background:linear-gradient(120deg,transparent,rgba(255,255,255,.5),transparent); animation:mShine 2s ease-in-out infinite;}
+#maintenanceOverlay .m-note{margin-top:1.7rem; font-family:'Inter',sans-serif; font-size:11.5px; color:#5c4a6c; letter-spacing:.5px;}
+@media(max-width:480px){#maintenanceOverlay .m-unit{min-width:60px; padding:.75rem .7rem;} #maintenanceOverlay .m-unit b{font-size:21px;} #maintenanceOverlay .m-logo-wrap{width:120px; height:120px;}}
+</style>
+<div id="maintenanceOverlay" role="alert" aria-live="polite">
+  <div class="m-aurora a1"></div>
+  <div class="m-aurora a2"></div>
+  <div class="m-aurora a3"></div>
+  <div class="m-stars"></div>
+  <div class="m-notes" aria-hidden="true">
+    <span>&#9834;</span><span>&#9835;</span><span>&#9833;</span><span>&#9834;</span><span>&#9835;</span><span>&#9833;</span>
+  </div>
+  <div class="m-card">
+    <div class="m-logo-wrap">
+      <div class="m-logo-halo"></div>
+      <div class="m-ring r3"></div>
+      <div class="m-ring r2"></div>
+      <div class="m-ring"></div>
+      <div class="m-logo-disc">
+        <img src="assets/img-8564.webp" class="m-logo-img" alt="Fairouz World FM">
+      </div>
+    </div>
+    <p class="m-sub">Under Maintenance</p>
+    <h1>الموقع تحت الصيانة حاليًا</h1>
+    <p class="m-desc">بنشتغل على تحديثات وتحسينات جديدة لعالم فيروز، هنرجع قريب أحلى من الأول. البث هيرجع تلقائيًا بعد انتهاء الصيانة.</p>
+    <p class="m-signature">مع تحيات فريق العمل 🤍</p>
+    <div class="m-countdown" id="mCountdown">
+      <div class="m-unit"><b id="mSecs">00</b><span>ثانية</span></div>
+      <div class="m-colon">:</div>
+      <div class="m-unit"><b id="mMins">00</b><span>دقيقة</span></div>
+      <div class="m-colon">:</div>
+      <div class="m-unit"><b id="mHours">00</b><span>ساعة</span></div>
+      <div class="m-colon">:</div>
+      <div class="m-unit"><b id="mDays">00</b><span>يوم</span></div>
+    </div>
+    <div class="m-bar-wrap"><div class="m-bar" id="mBar"></div></div>
+    <p class="m-note">Fairouz World FM · Back soon</p>
+  </div>
+</div>
+<script>
+(function(){
+  // منع أي تشغيل صوت (البث أو الأذان) طول فترة الصيانة
+  HTMLMediaElement.prototype.play = function(){
+    return Promise.reject(new DOMException('Playback disabled during maintenance','NotAllowedError'));
+  };
+  window.addEventListener('load', function(){
+    document.querySelectorAll('audio, video').forEach(function(el){
+      try{ el.pause(); el.muted = true; }catch(e){}
+    });
+  });
+  setInterval(function(){
+    document.querySelectorAll('audio, video').forEach(function(el){
+      if(!el.paused){ try{ el.pause(); }catch(e){} }
+    });
+  }, 800);
+
+  // منع أي طلب صلاحية لوكيشن (خاص بقسم الطقس/الصلاة) طول فترة الصيانة
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition = function(success, error){
+      if(typeof error === 'function'){ error({code:1,message:'Location disabled during maintenance'}); }
+    };
+    navigator.geolocation.watchPosition = function(success, error){
+      if(typeof error === 'function'){ error({code:1,message:'Location disabled during maintenance'}); }
+      return -1;
+    };
+  }
+
+  // العد التنازلي حتى 20 يوليو 2026 الساعة 7 مساءً (بتوقيت مصر)
+  var target = new Date('2026-07-20T19:00:00+02:00').getTime();
+  var start = Date.now();
+  var lastVals = {};
+  function setDigit(id, val){
+    var el = document.getElementById(id);
+    if(lastVals[id] !== val){
+      lastVals[id] = val;
+      el.textContent = val;
+      el.style.animation = 'none';
+      void el.offsetWidth;
+      el.style.animation = '';
+    }
+  }
+  function tick(){
+    var now = Date.now();
+    var diff = target - now;
+    if(diff <= 0){
+      setDigit('mDays','00'); setDigit('mHours','00'); setDigit('mMins','00'); setDigit('mSecs','00');
+      document.getElementById('mBar').style.width='100%';
+      return;
+    }
+    var d = Math.floor(diff/(1000*60*60*24));
+    var h = Math.floor((diff/(1000*60*60))%24);
+    var m = Math.floor((diff/(1000*60))%60);
+    var s = Math.floor((diff/1000)%60);
+    setDigit('mDays', String(d).padStart(2,'0'));
+    setDigit('mHours', String(h).padStart(2,'0'));
+    setDigit('mMins', String(m).padStart(2,'0'));
+    setDigit('mSecs', String(s).padStart(2,'0'));
+    var total = target - start;
+    var elapsed = now - start;
+    var pct = total>0 ? Math.min(100,(elapsed/total)*100) : 100;
+    document.getElementById('mBar').style.width = pct+'%';
+  }
+  tick();
+  setInterval(tick, 1000);
+})();
+</script>
+<!-- ══════════════════════════════════════════════════════════════
+     MAINTENANCE MODE — END
+     ══════════════════════════════════════════════════════════════ -->
+
 <!-- ── Site Loader / Splash Screen ── -->
 <div id="siteLoader" class="site-loader" role="status" aria-live="polite" aria-label="Loading Fairouz World FM">
   <div class="loader-bg"></div>
