@@ -2633,21 +2633,33 @@ footer { margin-top: 10px; font-size: 12.5px; }
     border-bottom: 1px solid var(--border);
     backdrop-filter: blur(14px);
     will-change: transform;
-    padding: calc(6px + env(safe-area-inset-top)) 0 6px;
+    padding: calc(6px + env(safe-area-inset-top)) 44px 4px;
     justify-content: center;
+    align-items: center;
   }
 
   .mobile-nav .nav-item {
     flex: 1;
     flex-direction: column;
     gap: 2px;
-    padding: 5px 4px;
-    font-size: 11.5px;
+    padding: 5px 2px;
     border: none;
     background: none;
-    max-width: 130px;
+    max-width: 72px;
     text-align: center;
     justify-content: center;
+  }
+
+  /* Icon-only on phones: six text labels plus icons plus the language
+     pill were all fighting for the same row — that's the crowding.
+     Icons alone plus a slim active-dot underneath is a standard, tidy
+     mobile tab-bar pattern; labels stay for screen readers. */
+  .mobile-nav .nav-item span:not(.ic) {
+    position: absolute;
+    width: 1px; height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
   }
 
   .mobile-nav .nav-item .ic {
@@ -2655,27 +2667,47 @@ footer { margin-top: 10px; font-size: 12.5px; }
   }
 
   .mobile-nav .nav-item .ic svg {
-    width: 24px;
-    height: 24px;
+    width: 23px;
+    height: 23px;
   }
 
   .mobile-nav .nav-item.active {
     color: var(--gold);
+    position: relative;
+  }
+  .mobile-nav .nav-item.active::after{
+    content:"";
+    position:absolute;
+    bottom:-2px;
+    width:4px;height:4px;border-radius:50%;
+    background:var(--gold);
+    box-shadow:0 0 5px var(--glow-g);
   }
 
+  /* Language toggle: pulled fully out of the nav row and pinned as its
+     own small icon-only pill in the corner, so it never competes with
+     the 6 page buttons for width and never gets clipped at the edge. */
   .mobile-lang {
-    position: static;
-    right: auto;
-    top: auto;
+    position: absolute;
+    top: calc(6px + env(safe-area-inset-top));
+    right: 6px;
+    left: auto;
     transform: none;
     flex-shrink: 0;
-    width: auto;
-    padding: 6px 10px;
-    margin: 0 6px 0 0;
-    font-size: 12px;
-    gap: 5px;
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: var(--card);
+    border: 1px solid var(--border);
   }
-  .mobile-lang .lang-flag{width:16px;height:12px;}
+  body.lang-ar .mobile-lang { right: auto; left: 6px; }
+  .mobile-lang .lang-flag{ width:18px; height:13px; }
+  .mobile-lang .lang-name{ display:none; }
 
   .mobile-footer {
     display: block;
@@ -2713,6 +2745,25 @@ footer { margin-top: 10px; font-size: 12.5px; }
   .cc-listeners-eq{ height: 8px; }
   .cc-listeners-eq i{ width: 2px; }
   .cc-listeners-label{ font-size: 8.5px; }
+
+  /* Center the clock card instead of hugging the right edge — it no
+     longer needs to dodge anything, and centered reads calmer. */
+  .topbar{
+    justify-content: center;
+    margin-bottom: 4px;
+  }
+  .clock-card{
+    margin-inline: auto;
+  }
+
+  /* The decorative flag/dove graphic used to be pulled up -150px, which
+     dragged it up behind the nav bar and the clock card — that overlap
+     was the biggest source of the "crowded" look. Let it sit as a small,
+     calm flourish above the clock card instead. */
+  .topbar-palestine{
+    width: min(76px, 22vw);
+    margin: 2px auto 8px;
+  }
 }
 
 /* ── SMALL MOBILE ≤ 480px ── */
