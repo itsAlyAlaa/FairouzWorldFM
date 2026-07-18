@@ -3185,7 +3185,20 @@ html.v2 .right-side{
   border-left:1px solid var(--border);
   background:linear-gradient(180deg,rgba(26,13,33,.7),rgba(11,5,14,.85));
   padding:16px 14px 30px;
+  position:relative;
+  transition:width .25s ease, padding .25s ease;
 }
+.v2-rail-toggle{
+  position:absolute; top:16px; left:-15px; z-index:5;
+  width:30px; height:30px; border-radius:50%;
+  background:var(--card); border:1px solid var(--border); color:var(--muted);
+  display:flex; align-items:center; justify-content:center; cursor:pointer;
+  font-size:13px; transition:color .2s,border-color .2s;
+}
+.v2-rail-toggle:hover{color:var(--gold); border-color:var(--gold2);}
+html.v2.right-collapsed .app{grid-template-columns:252px minmax(0,1fr) 0px;}
+html.v2.right-collapsed .right-side{padding:16px 0; overflow:visible;}
+html.v2.right-collapsed .right-side > *:not(.v2-rail-toggle){display:none;}
 
 /* Topbar (search + quick icons + profile pill) */
 .v2-topbar{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
@@ -4363,6 +4376,8 @@ html.v2 .right-side{
   <!-- Right rail: profile card + now playing + quick add-article -->
   <aside class="right-side" dir="rtl">
 
+    <button type="button" class="v2-rail-toggle" id="railToggleBtn" title="إخفاء/إظهار اللوحة الجانبية" onclick="v2ToggleRightRail()">»</button>
+
     <div class="v2-profile-card" id="v2ProfileCard"></div>
 
     <div class="v2-nowplay">
@@ -4938,7 +4953,7 @@ async function v2RenderUsers(){
       </select>` : `<span class="v2-role-chip">${roleLabels[u.role] || u.role || '—'}</span>`}
     </td>
     <td>
-      ${isFounderViewing ? `<input type="number" min="1" max="99" value="${u.level || 1}" style="width:52px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;" onchange="v2ChangeUserLevel('${u.id}', this.value, this)">` : `Lv. ${u.level || 1}`}
+      ${isFounderViewing ? `<input type="number" min="1" max="500" value="${u.level || 1}" style="width:52px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;" onchange="v2ChangeUserLevel('${u.id}', this.value, this)">` : `Lv. ${u.level || 1}`}
     </td>
     <td style="text-align:center;">
       ${isFounderViewing ? `<input type="checkbox" ${u.verified ? 'checked' : ''} title="توثيق الحساب" style="width:17px;height:17px;cursor:pointer;" onchange="v2ToggleUserVerified('${u.id}', this.checked, this)">` : (u.verified ? '✔️' : '—')}
@@ -4996,9 +5011,12 @@ async function v2ChangeUserRole(userId, newRole, selectEl){
 }
 async function v2ChangeUserLevel(userId, newLevel, inputEl){
   if (currentProfile?.role !== 'founder'){ alert('تعديل المستوى متاح للمؤسس فقط حاليًا.'); v2RenderUsers(); return; }
-  const lvl = Math.max(1, Math.min(99, parseInt(newLevel, 10) || 1));
+  const lvl = Math.max(1, Math.min(500, parseInt(newLevel, 10) || 1));
   inputEl.value = lvl; inputEl.disabled = true;
-  const { error } = await sb.from('profiles').update({ level: lvl }).eq('id', userId);
+  // No organic XP-earning system exists yet, so a manually-granted level should
+  // show as a full bar rather than 0% (which happened before because xp stayed
+  // at its old value while the required xp — level*100 — jumped up).
+  const { error } = await sb.from('profiles').update({ level: lvl, xp: lvl * 100 }).eq('id', userId);
   inputEl.disabled = false;
   if (error){ alert('تعذّر تغيير المستوى: ' + error.message + '\n\n(محتاج عمود "level" (int) في جدول profiles على Supabase).'); return; }
   if (currentUser && userId === currentUser.id) refreshAuthUI();
@@ -5109,6 +5127,21 @@ document.querySelectorAll('#v2ArticlesTabs button').forEach(b => b.addEventListe
 // ══════════════════════════════════════════════════════════════
 let currentUser = null;
 let currentProfile = null;
+
+// Right-rail collapse toggle — available to every visitor, remembered per-browser.
+function v2ToggleRightRail(){
+  const collapsed = document.documentElement.classList.toggle('right-collapsed');
+  const btn = document.getElementById('railToggleBtn');
+  if (btn) btn.textContent = collapsed ? '«' : '»';
+  try { localStorage.setItem('fw_right_collapsed', collapsed ? '1' : '0'); } catch(e){}
+}
+(function v2InitRightRail(){
+  let collapsed = false;
+  try { collapsed = localStorage.getItem('fw_right_collapsed') === '1'; } catch(e){}
+  if (collapsed) document.documentElement.classList.add('right-collapsed');
+  const btn = document.getElementById('railToggleBtn');
+  if (btn) btn.textContent = collapsed ? '«' : '»';
+})();
 
 v2RenderArticles();
 v2RenderFeed();
