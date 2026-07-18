@@ -4927,28 +4927,29 @@ async function v2RenderUsers(){
     return true;
   });
   const roleLabels = {founder:'👑 Founder', admin:'🛡️ مشرف', writer:'✍️ كاتب', member:'🎧 عضو'};
+  const isFounderViewing = currentProfile?.role === 'founder';
   body.innerHTML = rows.map(u => `<tr>
     <td><div class="u-cell"><img src="${u.avatar_url || 'https://api.dicebear.com/7.x/initials/svg?seed='+encodeURIComponent(u.username||'?')+'&backgroundColor=6e2640,8b5cf6'}" alt="">${u.username || '(بدون اسم)'}</div></td>
     <td>${u.country || '—'}</td>
     <td>${u.created_at ? new Date(u.created_at).toLocaleDateString('ar-EG') : '—'}</td>
     <td>
-      <select class="v2-role-chip" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;" onchange="v2ChangeUserRole('${u.id}', this.value, this)">
+      ${isFounderViewing ? `<select class="v2-role-chip" style="background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;" onchange="v2ChangeUserRole('${u.id}', this.value, this)">
         ${Object.entries(roleLabels).map(([val,label]) => `<option value="${val}" ${u.role===val?'selected':''}>${label}</option>`).join('')}
-      </select>
+      </select>` : `<span class="v2-role-chip">${roleLabels[u.role] || u.role || '—'}</span>`}
     </td>
     <td>
-      <input type="number" min="1" max="99" value="${u.level || 1}" style="width:52px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;" onchange="v2ChangeUserLevel('${u.id}', this.value, this)">
+      ${isFounderViewing ? `<input type="number" min="1" max="99" value="${u.level || 1}" style="width:52px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;" onchange="v2ChangeUserLevel('${u.id}', this.value, this)">` : `Lv. ${u.level || 1}`}
     </td>
     <td style="text-align:center;">
-      <input type="checkbox" ${u.verified ? 'checked' : ''} title="توثيق الحساب" style="width:17px;height:17px;cursor:pointer;" onchange="v2ToggleUserVerified('${u.id}', this.checked, this)">
+      ${isFounderViewing ? `<input type="checkbox" ${u.verified ? 'checked' : ''} title="توثيق الحساب" style="width:17px;height:17px;cursor:pointer;" onchange="v2ToggleUserVerified('${u.id}', this.checked, this)">` : (u.verified ? '✔️' : '—')}
     </td>
     <td>
-      <input type="text" value="${(Array.isArray(u.badges) ? u.badges : []).join(' ')}" placeholder="🏆 🎖️ ⭐" style="width:90px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;font-size:13px;" onchange="v2SetUserBadges('${u.id}', this.value, this)">
+      ${isFounderViewing ? `<input type="text" value="${(Array.isArray(u.badges) ? u.badges : []).join(' ')}" placeholder="🏆 🎖️ ⭐" style="width:90px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;font-size:13px;" onchange="v2SetUserBadges('${u.id}', this.value, this)">` : `${(Array.isArray(u.badges) ? u.badges : []).join(' ') || '—'}`}
     </td>
     <td><span class="v2-status-dot on"></span>مسجّل</td>
     <td style="display:flex;gap:6px;">
       ${(currentUser && u.id !== currentUser.id) ? `<button type="button" class="v2-act-btn" id="followBtn-${u.id}" onclick="v2ToggleFollow('${u.id}', this)">…</button>` : ''}
-      <button type="button" class="v2-act-btn v2-act-reject" title="حذف الحساب (من لوحة Supabase)" onclick="alert('حذف المستخدمين نهائيًا بيتم من لوحة Supabase مباشرة (Authentication → Users) حفاظًا على الأمان.')">🗑</button>
+      ${isFounderViewing ? `<button type="button" class="v2-act-btn v2-act-reject" title="حذف الحساب (من لوحة Supabase)" onclick="alert('حذف المستخدمين نهائيًا بيتم من لوحة Supabase مباشرة (Authentication → Users) حفاظًا على الأمان.')">🗑</button>` : ''}
     </td>
   </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مستخدمين لسه</td></tr>';
 
@@ -4981,6 +4982,7 @@ async function v2ToggleFollow(userId, btnEl){
   btnEl.disabled = false;
 }
 async function v2ChangeUserRole(userId, newRole, selectEl){
+  if (currentProfile?.role !== 'founder'){ alert('تغيير الأدوار متاح للمؤسس فقط حاليًا.'); v2RenderUsers(); return; }
   selectEl.disabled = true;
   const { error } = await sb.from('profiles').update({ role: newRole }).eq('id', userId);
   selectEl.disabled = false;
@@ -4993,6 +4995,7 @@ async function v2ChangeUserRole(userId, newRole, selectEl){
   if (currentUser && userId === currentUser.id) refreshAuthUI();
 }
 async function v2ChangeUserLevel(userId, newLevel, inputEl){
+  if (currentProfile?.role !== 'founder'){ alert('تعديل المستوى متاح للمؤسس فقط حاليًا.'); v2RenderUsers(); return; }
   const lvl = Math.max(1, Math.min(99, parseInt(newLevel, 10) || 1));
   inputEl.value = lvl; inputEl.disabled = true;
   const { error } = await sb.from('profiles').update({ level: lvl }).eq('id', userId);
@@ -5001,6 +5004,7 @@ async function v2ChangeUserLevel(userId, newLevel, inputEl){
   if (currentUser && userId === currentUser.id) refreshAuthUI();
 }
 async function v2ToggleUserVerified(userId, isVerified, checkboxEl){
+  if (currentProfile?.role !== 'founder'){ alert('توثيق الحسابات متاح للمؤسس فقط حاليًا.'); checkboxEl.checked = !isVerified; return; }
   checkboxEl.disabled = true;
   const { error } = await sb.from('profiles').update({ verified: isVerified }).eq('id', userId);
   checkboxEl.disabled = false;
@@ -5008,6 +5012,7 @@ async function v2ToggleUserVerified(userId, isVerified, checkboxEl){
   if (currentUser && userId === currentUser.id) refreshAuthUI();
 }
 async function v2SetUserBadges(userId, rawValue, inputEl){
+  if (currentProfile?.role !== 'founder'){ alert('إضافة الأوسمة متاحة للمؤسس فقط حاليًا.'); v2RenderUsers(); return; }
   const badges = rawValue.trim().split(/\s+/).filter(Boolean).slice(0, 6);
   inputEl.disabled = true;
   const { error } = await sb.from('profiles').update({ badges }).eq('id', userId);
