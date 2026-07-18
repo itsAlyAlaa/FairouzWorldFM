@@ -3177,7 +3177,6 @@ html.v2 .sidebar-decor,html.v2 .sidebar-footer .social-row,html.v2 .sidebar-foot
 
 /* Center column */
 html.v2 .content{grid-column:2;grid-row:1;height:100vh;overflow-y:auto;padding:16px 22px 40px;}
-html.v2 .topbar-palestine{display:none;}
 
 /* Right rail */
 html.v2 .right-side{
@@ -3774,7 +3773,7 @@ html.v2 .right-side{
           <p class="v2h-sub">إذاعة فيروز على مدار الساعة</p>
           <div class="v2-hero-btns">
             <button type="button" class="v2-btn v2-btn-ghost" data-goto="about">المزيد عن فيروز</button>
-            <button type="button" class="v2-btn v2-btn-gold" onclick="if(!hasStarted){startRadio();}else{togglePlay();}">▶ استمع الآن</button>
+            <button type="button" class="v2-btn v2-btn-gold" id="heroPlayBtn" onclick="if(!hasStarted){startRadio();}else{togglePlay();}"><span id="heroPlayIcon">▶</span> <span id="heroPlayLabel">استمع الآن</span></button>
           </div>
         </div>
       </div>
@@ -4289,6 +4288,13 @@ html.v2 .right-side{
         <p>الأغاني والمقالات اللي حفظتها</p>
       </div>
       <div class="v2-fav-list" id="v2FavList"></div>
+
+      <div class="v2-page-head" style="margin-top:28px;">
+        <h1 style="font-size:18px;">🎵 اختار أغانيك المفضلة</h1>
+        <p>دوس على أي أغنية عشان تضيفها أو تشيلها من المفضلة</p>
+      </div>
+      <input type="text" id="v2SongSearch" placeholder="ابحث عن أغنية..." oninput="v2RenderSongPicker()" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:13.5px;margin-bottom:14px;">
+      <div class="v2-article-grid" id="v2SongPicker"></div>
     </div>
 
     <!-- ── لوحة تحكم الأدمن (تظهر فقط للمؤسس/الأدمن) ── -->
@@ -4356,7 +4362,30 @@ html.v2 .right-side{
       </div>
     </div>
 
-    <footer><span data-en="© 2026 Fairouz World FM — All Rights Reserved" data-ar="© 2026 عالم فيروز FM — جميع الحقوق محفوظة">© 2026 Fairouz World FM — All Rights Reserved</span></footer>
+    <footer class="global-footer" style="text-align:center;padding:26px 16px 18px;display:flex;flex-direction:column;align-items:center;gap:10px;">
+      <span data-en="© 2026 Fairouz World FM — All Rights Reserved" data-ar="© 2026 عالم فيروز FM — جميع الحقوق محفوظة">© 2026 Fairouz World FM — All Rights Reserved</span>
+      <span data-en="Developed by Aly Alaa" data-ar="تم تطويره من خلال علي علاء" style="font-size:12px;color:var(--muted);">Developed by Aly Alaa</span>
+      <div class="social-row">
+        <a href="https://www.facebook.com/itsAlyAlaa/" target="_blank" rel="noopener" aria-label="Facebook" class="social-ic" style="--brand:#1877f2;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M22 12.06C22 6.5 17.52 2 12 2S2 6.5 2 12.06c0 5 3.66 9.14 8.44 9.94v-7.03H7.9v-2.91h2.54V9.91c0-2.5 1.49-3.89 3.78-3.89 1.1 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56v1.87h2.78l-.44 2.91h-2.34V22c4.78-.8 8.44-4.94 8.44-9.94z"/></svg>
+        </a>
+        <a href="https://www.instagram.com/itsalyalaa/" target="_blank" rel="noopener" aria-label="Instagram" class="social-ic" style="--brand:#e1306c;--brand-grad:linear-gradient(135deg,#f9ce34,#ee2a7b,#6228d7);">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2c2.72 0 3.06.01 4.12.06 1.06.05 1.79.22 2.43.47.65.25 1.21.6 1.7 1.09.49.49.84 1.05 1.09 1.7.25.64.42 1.37.47 2.43C21.86 8.42 21.87 8.76 21.87 11.48v1.04c0 2.72-.01 3.06-.06 4.12-.05 1.06-.22 1.79-.47 2.43-.25.65-.6 1.21-1.09 1.7-.49.49-1.05.84-1.7 1.09-.64.25-1.37.42-2.43.47-1.06.05-1.4.06-4.12.06s-3.06-.01-4.12-.06c-1.06-.05-1.79-.22-2.43-.47a4.6 4.6 0 0 1-1.7-1.09 4.6 4.6 0 0 1-1.09-1.7c-.25-.64-.42-1.37-.47-2.43C2.14 15.58 2.13 15.24 2.13 12.52v-1.04c0-2.72.01-3.06.06-4.12.05-1.06.22-1.79.47-2.43.25-.65.6-1.21 1.09-1.7a4.6 4.6 0 0 1 1.7-1.09c.64-.25 1.37-.42 2.43-.47C8.94 2.01 9.28 2 12 2zm0 1.8c-2.67 0-2.99.01-4.04.06-.97.04-1.5.2-1.85.34-.46.18-.8.4-1.15.74-.34.35-.56.69-.74 1.15-.14.35-.3.88-.34 1.85-.05 1.05-.06 1.37-.06 4.04s.01 2.99.06 4.04c.04.97.2 1.5.34 1.85.18.46.4.8.74 1.15.35.34.69.56 1.15.74.35.14.88.3 1.85.34 1.05.05 1.37.06 4.04.06s2.99-.01 4.04-.06c.97-.04 1.5-.2 1.85-.34.46-.18.8-.4 1.15-.74.34-.35.56-.69.74-1.15.14-.35.3-.88.34-1.85.05-1.05.06-1.37.06-4.04s-.01-2.99-.06-4.04c-.04-.97-.2-1.5-.34-1.85a3 3 0 0 0-.74-1.15 3 3 0 0 0-1.15-.74c-.35-.14-.88-.3-1.85-.34-1.05-.05-1.37-.06-4.04-.06zm0 3.5a4.7 4.7 0 1 1 0 9.4 4.7 4.7 0 0 1 0-9.4zm0 1.8a2.9 2.9 0 1 0 0 5.8 2.9 2.9 0 0 0 0-5.8zm5.98-2.16a1.13 1.13 0 1 1-2.26 0 1.13 1.13 0 0 1 2.26 0z"/></svg>
+        </a>
+        <a href="https://www.linkedin.com/in/itsalyalaa/" target="_blank" rel="noopener" aria-label="LinkedIn" class="social-ic" style="--brand:#0a66c2;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.03-1.85-3.03-1.85 0-2.14 1.45-2.14 2.94v5.66H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28zM5.34 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+        </a>
+        <a href="https://www.youtube.com/@itsalyalaa" target="_blank" rel="noopener" aria-label="YouTube" class="social-ic" style="--brand:#ff0000;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.5 12 3.5 12 3.5s-7.5 0-9.4.6A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.6 9.4.6 9.4.6s7.5 0 9.4-.6a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.5V8.5l6.3 3.5-6.3 3.5z"/></svg>
+        </a>
+        <a href="https://twitter.com/itsalyalaa" target="_blank" rel="noopener" aria-label="X" class="social-ic" style="--brand:#1da1f2;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-7.6 8.7L23.3 22h-7.2l-5.6-6.9L4 22H1l8.2-9.3L1 2h7.3l5.1 6.3L18.9 2zm-1.3 18h1.9L7.5 4H5.5l12.1 16z"/></svg>
+        </a>
+        <a href="https://www.tiktok.com/@itsalyalaa" target="_blank" rel="noopener" aria-label="TikTok" class="social-ic" style="--brand:#000000;">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.8c-.9-.9-1.4-2.1-1.4-3.4h-3.3v13.6c0 1.5-1.2 2.7-2.7 2.7s-2.7-1.2-2.7-2.7 1.2-2.7 2.7-2.7c.3 0 .6 0 .9.1V9.9c-.3 0-.6-.1-.9-.1-3.3 0-6 2.7-6 6s2.7 6 6 6 6-2.7 6-6V9.1a8.2 8.2 0 0 0 4.7 1.5V7.3c-1.2 0-2.3-.5-3.3-1.5z"/></svg>
+        </a>
+      </div>
+    </footer>
   </main>
 
   <!-- Right rail: profile card + now playing + quick add-article -->
@@ -4396,6 +4425,66 @@ html.v2 .right-side{
       </div>
     </div>
   </aside>
+</div>
+
+<!-- ── Profile Edit Modal ── -->
+<div class="auth-overlay" id="profileEditOverlay" dir="rtl">
+  <div class="auth-modal" style="max-width:420px;max-height:88vh;overflow-y:auto;">
+    <button type="button" class="am-close" onclick="closeProfileEditModal()">✕</button>
+    <h2>✏️ تعديل الملف الشخصي</h2>
+    <p class="am-sub">عدّل بياناتك، وتقدر تخفي أي معلومة عايز تفضل خاصة</p>
+
+    <div class="am-field" style="text-align:center;">
+      <img id="peAvatarPreview" src="" alt="" style="width:78px;height:78px;border-radius:50%;object-fit:cover;border:2px solid var(--gold2);margin-bottom:8px;">
+      <input type="file" id="peAvatarFile" accept="image/*" style="display:block;margin:0 auto;font-size:12px;color:var(--muted);" onchange="peHandleAvatarFile(event)">
+    </div>
+
+    <div class="am-field">
+      <label>اسم المستخدم (Username)</label>
+      <input type="text" id="peUsername" placeholder="مثال: aly_alaa">
+    </div>
+
+    <div class="am-field">
+      <label>الاسم الظاهر</label>
+      <input type="text" id="peDisplayName" placeholder="اسمك الكامل">
+    </div>
+
+    <div class="am-field">
+      <label>نبذة عنك (Bio)</label>
+      <textarea id="peBio" rows="3" maxlength="200" placeholder="اكتب نبذة قصيرة..." style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:13.5px;resize:vertical;"></textarea>
+    </div>
+
+    <div class="am-field">
+      <label>الجنسية</label>
+      <select id="peNationality" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:13.5px;"></select>
+      <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="peHideNationality">إخفاء الجنسية من ملفي العام</label>
+    </div>
+
+    <div class="am-field">
+      <label>الجنس</label>
+      <select id="peGender" style="width:100%;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 14px;color:var(--text);font-family:inherit;font-size:13.5px;">
+        <option value="">— اختر —</option>
+        <option value="male">ذكر</option>
+        <option value="female">أنثى</option>
+        <option value="other">أفضل عدم التحديد</option>
+      </select>
+      <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="peHideGender">إخفاء الجنس من ملفي العام</label>
+    </div>
+
+    <div class="am-field">
+      <label>تاريخ الميلاد</label>
+      <div style="display:flex;gap:8px;">
+        <select id="peBirthDay" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 6px;color:var(--text);font-family:inherit;font-size:13px;"></select>
+        <select id="peBirthMonth" style="flex:1.4;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 6px;color:var(--text);font-family:inherit;font-size:13px;"></select>
+        <select id="peBirthYear" style="flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 6px;color:var(--text);font-family:inherit;font-size:13px;"></select>
+      </div>
+      <div style="margin-top:6px;font-size:12px;color:var(--gold2);" id="peAgePreview"></div>
+      <label style="display:flex;align-items:center;gap:6px;margin-top:6px;font-size:11.5px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="peHideAge">إخفاء عمري من ملفي العام</label>
+    </div>
+
+    <div class="am-error" id="peError"></div>
+    <button type="button" class="am-submit" id="peSaveBtn" onclick="saveProfileEdit()">💾 حفظ التعديلات</button>
+  </div>
 </div>
 
 <!-- Floating mini radio player — shown on every page except Home -->
@@ -4652,19 +4741,37 @@ document.querySelectorAll('.v2-qn-btn[data-goto], [data-goto]').forEach(btn => {
 //   async function v2GetArticles(){ const {data} = await sb.from('articles').select('*').eq('status','published').order('created_at',{ascending:false}); return data; }
 // ══════════════════════════════════════════════════════════════
 const V2_ARTICLES = [
-  {id:1, title:'فيروز… صوت لا يشبه أحد', excerpt:'رحلة في حياة السيدة فيروز ومسيرتها الفنية الفريدة', author:'Mona Saad', avatar:'https://i.pravatar.cc/60?img=5', views:'2.4K', time:'منذ 5 ساعات', tag:'مقال', hue:['#8b5cf6','#c9879c']},
-  {id:2, title:'أجمل 10 أغاني لفيروز في الصباح', excerpt:'بداية يومك مع فيروز غير يوم كل يوم', author:'Karim Adel', avatar:'https://i.pravatar.cc/60?img=12', views:'1.8K', time:'منذ يوم', tag:'مقال', hue:['#6e2640','#d9b888']},
-  {id:3, title:'كلمات لا تُنسى من أغاني فيروز', excerpt:'أجمل ما كتبت السيدة فيروز وأبدعت', author:'Nourhan', avatar:'https://i.pravatar.cc/60?img=32', views:'3.1K', time:'منذ يومين', tag:'مقال', hue:['#3a1220','#8b5cf6']},
-  {id:4, title:'قصة أغنية بحبك يا لبنان', excerpt:'كيف وُلدت واحدة من أعظم أغاني فيروز الوطنية', author:'Ahmed Tarek', avatar:'https://i.pravatar.cc/60?img=15', views:'980', time:'منذ 3 أيام', tag:'مقال', hue:['#c9879c','#6e2640']},
-  {id:5, title:'فيروز والرحابنة: ثلاثية موسيقية', excerpt:'كيف شكّل عاصي ومنصور الرحباني عالم فيروز', author:'Mona Saad', avatar:'https://i.pravatar.cc/60?img=5', views:'1.2K', time:'منذ 4 أيام', tag:'مقال', hue:['#8b5cf6','#3a1220']},
-  {id:6, title:'حفلات فيروز الأسطورية حول العالم', excerpt:'من بعلبك إلى لاس فيغاس… جولة في أشهر حفلاتها', author:'Karim Adel', avatar:'https://i.pravatar.cc/60?img=12', views:'2.0K', time:'منذ أسبوع', tag:'مقال', hue:['#d9b888','#8b5cf6']}
+  {id:1, title:'فيروز… صوت لا يشبه أحد', excerpt:'رحلة في حياة السيدة فيروز ومسيرتها الفنية الفريدة', author:'Mona Saad', avatar:'https://i.pravatar.cc/60?img=5', views:'2.4K', time:'منذ 5 ساعات', tag:'مقال', hue:['#8b5cf6','#c9879c'], featured:false},
+  {id:2, title:'أجمل 10 أغاني لفيروز في الصباح', excerpt:'بداية يومك مع فيروز غير يوم كل يوم', author:'Karim Adel', avatar:'https://i.pravatar.cc/60?img=12', views:'1.8K', time:'منذ يوم', tag:'مقال', hue:['#6e2640','#d9b888'], featured:false},
+  {id:3, title:'كلمات لا تُنسى من أغاني فيروز', excerpt:'أجمل ما كتبت السيدة فيروز وأبدعت', author:'Nourhan', avatar:'https://i.pravatar.cc/60?img=32', views:'3.1K', time:'منذ يومين', tag:'مقال', hue:['#3a1220','#8b5cf6'], featured:false},
+  {id:4, title:'قصة أغنية بحبك يا لبنان', excerpt:'كيف وُلدت واحدة من أعظم أغاني فيروز الوطنية', author:'Ahmed Tarek', avatar:'https://i.pravatar.cc/60?img=15', views:'980', time:'منذ 3 أيام', tag:'مقال', hue:['#c9879c','#6e2640'], featured:false},
+  {id:5, title:'فيروز والرحابنة: ثلاثية موسيقية', excerpt:'كيف شكّل عاصي ومنصور الرحباني عالم فيروز', author:'Mona Saad', avatar:'https://i.pravatar.cc/60?img=5', views:'1.2K', time:'منذ 4 أيام', tag:'مقال', hue:['#8b5cf6','#3a1220'], featured:false},
+  {id:6, title:'حفلات فيروز الأسطورية حول العالم', excerpt:'من بعلبك إلى لاس فيغاس… جولة في أشهر حفلاتها', author:'Karim Adel', avatar:'https://i.pravatar.cc/60?img=12', views:'2.0K', time:'منذ أسبوع', tag:'مقال', hue:['#d9b888','#8b5cf6'], featured:false}
 ];
+// Pin state persists locally so it survives page reloads (until this is wired to a real `articles` table in Supabase).
+try {
+  const savedPins = JSON.parse(localStorage.getItem('fw_featured_articles') || '[]');
+  V2_ARTICLES.forEach(a => { if (savedPins.includes(a.id)) a.featured = true; });
+} catch(e){}
+function v2SaveFeaturedPins(){
+  try { localStorage.setItem('fw_featured_articles', JSON.stringify(V2_ARTICLES.filter(a=>a.featured).map(a=>a.id))); } catch(e){}
+}
+function v2ToggleFeatured(id){
+  const a = V2_ARTICLES.find(x => x.id === id);
+  if (!a) return;
+  a.featured = !a.featured;
+  v2SaveFeaturedPins();
+  v2RenderArticles();
+}
 function v2ArticleCardSVG(hue){
   const id = 'g'+Math.random().toString(36).slice(2,8);
   return `<svg viewBox="0 0 300 150" preserveAspectRatio="xMidYMid slice"><defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="${hue[0]}"/><stop offset="1" stop-color="${hue[1]}"/></linearGradient></defs><rect width="300" height="150" fill="url(#${id})"/><circle cx="250" cy="30" r="40" fill="#fff" opacity=".06"/><circle cx="40" cy="120" r="60" fill="#fff" opacity=".05"/></svg>`;
 }
 function v2ArticleCard(a){
-  return `<div class="v2-article" onclick="v2GoToPage('articles')">
+  const isAdmin = currentProfile?.role === 'admin' || currentProfile?.role === 'founder';
+  const pinBtn = isAdmin ? `<button type="button" class="v2-pin-btn" title="${a.featured?'إلغاء التثبيت':'تثبيت في الرئيسية'}" onclick="event.stopPropagation();v2ToggleFeatured(${a.id});" style="position:absolute;top:8px;left:8px;z-index:2;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:${a.featured?'linear-gradient(135deg,var(--gold2),var(--gold))':'rgba(0,0,0,.45)'};color:${a.featured?'#2a1808':'#fff'};font-size:14px;cursor:pointer;">${a.featured?'📌':'📍'}</button>` : '';
+  return `<div class="v2-article" onclick="v2GoToPage('articles')" style="position:relative;">
+    ${pinBtn}
     <div class="va-img">${v2ArticleCardSVG(a.hue)}<span class="va-tag">📄 ${a.tag}</span></div>
     <div class="va-body">
       <h3>${a.title}</h3>
@@ -4675,7 +4782,12 @@ function v2ArticleCard(a){
 }
 function v2RenderArticles(){
   const feat = document.getElementById('v2FeaturedArticles');
-  if (feat) feat.innerHTML = V2_ARTICLES.slice(0,3).map(v2ArticleCard).join('');
+  if (feat) {
+    const pinned = V2_ARTICLES.filter(a => a.featured);
+    feat.innerHTML = pinned.length
+      ? pinned.map(v2ArticleCard).join('')
+      : `<div class="v2-empty-featured" style="grid-column:1/-1;text-align:center;color:var(--muted);padding:24px 12px;border:1px dashed var(--border);border-radius:14px;">لسه مفيش مقالات مميزة — ${(currentProfile?.role==='admin'||currentProfile?.role==='founder') ? 'ثبّت مقال من صفحة المقالات بالضغط على 📍' : 'تابعنا قريبًا!'}</div>`;
+  }
   const all = document.getElementById('v2AllArticles');
   if (all) all.innerHTML = V2_ARTICLES.map(v2ArticleCard).join('');
   const c1 = document.getElementById('v2StatArticles'); if (c1) c1.textContent = V2_ARTICLES.length + 33 + '';
@@ -4730,15 +4842,60 @@ function v2RenderGallery(){
   el.innerHTML = V2_GALLERY.map((hue,i) => `<div class="gph" onclick="void 0">${v2ArticleCardSVG(hue)}<span class="gph-cap">لقطة #${i+1}</span></div>`).join('');
 }
 
-const V2_FAVORITES = [
-  {title:'بحبك يا لبنان', sub:'أغنية', hue:['#8b5cf6','#c9879c']},
-  {title:'فيروز… صوت لا يشبه أحد', sub:'مقال', hue:['#6e2640','#d9b888']},
-  {title:'سألوني الناس', sub:'أغنية', hue:['#3a1220','#8b5cf6']}
+// Full catalog of songs users can pick from to build their favorites
+const FAIROUZ_SONG_CATALOG = [
+  {id:'s1', title:'بحبك يا لبنان', hue:['#8b5cf6','#c9879c']},
+  {id:'s2', title:'سألوني الناس', hue:['#3a1220','#8b5cf6']},
+  {id:'s3', title:'نسم علينا الهوا', hue:['#6e2640','#d9b888']},
+  {id:'s4', title:'كيفك أنت', hue:['#c9879c','#6e2640']},
+  {id:'s5', title:'شايف البحر شو كبير', hue:['#8b5cf6','#3a1220']},
+  {id:'s6', title:'عودك رنّ', hue:['#d9b888','#8b5cf6']},
+  {id:'s7', title:'زهرة المدائن', hue:['#3a1220','#c9879c']},
+  {id:'s8', title:'راجعون', hue:['#6e2640','#8b5cf6']},
+  {id:'s9', title:'يا أنا يا أنا', hue:['#8b5cf6','#d9b888']},
+  {id:'s10', title:'حبيتك بالصيف', hue:['#c9879c','#3a1220']},
+  {id:'s11', title:'قدك المياس', hue:['#d9b888','#6e2640']},
+  {id:'s12', title:'إسوارة العروس', hue:['#8b5cf6','#c9879c']}
 ];
+// Load / persist which songs the current user has favorited
+function v2FavKey(){ return 'fw_user_favorites_' + (currentUser?.id || 'guest'); }
+function v2LoadFavIds(){
+  try { return JSON.parse(localStorage.getItem(v2FavKey()) || '[]'); } catch(e){ return []; }
+}
+function v2SaveFavIds(ids){
+  try { localStorage.setItem(v2FavKey(), JSON.stringify(ids)); } catch(e){}
+}
+function v2ToggleFavorite(songId){
+  if (!currentUser) { closeAuthModal(); openAuthModal(); return; }
+  let ids = v2LoadFavIds();
+  ids = ids.includes(songId) ? ids.filter(x => x !== songId) : [...ids, songId];
+  v2SaveFavIds(ids);
+  v2RenderFavorites();
+  v2RenderSongPicker();
+}
 function v2RenderFavorites(){
   const el = document.getElementById('v2FavList');
   if (!el) return;
-  el.innerHTML = V2_FAVORITES.map(f => `<div class="v2-fav-item"><div class="fv-thumb">${v2ArticleCardSVG(f.hue)}</div><div><h4>${f.title}</h4><span>${f.sub}</span></div><button type="button" onclick="this.closest('.v2-fav-item').remove()">✕</button></div>`).join('');
+  const ids = v2LoadFavIds();
+  const items = FAIROUZ_SONG_CATALOG.filter(s => ids.includes(s.id));
+  el.innerHTML = items.length
+    ? items.map(f => `<div class="v2-fav-item"><div class="fv-thumb">${v2ArticleCardSVG(f.hue)}</div><div><h4>${f.title}</h4><span>أغنية</span></div><button type="button" onclick="v2ToggleFavorite('${f.id}')">✕</button></div>`).join('')
+    : `<div style="text-align:center;color:var(--muted);padding:20px;border:1px dashed var(--border);border-radius:14px;">لسه معندكش أغاني مفضلة — اختار من القائمة تحت 👇</div>`;
+}
+function v2RenderSongPicker(){
+  const el = document.getElementById('v2SongPicker');
+  if (!el) return;
+  const q = (document.getElementById('v2SongSearch')?.value || '').trim();
+  const ids = v2LoadFavIds();
+  const list = FAIROUZ_SONG_CATALOG.filter(s => s.title.includes(q));
+  el.innerHTML = list.map(s => {
+    const active = ids.includes(s.id);
+    return `<div class="v2-article" onclick="v2ToggleFavorite('${s.id}')" style="cursor:pointer;position:relative;">
+      ${active ? '<span style="position:absolute;top:8px;left:8px;z-index:2;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2a1808;border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:14px;">✓</span>' : ''}
+      <div class="va-img">${v2ArticleCardSVG(s.hue)}<span class="va-tag">🎵 أغنية</span></div>
+      <div class="va-body"><h3>${s.title}</h3><p>${active ? 'في مفضلتك — دوس عشان تشيلها' : 'دوس عشان تضيفها للمفضلة'}</p></div>
+    </div>`;
+  }).join('') || `<div style="grid-column:1/-1;text-align:center;color:var(--muted);padding:16px;">مفيش نتايج</div>`;
 }
 
 function v2SaveDraft(){
@@ -4785,8 +4942,39 @@ async function v2RenderUsers(){
       </select>
     </td>
     <td><span class="v2-status-dot on"></span>مسجّل</td>
-    <td><button type="button" class="v2-act-btn v2-act-reject" title="حذف الحساب (من لوحة Supabase)" onclick="alert('حذف المستخدمين نهائيًا بيتم من لوحة Supabase مباشرة (Authentication → Users) حفاظًا على الأمان.')">🗑</button></td>
+    <td style="display:flex;gap:6px;">
+      ${(currentUser && u.id !== currentUser.id) ? `<button type="button" class="v2-act-btn" id="followBtn-${u.id}" onclick="v2ToggleFollow('${u.id}', this)">…</button>` : ''}
+      <button type="button" class="v2-act-btn v2-act-reject" title="حذف الحساب (من لوحة Supabase)" onclick="alert('حذف المستخدمين نهائيًا بيتم من لوحة Supabase مباشرة (Authentication → Users) حفاظًا على الأمان.')">🗑</button>
+    </td>
   </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مستخدمين لسه</td></tr>';
+
+  if (currentUser) {
+    const { data: myFollows } = await sb.from('follows').select('following_id').eq('follower_id', currentUser.id);
+    const followingIds = new Set((myFollows || []).map(f => f.following_id));
+    rows.forEach(u => {
+      if (u.id === currentUser.id) return;
+      const btn = document.getElementById('followBtn-' + u.id);
+      if (btn) {
+        const isFollowing = followingIds.has(u.id);
+        btn.textContent = isFollowing ? '✓ متابَع' : '+ متابعة';
+        btn.style.color = isFollowing ? 'var(--gold2)' : '';
+      }
+    });
+  }
+}
+async function v2ToggleFollow(userId, btnEl){
+  if (!currentUser) { openAuthModal(); return; }
+  btnEl.disabled = true;
+  const { data: existing } = await sb.from('follows').select('*').eq('follower_id', currentUser.id).eq('following_id', userId).maybeSingle();
+  if (existing) {
+    await sb.from('follows').delete().eq('follower_id', currentUser.id).eq('following_id', userId);
+    btnEl.textContent = '+ متابعة'; btnEl.style.color = '';
+  } else {
+    const { error } = await sb.from('follows').insert({ follower_id: currentUser.id, following_id: userId });
+    if (error) { alert('تعذّرت المتابعة: ' + error.message + '\n\n(لازم جدول follows موجود في Supabase — شوف تعليمات الإعداد)'); btnEl.disabled = false; return; }
+    btnEl.textContent = '✓ متابَع'; btnEl.style.color = 'var(--gold2)';
+  }
+  btnEl.disabled = false;
 }
 async function v2ChangeUserRole(userId, newRole, selectEl){
   selectEl.disabled = true;
@@ -4863,6 +5051,7 @@ v2RenderFeed();
 v2RenderEvents();
 v2RenderGallery();
 v2RenderFavorites();
+v2RenderSongPicker();
 
 // ══════════════════════════════════════════════════════════════
 // AUTH — Supabase email/password + Google/Facebook OAuth
@@ -4944,21 +5133,45 @@ function v2GuestCardHTML(){
     <button type="button" class="vpc-edit" style="margin-top:16px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2a1808;border:none;" onclick="openAuthModal()">🔑 تسجيل الدخول / حساب جديد</button>
   `;
 }
+function calcAgeFromDate(birthDate){
+  if (!birthDate) return null;
+  const b = new Date(birthDate);
+  if (isNaN(b.getTime())) return null;
+  const now = new Date();
+  let age = now.getFullYear() - b.getFullYear();
+  const m = now.getMonth() - b.getMonth();
+  if (m < 0 || (m === 0 && now.getDate() < b.getDate())) age--;
+  return age;
+}
 function v2MemberCardHTML(u, p){
   const isAdmin = p?.role === 'admin' || p?.role === 'founder';
   const roleLabel = p?.role === 'founder' ? '👑 Founder' : (p?.role === 'admin' ? '🛡️ مشرف' : (p?.role === 'writer' ? '✍️ كاتب' : '🎧 عضو'));
   const name = p?.username || u.email.split('@')[0];
+  const displayName = p?.display_name || name;
   const avatar = p?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=6e2640,8b5cf6`;
   const level = p?.level || 1;
   const xp = p?.xp || 0;
   const nextLevelXp = level * 100;
   const pct = Math.min(100, Math.round((xp / nextLevelXp) * 100));
   const joined = p?.created_at ? new Date(p.created_at).toLocaleDateString('ar-EG', {month:'long', year:'numeric'}) : '—';
+  const hidden = Array.isArray(p?.hidden_fields) ? p.hidden_fields : [];
+  const country = COUNTRY_LIST.find(c => c.iso === p?.nationality);
+  const genderLabel = {male:'ذكر', female:'أنثى', other:'—'}[p?.gender] || null;
+  const age = calcAgeFromDate(p?.birth_date);
+  const bio = p?.bio ? `<p style="font-size:12px;color:var(--muted);margin-top:8px;line-height:1.6;">${p.bio}</p>` : '';
+  const chips = [];
+  if (country && !hidden.includes('nationality')) chips.push(`<span class="v2-role-chip"><img src="https://flagcdn.com/24x18/${country.iso}.png" alt="${country.ar}" style="width:16px;height:12px;border-radius:2px;vertical-align:-1px;margin-left:4px;">${country.ar}</span>`);
+  if (genderLabel && !hidden.includes('gender')) chips.push(`<span class="v2-role-chip">${p.gender==='male'?'♂️':(p.gender==='female'?'♀️':'')} ${genderLabel}</span>`);
+  if (age != null && !hidden.includes('age')) chips.push(`<span class="v2-role-chip">🎂 ${age} سنة</span>`);
+  const chipsRow = chips.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;">${chips.join('')}</div>` : '';
   return `
     <img class="vpc-avatar" src="${avatar}" alt="${name}">
-    <h3>${name} ${isAdmin ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#3b9eff"><path d="M12 2 9.5 4.5 6 4l-.5 3.5L2 9l2 3-2 3 3.5 1.5L6 20l3.5-.5L12 22l2.5-2.5 3.5.5.5-3.5L22 15l-2-3 2-3-3.5-1.5L18 4l-3.5.5z"/><path d="m8.5 12 2.3 2.3L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</h3>
+    <h3>${displayName} ${isAdmin ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#3b9eff"><path d="M12 2 9.5 4.5 6 4l-.5 3.5L2 9l2 3-2 3 3.5 1.5L6 20l3.5-.5L12 22l2.5-2.5 3.5.5.5-3.5L22 15l-2-3 2-3-3.5-1.5L18 4l-3.5.5z"/><path d="m8.5 12 2.3 2.3L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</h3>
+    <div style="font-size:11px;color:var(--muted);">@${name}</div>
     <div class="vpc-role">${roleLabel}</div>
     ${p?.role === 'founder' ? '<div class="vpc-founder-chip">👑 مؤسس الموقع</div>' : ''}
+    ${bio}
+    ${chipsRow}
     <div class="vpc-level">
       <div class="lv-row"><b>Level ${level}</b><span style="color:var(--muted);">${pct}%</span></div>
       <div class="lv-bar"><i style="width:${pct}%;"></i></div>
@@ -4966,12 +5179,154 @@ function v2MemberCardHTML(u, p){
     </div>
     <div class="vpc-info">
       <div><span>انضم في</span><b>${joined}</b></div>
-      <div><span>الدولة</span><b>${p?.country || '—'}</b></div>
       <div><span>البريد</span><b style="font-size:11px;">${u.email}</b></div>
     </div>
+    <button type="button" class="vpc-edit" style="margin-top:12px;background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2a1808;border:none;" onclick="openProfileEditModal()">✏️ تعديل الملف الشخصي</button>
     <button type="button" class="vpc-edit" onclick="signOutUser()">🚪 تسجيل الخروج</button>
   `;
 }
+// ── Profile Edit Modal logic ──
+const COUNTRY_LIST = [
+  {iso:'eg', ar:'مصر', en:'Egypt'}, {iso:'lb', ar:'لبنان', en:'Lebanon'}, {iso:'sy', ar:'سوريا', en:'Syria'},
+  {iso:'jo', ar:'الأردن', en:'Jordan'}, {iso:'ps', ar:'فلسطين', en:'Palestine'}, {iso:'iq', ar:'العراق', en:'Iraq'},
+  {iso:'sa', ar:'السعودية', en:'Saudi Arabia'}, {iso:'ae', ar:'الإمارات', en:'UAE'}, {iso:'kw', ar:'الكويت', en:'Kuwait'},
+  {iso:'qa', ar:'قطر', en:'Qatar'}, {iso:'bh', ar:'البحرين', en:'Bahrain'}, {iso:'om', ar:'عُمان', en:'Oman'},
+  {iso:'ye', ar:'اليمن', en:'Yemen'}, {iso:'ly', ar:'ليبيا', en:'Libya'}, {iso:'tn', ar:'تونس', en:'Tunisia'},
+  {iso:'dz', ar:'الجزائر', en:'Algeria'}, {iso:'ma', ar:'المغرب', en:'Morocco'}, {iso:'sd', ar:'السودان', en:'Sudan'},
+  {iso:'tr', ar:'تركيا', en:'Turkey'}, {iso:'us', ar:'أمريكا', en:'USA'}, {iso:'gb', ar:'بريطانيا', en:'UK'},
+  {iso:'fr', ar:'فرنسا', en:'France'}, {iso:'de', ar:'ألمانيا', en:'Germany'}, {iso:'ca', ar:'كندا', en:'Canada'},
+  {iso:'other', ar:'دولة أخرى', en:'Other'}
+];
+function peBuildSelects(){
+  const natSel = document.getElementById('peNationality');
+  if (natSel && !natSel.dataset.built) {
+    natSel.innerHTML = '<option value="">— اختر —</option>' + COUNTRY_LIST.map(c => `<option value="${c.iso}">${c.ar}</option>`).join('');
+    natSel.dataset.built = '1';
+  }
+  const daySel = document.getElementById('peBirthDay');
+  if (daySel && !daySel.dataset.built) {
+    daySel.innerHTML = '<option value="">يوم</option>' + Array.from({length:31}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join('');
+    daySel.dataset.built = '1';
+  }
+  const monthSel = document.getElementById('peBirthMonth');
+  if (monthSel && !monthSel.dataset.built) {
+    const months = ['يناير','فبراير','مارس','أبريل','مايو','يونيو','يوليو','أغسطس','سبتمبر','أكتوبر','نوفمبر','ديسمبر'];
+    monthSel.innerHTML = '<option value="">شهر</option>' + months.map((m,i)=>`<option value="${i+1}">${m}</option>`).join('');
+    monthSel.dataset.built = '1';
+  }
+  const yearSel = document.getElementById('peBirthYear');
+  if (yearSel && !yearSel.dataset.built) {
+    const nowY = new Date().getFullYear();
+    let opts = '<option value="">سنة</option>';
+    for (let y = nowY; y >= nowY - 90; y--) opts += `<option value="${y}">${y}</option>`;
+    yearSel.innerHTML = opts;
+    yearSel.dataset.built = '1';
+  }
+}
+function peUpdateAgePreview(){
+  const d = document.getElementById('peBirthDay').value, m = document.getElementById('peBirthMonth').value, y = document.getElementById('peBirthYear').value;
+  const el = document.getElementById('peAgePreview');
+  if (d && m && y) {
+    const age = calcAgeFromDate(`${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}`);
+    el.textContent = age != null ? `عمرك الحالي: ${age} سنة` : '';
+  } else el.textContent = '';
+}
+let peAvatarDataUrl = null;
+function peHandleAvatarFile(e){
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    peAvatarDataUrl = reader.result;
+    document.getElementById('peAvatarPreview').src = peAvatarDataUrl;
+  };
+  reader.readAsDataURL(file);
+}
+function openProfileEditModal(){
+  if (!currentUser) { openAuthModal(); return; }
+  peBuildSelects();
+  const p = currentProfile || {};
+  const name = p.username || currentUser.email.split('@')[0];
+  document.getElementById('peAvatarPreview').src = p.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=6e2640,8b5cf6`;
+  peAvatarDataUrl = null;
+  document.getElementById('peUsername').value = p.username || '';
+  document.getElementById('peDisplayName').value = p.display_name || '';
+  document.getElementById('peBio').value = p.bio || '';
+  document.getElementById('peNationality').value = p.nationality || '';
+  document.getElementById('peGender').value = p.gender || '';
+  const hidden = Array.isArray(p.hidden_fields) ? p.hidden_fields : [];
+  document.getElementById('peHideNationality').checked = hidden.includes('nationality');
+  document.getElementById('peHideGender').checked = hidden.includes('gender');
+  document.getElementById('peHideAge').checked = hidden.includes('age');
+  if (p.birth_date) {
+    const [y,m,d] = p.birth_date.split('-');
+    document.getElementById('peBirthYear').value = String(Number(y));
+    document.getElementById('peBirthMonth').value = String(Number(m));
+    document.getElementById('peBirthDay').value = String(Number(d));
+  } else {
+    document.getElementById('peBirthYear').value = '';
+    document.getElementById('peBirthMonth').value = '';
+    document.getElementById('peBirthDay').value = '';
+  }
+  peUpdateAgePreview();
+  ['peBirthDay','peBirthMonth','peBirthYear'].forEach(id => document.getElementById(id).onchange = peUpdateAgePreview);
+  document.getElementById('peError').classList.remove('show');
+  document.getElementById('profileEditOverlay').classList.add('open');
+}
+function closeProfileEditModal(){ document.getElementById('profileEditOverlay').classList.remove('open'); }
+async function saveProfileEdit(){
+  const errEl = document.getElementById('peError');
+  errEl.classList.remove('show');
+  const btn = document.getElementById('peSaveBtn');
+  const username = document.getElementById('peUsername').value.trim();
+  if (!username) { errEl.textContent = 'اسم المستخدم مطلوب'; errEl.classList.add('show'); return; }
+  btn.disabled = true; btn.textContent = 'جاري الحفظ...';
+
+  let avatar_url = currentProfile?.avatar_url || null;
+  if (peAvatarDataUrl) {
+    try {
+      const blob = await (await fetch(peAvatarDataUrl)).blob();
+      const path = `${currentUser.id}/${Date.now()}.jpg`;
+      const { error: upErr } = await sb.storage.from('avatars').upload(path, blob, { upsert:true });
+      if (upErr) throw upErr;
+      const { data: pub } = sb.storage.from('avatars').getPublicUrl(path);
+      avatar_url = pub.publicUrl;
+    } catch (e) {
+      // Storage bucket may not exist yet — fall back to storing the image inline
+      avatar_url = peAvatarDataUrl;
+    }
+  }
+
+  const d = document.getElementById('peBirthDay').value, m = document.getElementById('peBirthMonth').value, y = document.getElementById('peBirthYear').value;
+  const birth_date = (d && m && y) ? `${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')}` : null;
+
+  const hidden_fields = [];
+  if (document.getElementById('peHideNationality').checked) hidden_fields.push('nationality');
+  if (document.getElementById('peHideGender').checked) hidden_fields.push('gender');
+  if (document.getElementById('peHideAge').checked) hidden_fields.push('age');
+
+  const updates = {
+    username,
+    display_name: document.getElementById('peDisplayName').value.trim() || null,
+    bio: document.getElementById('peBio').value.trim() || null,
+    nationality: document.getElementById('peNationality').value || null,
+    gender: document.getElementById('peGender').value || null,
+    birth_date,
+    hidden_fields,
+    avatar_url
+  };
+
+  const { error } = await sb.from('profiles').update(updates).eq('id', currentUser.id);
+  btn.disabled = false; btn.textContent = '💾 حفظ التعديلات';
+  if (error) {
+    errEl.textContent = 'تعذّر الحفظ: ' + error.message + ' — تأكد إن أعمدة الملف الشخصي (username, bio, nationality...) موجودة في جدول profiles على Supabase.';
+    errEl.classList.add('show');
+    return;
+  }
+  closeProfileEditModal();
+  await refreshAuthUI();
+}
+
 async function refreshAuthUI(){
   const { data:{ session } } = await sb.auth.getSession();
   currentUser = session ? session.user : null;
@@ -5016,6 +5371,8 @@ async function refreshAuthUI(){
   if (!isAdmin && document.getElementById('page-admin') && !document.getElementById('page-admin').classList.contains('page-hidden')){
     v2GoToPage('home'); // kick out non-admins who were viewing it before signing out
   }
+  if (typeof v2RenderArticles === 'function') v2RenderArticles();
+  if (typeof v2RenderFavorites === 'function') { v2RenderFavorites(); v2RenderSongPicker(); }
 
   // Topbar auth CTA — hide once signed in
   const cta = document.getElementById('v2AuthCta');
@@ -5043,8 +5400,29 @@ try {
     origToggle();
     const ic = document.getElementById('v2PlayIcon');
     if (ic) ic.textContent = isPlaying ? '⏸' : '▶';
+    syncHeroPlayBtn();
   };
 })();
+
+// Keep the homepage hero Play/Pause button synced with playback state,
+// regardless of which code path (hero click, live page, mini player) changed it.
+function syncHeroPlayBtn(){
+  const icon = document.getElementById('heroPlayIcon');
+  const label = document.getElementById('heroPlayLabel');
+  if (!icon || !label) return;
+  const ar = currentLang === 'ar';
+  if (isPlaying) {
+    icon.textContent = '⏸';
+    label.textContent = ar ? 'إيقاف البث' : 'Pause';
+  } else if (isStarting) {
+    icon.textContent = '…';
+    label.textContent = ar ? 'جاري الاتصال...' : 'Connecting...';
+  } else {
+    icon.textContent = '▶';
+    label.textContent = ar ? 'استمع الآن' : 'Listen Now';
+  }
+}
+setInterval(syncHeroPlayBtn, 500);
 
 // ── Support page: copy buttons, toast, ripple ──
 (function(){
@@ -7807,7 +8185,7 @@ function renderWeatherText(cur, wData, city, flag){
   const heroTemp=document.getElementById('heroWeatherTemp'), heroDesc=document.getElementById('heroWeatherDesc'), heroCity=document.getElementById('heroWeatherCity');
   if(heroTemp) heroTemp.textContent=Math.round(cur.temperature_2m)+'°';
   if(heroDesc) heroDesc.textContent=weatherDesc(cur.weather_code,currentLang);
-  if(heroCity) heroCity.textContent=(flagPart?flagPart+' ':'📍 ')+city;
+  if(heroCity) heroCity.innerHTML=(flagPart?flagPart+' ':'📍 ')+city;
 
   const visibilityM = (wData.hourly && wData.hourly.visibility && hourlyIdx>=0) ? wData.hourly.visibility[hourlyIdx] : null;
   const humidity = cur.relative_humidity_2m!=null ? cur.relative_humidity_2m : null;
