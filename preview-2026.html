@@ -3172,6 +3172,7 @@ html.v2 .nav-item .nav-badge{margin-inline-start:auto;background:var(--maroon);c
 html.v2 .sidebar-footer{margin-top:10px;flex-shrink:0;padding-top:10px;border-top:1px solid var(--border);}
 html.v2 .sidebar-footer .v2-tools{display:flex;gap:6px;}
 html.v2 .sidebar-footer .v2-tool-btn{flex:1;display:flex;align-items:center;justify-content:center;padding:9px 0;border-radius:10px;background:var(--surface);border:1px solid var(--border);color:var(--muted);cursor:pointer;font-size:14px;transition:color .2s,border-color .2s;}
+html.v2 .sidebar-footer .v2-tool-btn.nav-lang{position:static;transform:none;right:auto;top:auto;width:auto;margin:0;}
 html.v2 .sidebar-footer .v2-tool-btn:hover{color:var(--gold);border-color:var(--gold2);}
 html.v2 .sidebar-decor,html.v2 .sidebar-footer .social-row,html.v2 .sidebar-footer > div:not(.v2-tools){display:none;}
 
@@ -3222,7 +3223,7 @@ html.v2 .right-side{
 .v2-btn{padding:12px 22px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;border:none;font-family:inherit;display:inline-flex;align-items:center;gap:8px;}
 .v2-btn-ghost{background:rgba(255,255,255,.06);color:var(--text);border:1px solid var(--border);}
 .v2-btn-gold{background:linear-gradient(135deg,var(--gold2),var(--gold));color:#2a1808;}
-.v2-hero-widget{position:absolute;top:24px;right:24px;z-index:2;display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
+.v2-hero-widget{position:absolute;top:24px;left:24px;z-index:2;display:flex;flex-direction:column;gap:10px;align-items:flex-start;}
 .v2-weather-chip{background:rgba(20,10,25,.7);backdrop-filter:blur(8px);border:1px solid var(--border);border-radius:16px;padding:10px 16px;text-align:center;min-width:160px;}
 .v2-weather-chip .wc-loc{font-size:11px;color:var(--muted);margin-bottom:2px;}
 .v2-weather-chip .wc-row{display:flex;align-items:center;justify-content:center;gap:8px;}
@@ -3733,8 +3734,7 @@ html.v2 .right-side{
       <div class="v2-hero">
         <div class="v2-hero-bg">
           <picture>
-            <source srcset="assets/hero-fairouz.webp" type="image/webp">
-            <img src="assets/hero-fairouz.png" alt="عالم فيروز" loading="eager" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+            <img src="assets/hero-fairouz.webp" alt="عالم فيروز" loading="eager" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;object-position:center;" onerror="this.onerror=null;this.closest('.v2-hero-bg').style.background='linear-gradient(135deg,#2a1030,#1a0e22)';">
           </picture>
         </div>
         <div class="v2-hero-overlay"></div>
@@ -3775,7 +3775,7 @@ html.v2 .right-side{
         </div>
         <div class="stat">
           <span class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="8" r="3"/><path d="M2 20c0-3.5 3-6 7-6s7 2.5 7 6"/><circle cx="17" cy="8" r="2.6"/><path d="M17 12.5c2.6.3 4.5 2.2 4.5 4.6"/></svg></span>
-          <div><b>12K+</b><span>عضو في المجتمع</span></div>
+          <div><b id="v2StatMembers">—</b><span>عضو في المجتمع</span></div>
         </div>
         <div class="stat">
           <span class="si"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>
@@ -4277,10 +4277,10 @@ html.v2 .right-side{
       </div>
 
       <div class="v2-admin-stats">
-        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(139,92,246,.15);color:#a78bfa;">👥</span><div><b id="admStatUsers">12,543</b><span>المستخدمين</span></div></div>
-        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(217,184,136,.15);color:var(--gold);">📄</span><div><b id="admStatArticles">1,254</b><span>المقالات</span></div></div>
-        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(201,135,156,.15);color:var(--rose);">💬</span><div><b id="admStatComments">8,765</b><span>التعليقات</span></div></div>
-        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(74,222,128,.15);color:#4ade80;">📈</span><div><b id="admStatVisitors">24,890</b><span>الزوار</span></div></div>
+        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(139,92,246,.15);color:#a78bfa;">👥</span><div><b id="admStatUsers">—</b><span>المستخدمين</span></div></div>
+        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(217,184,136,.15);color:var(--gold);">📄</span><div><b id="admStatArticles">—</b><span>المقالات</span></div></div>
+        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(201,135,156,.15);color:var(--rose);">💬</span><div><b id="admStatComments">—</b><span>التعليقات (قريبًا)</span></div></div>
+        <div class="v2-admin-stat"><span class="as-ic" style="background:rgba(74,222,128,.15);color:#4ade80;">📈</span><div><b id="admStatVisitors">—</b><span>الزوار (قريبًا)</span></div></div>
       </div>
 
       <div class="v2-admin-grid">
@@ -4309,7 +4309,7 @@ html.v2 .right-side{
         </div>
         <div style="overflow-x:auto;">
           <table class="v2-table">
-            <thead><tr><th>المستخدم</th><th>الدولة</th><th>انضم في</th><th>الدور</th><th>الحالة</th><th>الإجراء</th></tr></thead>
+            <thead><tr><th>المستخدم</th><th>الدولة</th><th>انضم في</th><th>الدور</th><th>المستوى</th><th>التوثيق</th><th>الأوسمة</th><th>الحالة</th><th>الإجراء</th></tr></thead>
             <tbody id="v2UsersTableBody"></tbody>
           </table>
         </div>
@@ -4762,25 +4762,46 @@ function v2RenderArticles(){
   }
   const all = document.getElementById('v2AllArticles');
   if (all) all.innerHTML = V2_ARTICLES.map(v2ArticleCard).join('');
-  const c1 = document.getElementById('v2StatArticles'); if (c1) c1.textContent = V2_ARTICLES.length + 33 + '';
+  const c1 = document.getElementById('v2StatArticles'); if (c1) c1.textContent = V2_ARTICLES.length + '';
 }
 
-const V2_FEED = [
-  {user:'Ahmed', avatar:'https://i.pravatar.cc/60?img=15', text:'نشر مقال جديد', obj:'أحمد نشر مقال جديد', time:'منذ 10 دقائق'},
-  {user:'Mona', avatar:'https://i.pravatar.cc/60?img=5', text:'علّقت على مقال', obj:'Mona علّقت على مقال', time:'منذ 25 دقيقة'},
-  {user:'Karim', avatar:'https://i.pravatar.cc/60?img=12', text:'أعجب بمقال', obj:'Karim أعجب بمقال', time:'منذ ساعة'},
-  {user:'Nourhan', avatar:'https://i.pravatar.cc/60?img=32', text:'تتابعك الآن', obj:'Nourhan أصبحت تتابعك', time:'منذ ساعتين'},
-  {user:'Sara', avatar:'https://i.pravatar.cc/60?img=25', text:'شاركت أغنية في المفضلة', obj:'Sara أضافت أغنية للمفضلة', time:'منذ 3 ساعات'},
-  {user:'Omar', avatar:'https://i.pravatar.cc/60?img=8', text:'انضم إلى المجتمع', obj:'Omar انضم حديثاً إلى عالم فيروز', time:'منذ 5 ساعات'}
-];
+// Real activity only: locally-composed posts this session, merged with real
+// new-member signups fetched from Supabase. No fake users, no invented events.
+// (Once a `community_posts` table exists, swap the local array below for a
+// real `sb.from('community_posts').select('*')` call.)
+let V2_FEED = [];
+function v2RelTimeAr(dateInput){
+  const d = new Date(dateInput);
+  const diffSec = Math.max(0, Math.round((Date.now() - d.getTime())/1000));
+  if (diffSec < 60) return 'الآن';
+  const mins = Math.round(diffSec/60);
+  if (mins < 60) return `منذ ${mins} دقيقة`;
+  const hrs = Math.round(mins/60);
+  if (hrs < 24) return `منذ ${hrs} ساعة`;
+  const days = Math.round(hrs/24);
+  return `منذ ${days} يوم`;
+}
 function v2FeedItem(f){
   return `<div class="vf-item"><img src="${f.avatar}" alt=""><div><p>${f.obj}</p><small>${f.time}</small></div></div>`;
 }
-function v2RenderFeed(){
+async function v2RenderFeed(){
   const home = document.getElementById('v2HomeFeed');
-  if (home) home.innerHTML = V2_FEED.slice(0,4).map(v2FeedItem).join('');
   const full = document.getElementById('v2CommunityFeed');
-  if (full) full.innerHTML = V2_FEED.map(v2FeedItem).join('');
+  if (!home && !full) return;
+  let signups = [];
+  try {
+    const { data, error } = await sb.from('profiles').select('username,display_name,avatar_url,created_at').order('created_at', {ascending:false}).limit(10);
+    if (!error && data) {
+      signups = data.map(u => {
+        const name = u.display_name || u.username || 'عضو جديد';
+        const avatar = u.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=6e2640,8b5cf6`;
+        return { avatar, obj: `${name} انضم/ت حديثًا إلى عالم فيروز`, time: v2RelTimeAr(u.created_at), ts: new Date(u.created_at).getTime() };
+      });
+    }
+  } catch(e){}
+  const merged = [...V2_FEED.map(f => ({...f, ts: f.ts || Date.now()})), ...signups].sort((a,b) => b.ts - a.ts);
+  if (home) home.innerHTML = merged.length ? merged.slice(0,4).map(v2FeedItem).join('') : `<div style="text-align:center;color:var(--muted);padding:18px 10px;font-size:13px;">لسه مفيش نشاط — كن أول عضو يتفاعل! 🎧</div>`;
+  if (full) full.innerHTML = merged.length ? merged.map(v2FeedItem).join('') : `<div style="text-align:center;color:var(--muted);padding:18px 10px;font-size:13px;">لسه مفيش نشاط — كن أول عضو يتفاعل! 🎧</div>`;
 }
 function v2Post(){
   if (!currentUser) { openAuthModal(); return; }
@@ -4788,7 +4809,7 @@ function v2Post(){
   if (!input || !input.value.trim()) return;
   const name = currentProfile?.display_name || currentProfile?.username || currentUser.email.split('@')[0];
   const avatar = currentProfile?.avatar_url || `https://api.dicebear.com/7.x/initials/svg?seed=${encodeURIComponent(name)}&backgroundColor=6e2640,8b5cf6`;
-  V2_FEED.unshift({user:name, avatar, text:'نشر', obj:name+': '+input.value.trim(), time:'الآن'});
+  V2_FEED.unshift({avatar, obj:name+': '+input.value.trim(), time:'الآن', ts: Date.now()});
   input.value='';
   v2RenderFeed();
   // TODO: Supabase insert into `community_posts`
@@ -4892,9 +4913,9 @@ function sendPageMsg(page){ v2GoToPage(page === 'profile' || page === 'settings'
 async function v2RenderUsers(){
   const body = document.getElementById('v2UsersTableBody');
   if (!body) return;
-  body.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px;">جاري التحميل...</td></tr>';
+  body.innerHTML = '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">جاري التحميل...</td></tr>';
   const { data: users, error } = await sb.from('profiles').select('*').order('created_at', {ascending:false});
-  if (error){ body.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#f87171;padding:16px;">تعذّر تحميل المستخدمين: ${error.message}</td></tr>`; return; }
+  if (error){ body.innerHTML = `<tr><td colspan="9" style="text-align:center;color:#f87171;padding:16px;">تعذّر تحميل المستخدمين: ${error.message}</td></tr>`; return; }
 
   const q = (document.getElementById('v2UserSearch')?.value || '').trim().toLowerCase();
   const activeTab = document.querySelector('#v2UserTabs button.active')?.dataset.utab || 'all';
@@ -4915,12 +4936,21 @@ async function v2RenderUsers(){
         ${Object.entries(roleLabels).map(([val,label]) => `<option value="${val}" ${u.role===val?'selected':''}>${label}</option>`).join('')}
       </select>
     </td>
+    <td>
+      <input type="number" min="1" max="99" value="${u.level || 1}" style="width:52px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;" onchange="v2ChangeUserLevel('${u.id}', this.value, this)">
+    </td>
+    <td style="text-align:center;">
+      <input type="checkbox" ${u.verified ? 'checked' : ''} title="توثيق الحساب" style="width:17px;height:17px;cursor:pointer;" onchange="v2ToggleUserVerified('${u.id}', this.checked, this)">
+    </td>
+    <td>
+      <input type="text" value="${(Array.isArray(u.badges) ? u.badges : []).join(' ')}" placeholder="🏆 🎖️ ⭐" style="width:90px;background:var(--surface);color:var(--text);border:1px solid var(--border);padding:4px 6px;border-radius:8px;font-family:inherit;font-size:13px;" onchange="v2SetUserBadges('${u.id}', this.value, this)">
+    </td>
     <td><span class="v2-status-dot on"></span>مسجّل</td>
     <td style="display:flex;gap:6px;">
       ${(currentUser && u.id !== currentUser.id) ? `<button type="button" class="v2-act-btn" id="followBtn-${u.id}" onclick="v2ToggleFollow('${u.id}', this)">…</button>` : ''}
       <button type="button" class="v2-act-btn v2-act-reject" title="حذف الحساب (من لوحة Supabase)" onclick="alert('حذف المستخدمين نهائيًا بيتم من لوحة Supabase مباشرة (Authentication → Users) حفاظًا على الأمان.')">🗑</button>
     </td>
-  </tr>`).join('') || '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مستخدمين لسه</td></tr>';
+  </tr>`).join('') || '<tr><td colspan="9" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مستخدمين لسه</td></tr>';
 
   if (currentUser) {
     const { data: myFollows } = await sb.from('follows').select('following_id').eq('follower_id', currentUser.id);
@@ -4962,16 +4992,45 @@ async function v2ChangeUserRole(userId, newRole, selectEl){
   // If the admin just changed their OWN role, refresh the whole UI immediately
   if (currentUser && userId === currentUser.id) refreshAuthUI();
 }
-const V2_ARTICLES_ADMIN = [
-  {author:'Mona Saad', title:'ذكريات مع فيروز في الاسكندرية', date:'2026 مايو 17', status:'pending'},
-  {author:'Karim Adel', title:'فيروز والصباح: قصة عشق', date:'2026 مايو 17', status:'pending'},
-  {author:'Nourhan', title:'أجمل حفلات فيروز في لبنان', date:'2026 مايو 16', status:'pub'},
-  {author:'Ahmed Tarek', title:'رحلة إلى عالم فيروز', date:'2026 مايو 15', status:'pub'},
-  {author:'Mona Saad', title:'مسودة غير مكتملة', date:'2026 مايو 14', status:'rej'}
-];
+async function v2ChangeUserLevel(userId, newLevel, inputEl){
+  const lvl = Math.max(1, Math.min(99, parseInt(newLevel, 10) || 1));
+  inputEl.value = lvl; inputEl.disabled = true;
+  const { error } = await sb.from('profiles').update({ level: lvl }).eq('id', userId);
+  inputEl.disabled = false;
+  if (error){ alert('تعذّر تغيير المستوى: ' + error.message + '\n\n(محتاج عمود "level" (int) في جدول profiles على Supabase).'); return; }
+  if (currentUser && userId === currentUser.id) refreshAuthUI();
+}
+async function v2ToggleUserVerified(userId, isVerified, checkboxEl){
+  checkboxEl.disabled = true;
+  const { error } = await sb.from('profiles').update({ verified: isVerified }).eq('id', userId);
+  checkboxEl.disabled = false;
+  if (error){ alert('تعذّر تغيير حالة التوثيق: ' + error.message + '\n\n(محتاج عمود "verified" (boolean) في جدول profiles على Supabase).'); checkboxEl.checked = !isVerified; return; }
+  if (currentUser && userId === currentUser.id) refreshAuthUI();
+}
+async function v2SetUserBadges(userId, rawValue, inputEl){
+  const badges = rawValue.trim().split(/\s+/).filter(Boolean).slice(0, 6);
+  inputEl.disabled = true;
+  const { error } = await sb.from('profiles').update({ badges }).eq('id', userId);
+  inputEl.disabled = false;
+  if (error){ alert('تعذّر حفظ الأوسمة: ' + error.message + '\n\n(محتاج عمود "badges" (jsonb أو array) في جدول profiles على Supabase).'); return; }
+  if (currentUser && userId === currentUser.id) refreshAuthUI();
+}
+// Real submissions queue — empty until members actually submit articles via v2SubmitArticle()
+// (wire this to `sb.from('articles').select('*')` once the articles table exists on Supabase).
+const V2_ARTICLES_ADMIN = [];
+function v2RenderArticleTabCounts(){
+  const counts = {all: V2_ARTICLES_ADMIN.length, pending:0, pub:0, rej:0};
+  V2_ARTICLES_ADMIN.forEach(a => { if (counts[a.status] != null) counts[a.status]++; });
+  const labelText = {all:'الكل', pending:'قيد المراجعة', pub:'المنشورة', rej:'المرفوضة'};
+  document.querySelectorAll('#v2ArtTabs button[data-atab]').forEach(btn => {
+    const key = btn.dataset.atab;
+    btn.textContent = `${labelText[key]} (${counts[key] || 0})`;
+  });
+}
 function v2RenderArticlesAdmin(){
   const body = document.getElementById('v2ArticlesTableBody');
   if (!body) return;
+  v2RenderArticleTabCounts();
   const activeTab = document.querySelector('#v2ArtTabs button.active')?.dataset.atab || 'all';
   const label = {pub:'منشور', pending:'قيد المراجعة', rej:'مرفوض'};
   const rows = V2_ARTICLES_ADMIN.filter(a => activeTab === 'all' || a.status === activeTab);
@@ -4979,7 +5038,7 @@ function v2RenderArticlesAdmin(){
     <td>${a.author}</td><td>${a.title}</td><td>${a.date}</td>
     <td><span class="v2-art-status ${a.status}">${label[a.status]}</span></td>
     <td>${a.status==='pending' ? '<button type="button" class="v2-act-btn v2-act-approve" title="نشر">✓</button><button type="button" class="v2-act-btn v2-act-reject" title="رفض">✕</button>' : ''}<button type="button" class="v2-act-btn v2-act-edit" title="تعديل">✎</button></td>
-  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مقالات</td></tr>';
+  </tr>`).join('') || '<tr><td colspan="5" style="text-align:center;color:var(--muted);padding:16px;">لا يوجد مقالات لسه</td></tr>';
 }
 function v2DrawLineChart(){
   const svg = document.getElementById('v2LineChart');
@@ -5010,11 +5069,29 @@ function v2DrawPieChart(){
   svg.innerHTML = circles;
   if (legend) legend.innerHTML = data.map(d => `<span><i style="background:${d.c};"></i>${d.l} — ${d.v}%</span>`).join('');
 }
+async function v2LoadRealMemberCount(){
+  const el = document.getElementById('v2StatMembers');
+  if (!el) return;
+  const { count, error } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+  el.textContent = error ? '—' : (count ?? 0).toLocaleString('ar-EG');
+}
+async function v2LoadAdminStats(){
+  const usersEl = document.getElementById('admStatUsers');
+  const articlesEl = document.getElementById('admStatArticles');
+  if (usersEl){
+    const { count, error } = await sb.from('profiles').select('*', { count: 'exact', head: true });
+    usersEl.textContent = error ? '—' : (count ?? 0).toLocaleString('ar-EG');
+  }
+  // Real articles table isn't wired up yet — until it is, this reflects the actual
+  // in-app article list (V2_ARTICLES) rather than a made-up number.
+  if (articlesEl) articlesEl.textContent = V2_ARTICLES.length.toLocaleString('ar-EG');
+}
 function v2InitAdmin(){
   v2RenderUsers();
   v2RenderArticlesAdmin();
   v2DrawLineChart();
   v2DrawPieChart();
+  v2LoadAdminStats();
 }
 document.querySelectorAll('#v2UserTabs button').forEach(b => b.addEventListener('click', ()=>{ document.querySelectorAll('#v2UserTabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); v2RenderUsers(); }));
 document.querySelectorAll('#v2ArtTabs button').forEach(b => b.addEventListener('click', ()=>{ document.querySelectorAll('#v2ArtTabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); v2RenderArticlesAdmin(); }));
@@ -5030,6 +5107,7 @@ let currentProfile = null;
 
 v2RenderArticles();
 v2RenderFeed();
+v2LoadRealMemberCount();
 v2RenderEvents();
 v2RenderGallery();
 v2RenderFavorites();
@@ -5140,12 +5218,16 @@ function v2MemberCardHTML(u, p){
   if (genderLabel && !hidden.includes('gender')) chips.push(`<span class="v2-role-chip">${p.gender==='male'?'♂️':(p.gender==='female'?'♀️':'')} ${genderLabel}</span>`);
   if (age != null && !hidden.includes('age')) chips.push(`<span class="v2-role-chip">🎂 ${age} سنة</span>`);
   const chipsRow = chips.length ? `<div style="display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px;">${chips.join('')}</div>` : '';
+  const isVerified = isAdmin || p?.verified === true;
+  const badges = Array.isArray(p?.badges) ? p.badges : [];
+  const badgesRow = badges.length ? `<div class="vpc-badges">${badges.map(b=>`<span title="وسام">${b}</span>`).join('')}</div>` : '';
   return `
     <img class="vpc-avatar" src="${avatar}" alt="${name}">
-    <h3>${displayName} ${isAdmin ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#3b9eff"><path d="M12 2 9.5 4.5 6 4l-.5 3.5L2 9l2 3-2 3 3.5 1.5L6 20l3.5-.5L12 22l2.5-2.5 3.5.5.5-3.5L22 15l-2-3 2-3-3.5-1.5L18 4l-3.5.5z"/><path d="m8.5 12 2.3 2.3L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</h3>
+    <h3>${displayName} ${isVerified ? '<svg width="15" height="15" viewBox="0 0 24 24" fill="#3b9eff"><path d="M12 2 9.5 4.5 6 4l-.5 3.5L2 9l2 3-2 3 3.5 1.5L6 20l3.5-.5L12 22l2.5-2.5 3.5.5.5-3.5L22 15l-2-3 2-3-3.5-1.5L18 4l-3.5.5z"/><path d="m8.5 12 2.3 2.3L16 9" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>' : ''}</h3>
     <div style="font-size:11px;color:var(--muted);">@${name}</div>
     <div class="vpc-role">${roleLabel}</div>
     ${p?.role === 'founder' ? '<div class="vpc-founder-chip">👑 مؤسس الموقع</div>' : ''}
+    ${badgesRow}
     ${bio}
     ${chipsRow}
     <div class="vpc-level">
