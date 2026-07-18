@@ -3209,7 +3209,11 @@ html.v2 .right-side{
 .v2-hero{position:relative;border-radius:24px;overflow:hidden;min-height:340px;display:flex;align-items:center;padding:36px;border:1px solid var(--border);}
 .v2-hero-bg{position:absolute;inset:0;z-index:0;}
 .v2-hero-bg svg{width:100%;height:100%;object-fit:cover;}
-.v2-hero-overlay{position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,4,14,.88) 20%,rgba(10,4,14,.25) 70%);z-index:1;}
+.v2-hero-bg img{object-position:38% 32%;}
+.v2-hero-overlay{position:absolute;inset:0;background:
+    linear-gradient(90deg,rgba(10,4,14,.92) 22%,rgba(10,4,14,.55) 55%,rgba(10,4,14,.22) 78%),
+    linear-gradient(0deg,rgba(10,4,14,.55),transparent 45%);
+  z-index:1;}
 .v2-hero-content{position:relative;z-index:2;max-width:480px;}
 .v2-hero-content h1{font-size:44px;font-weight:800;color:var(--gold);margin-bottom:10px;font-family:'Cairo',sans-serif;}
 .v2-hero-content p.v2h-tag{font-size:16px;color:var(--text);margin-bottom:4px;}
@@ -3728,32 +3732,10 @@ html.v2 .right-side{
 
       <div class="v2-hero">
         <div class="v2-hero-bg">
-          <svg viewBox="0 0 900 400" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-            <defs>
-              <linearGradient id="heroSky" x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0" stop-color="#2a1140"/><stop offset=".55" stop-color="#160a1a"/><stop offset="1" stop-color="#3a1220"/>
-              </linearGradient>
-              <radialGradient id="heroMoonGlow" cx="50%" cy="50%" r="50%">
-                <stop offset="0" stop-color="#f3e4bd" stop-opacity=".9"/><stop offset="1" stop-color="#f3e4bd" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <rect width="900" height="400" fill="url(#heroSky)"/>
-            <g opacity=".8">
-              <circle cx="120" cy="60" r="1.4" fill="#fff"/><circle cx="220" cy="110" r="1" fill="#fff"/>
-              <circle cx="340" cy="50" r="1.6" fill="#fff"/><circle cx="480" cy="90" r="1" fill="#fff"/>
-              <circle cx="60" cy="150" r="1" fill="#fff"/><circle cx="180" cy="40" r="1.2" fill="#fff"/>
-              <circle cx="410" cy="140" r="1.3" fill="#fff"/><circle cx="270" cy="160" r="1" fill="#fff"/>
-            </g>
-            <circle cx="150" cy="90" r="70" fill="url(#heroMoonGlow)"/>
-            <circle cx="150" cy="90" r="34" fill="#f3e4bd"/>
-            <circle cx="164" cy="80" r="30" fill="#160a1a" opacity=".9"/>
-            <path d="M0 300 Q150 240 300 290 T600 280 T900 300 V400 H0 Z" fill="#6e2640" opacity=".55"/>
-            <path d="M0 340 Q200 290 450 330 T900 330 V400 H0 Z" fill="#3a1220"/>
-            <g opacity=".5" stroke="#d9b888" stroke-width="1.4" fill="none">
-              <path d="M600 340 q10 -60 40 -90"/><path d="M660 350 q0 -80 -20 -120"/>
-              <path d="M720 345 q20 -50 -10 -100"/>
-            </g>
-          </svg>
+          <picture>
+            <source srcset="assets/hero-fairouz.webp" type="image/webp">
+            <img src="assets/hero-fairouz.png" alt="عالم فيروز" loading="eager" fetchpriority="high" style="width:100%;height:100%;object-fit:cover;object-position:center;">
+          </picture>
         </div>
         <div class="v2-hero-overlay"></div>
         <div class="v2-hero-widget">
@@ -5038,18 +5020,20 @@ document.querySelectorAll('#v2UserTabs button').forEach(b => b.addEventListener(
 document.querySelectorAll('#v2ArtTabs button').forEach(b => b.addEventListener('click', ()=>{ document.querySelectorAll('#v2ArtTabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); v2RenderArticlesAdmin(); }));
 document.querySelectorAll('#v2ArticlesTabs button').forEach(b => b.addEventListener('click', ()=>{ document.querySelectorAll('#v2ArticlesTabs button').forEach(x=>x.classList.remove('active')); b.classList.add('active'); }));
 
+// ══════════════════════════════════════════════════════════════
+// AUTH — Supabase email/password + Google/Facebook OAuth
+// (declared here, BEFORE the render calls below, because several
+// render functions such as v2ArticleCard() read currentProfile)
+// ══════════════════════════════════════════════════════════════
+let currentUser = null;
+let currentProfile = null;
+
 v2RenderArticles();
 v2RenderFeed();
 v2RenderEvents();
 v2RenderGallery();
 v2RenderFavorites();
 v2RenderSongPicker();
-
-// ══════════════════════════════════════════════════════════════
-// AUTH — Supabase email/password + Google/Facebook OAuth
-// ══════════════════════════════════════════════════════════════
-let currentUser = null;
-let currentProfile = null;
 
 function openAuthModal(){ document.getElementById('authOverlay').classList.add('open'); }
 function closeAuthModal(){
