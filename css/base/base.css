@@ -1,0 +1,59 @@
+/* ================================================================
+   Base layer — @font-face, :root CSS variables (colors/gradients), global reset, body background & aurora blobs, starfield canvas base.
+   Part of the Fairouz World FM stylesheet — loaded in order after
+   base.css. Do not reorder relative to the other css/*.css files;
+   the cascade in preview-2026.html depends on this sequence.
+   ================================================================ */
+
+@font-face {
+  font-family: 'DayArabic';
+  src: url('../../assets/fonts/DayArabic.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bg:#0d0610; --bg2:#160a1a; --surface:#1e0f26; --card:#22112c;
+  --border:#3a1f4a; --gold:#d9b888; --gold2:#c9a36a; --rose:#c9879c;
+  --maroon:#6e2640; --purple:#8b5cf6; --purple2:#6d28d9; --pink:#e08aa6;
+  --text:#f3e8f6; --muted:#a080b0;
+  --glow-g:rgba(217,184,136,.35); --glow-p:rgba(139,92,246,.3);
+  --sun-c:#ffb648; --moon-c:#c9a3e8; --cloud-c:#8d84a6; --cloud-c2:#b5add0;
+  --rain-c:#7ec3f2; --snow-c:#f4f7ff; --storm-c:#f4e04d; --fog-c:#a29cb8;
+  --sea-c:#3fb9d6; --sea-c2:#7fd8e6; --sand-c:#e8c98a;
+  --winter-sun-c:#dce8f7; --winter-moon-c:#a9c6ea;
+  --snowhill-c:#eaf3ff; --snowhill-c2:#cfe0f2; --snowcap:#f6faff;
+  --pine-c:#4a7a63; --pine-c2:#3a6350;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{min-height:100%;}
+body{
+  font-family:'Inter',sans-serif;
+  background:radial-gradient(ellipse at 30% 0%,var(--bg2),var(--bg) 60%);
+  color:var(--text); min-height:100vh; overflow-x:hidden; position:relative;
+  transition:background 2.2s ease, color 1.6s ease;
+}
+body, body *{transition:background-color 1.6s ease, border-color 1.6s ease, color 1.4s ease;}
+/* Skip the (costly, DOM-wide) color transitions during the very first paint burst,
+   they only matter for later runtime theme changes (day/night, occasions, etc.) */
+html.boot body, html.boot body *{transition:none !important;}
+
+@media (prefers-reduced-motion: reduce){
+  .aurora, .loader-aurora, .loader-sparkles span, .loader-halo, .loader-ring-dash, .loader-logo-wrap::before, .loader-logo-wrap::after{
+    animation:none !important;
+  }
+}
+@media (max-width:768px){
+  .aurora{--blur:55px;}
+  .loader-aurora{filter:blur(60px);}
+}
+body.lang-ar{font-family:'Cairo',sans-serif;}
+#starCanvas{position:fixed;inset:0;z-index:0;pointer-events:none;transition:opacity 2.2s ease;}
+.aurora{position:fixed;border-radius:50%;--blur:90px;--op:.22;filter:blur(calc(var(--blur) + var(--bass,0) * 14px));opacity:calc(min(var(--op) * 1.9, var(--op) + var(--bass,0) * .16));z-index:0;pointer-events:none;animation:drift 16s ease-in-out infinite alternate;transition:opacity 2.2s ease, filter 2.2s ease;}
+.aurora.audio-live{transition:opacity .25s ease-out, filter .25s ease-out;}
+@keyframes drift{0%{transform:translate(0,0) scale(calc(1 + var(--bass,0)*.22));}100%{transform:translate(30px,-25px) scale(calc(1.08 + var(--bass,0)*.22));}}
+.aurora-1{width:620px;height:620px;background:#5b1060;top:-160px;right:-120px;}
+.aurora-2{width:520px;height:520px;background:var(--gold);bottom:-140px;left:-100px;animation-delay:4s;--op:.08;}
+.aurora-3{width:420px;height:420px;background:var(--purple);top:40%;left:38%;animation-delay:8s;--op:.12;}
+
